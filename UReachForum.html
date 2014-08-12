@@ -1,0 +1,621 @@
+<!--
+Designed by shijie
+Date:20140207
+My Bootstrap Sample Code
+-->
+<html>
+<head>
+<title>Bootstrap Sample Code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+<script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-pagecontroller.js"></script>
+
+<!-- Notification  -->    
+<link href="assets/gritter/css/custom.gritter.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="assets/gritter/js/custom.gritter.min.js"></script>
+
+<!-- Google Fonts -->
+<link href='http://fonts.googleapis.com/css?family=Exo+2:400,700,700italic,400italic' rel='stylesheet' type='text/css'>
+
+
+<script>
+
+  var stringTable = {
+    en:{
+      Edit:"Edit", 
+      Save:"Save", 
+      Add: "Add", 
+      Delete: "Delete" ,
+      Display: "Display" ,
+      Publish:"Create Topic",
+      UpdateSuccess: "Update successful",
+      UpdateFailed: "Update Failed",
+      Message: "Message",
+      Error: "Error", 
+      Ok: "OK",
+      Cancel: "Cancel",
+      NoResult: "No search results."
+    },
+    tw:{
+      Edit:"編輯",
+      Save:"儲存",
+      Add:"新增",
+      Delete:"刪除",
+      Display:"顯示",
+      Publish:"發表新文章",
+      UpdateSuccess:"更新成功",
+      UpdateFailed:"更新失敗",
+      Message:"訊息",
+      Error:"錯誤",
+      Ok:"確定",
+      Cancel:"取消",
+      NoResult:"無搜尋結果"
+    },
+    cn:{
+      Edit:"编辑",
+      Save:"储存",
+      Add:"新增",
+      Delete:"删除",
+      Display:"显示",
+      Publish:"發表新文章",
+      UpdateSuccess:"更新成功",
+      UpdateFailed:"更新失败",
+      Message:"讯息",
+      Error:"错误",
+      Ok:"确定",
+      Cancel:"取消",
+      NoResult:"无搜寻结果"
+    }
+  }
+
+  var stringMap=stringTable.en;
+function InitialLanguage(language){
+  if(language==="en"){
+    stringMap=stringTable.en;
+  }else if(language==="zh_TW"){
+    stringMap=stringTable.tw;
+  }else if(language==="zh_CN"){
+    stringMap=stringTable.cn;
+  }
+}
+  
+  var mWebApi="Action/action.php"; //Action
+
+  var mInitJson={   
+    initial:{
+      list:"0",
+    },
+    FourmInfo:{
+      readonly:true, 
+      type:"form-table",
+      table:{
+        list:[]
+      }
+    }
+  }  
+  
+  var mOptions={ 
+    name:"Forum",//"<s:property value="%{#parameters.target}" />",
+    term:"",
+    pages:{
+      start:0,     //
+      count:25,    //
+      total:0
+    }
+  }
+
+  //討論分類
+  var mCategory=[
+    {value:"9",text:"全部"},
+    {value:"1",text:"公告"},
+    {value:"2",text:"市場快訊"},
+    {value:"3",text:"訊息分享"},
+    {value:"4",text:"心情分享"},
+    {value:"5",text:"問題討論"}
+  ];
+
+  var mTableHeader={
+    id:"0",
+    title:"Forum",
+    description: "",
+    type:"table",
+    enableOrder:"true",
+    inputs: [
+      {
+        sortable: "true",
+        id: "1",
+        name: "author",
+        type: "text",
+        title: "@Author@"
+      },
+      {
+        sortable: "true",
+        id: "2",
+        name: "category", //分類
+        type: "select",
+        title: "@Category@",
+        options:[  
+          {value:"1",text:"公告"},
+          {value:"2",text:"市場快訊"},
+          {value:"3",text:"訊息分享"},
+          {value:"4",text:"心情分享"},
+          {value:"5",text:"問題討論"},
+          {value:"0",text:""},
+        ]
+      },
+      {
+        id: "3",
+        name: "subject",
+        type: "textarea",
+        title: "@Subject@"
+      },
+      {
+        sortable: "true",
+        id: "4",
+        name: "replies",
+        type: "text",
+        title: "@Replies@"
+      },
+      {
+        sortable: "true",
+        id: "5",
+        name: "last_post",
+        type: "text",
+        title: "@Last Post@"
+      }
+    ]
+  }
+
+  function ProcedureEntry(){
+
+
+  }
+
+  //介面table header
+  function ProcedureList(paramJson){ 
+
+    //!!之後要改成ModuleTable_New設定
+    var dataMap={};
+    for(var i=0;i<mTableHeader.inputs.length;i++){
+      var input=mTableHeader.inputs[i];
+      if(input.type==="select"||input.type==="selectable"){
+        if(input.options){
+          dataMap[input.name]=input.options;
+        }
+      }
+    }
+
+    function GetOptionsTextByValue(name,value){
+      var options=dataMap[name];
+      if(options!==undefined){
+        for(var i=0;i<options.length;i++){
+          //不強制型別比對，可能會有Integer
+          if(options[i].value==value){
+            return options[i].text;
+          }
+        }
+      }
+      return value;
+    }
+
+    var options={
+      language:"en",
+      initial:paramJson.initial,
+      select:{     
+      },
+      autocomplete:{
+      },
+      ui:{        
+      },
+      header:{
+        list:mTableHeader
+      },
+      tableApi:{
+      },
+      inputChange:function(ui,data){
+      },
+      listChange:function(ui,name,value){
+      },
+      tableInputChange:function(){
+      }
+    };
+
+    // table 控制
+    var TableToolbarJson={
+      title:"",
+      buttons:[
+        { 
+          type:"select",
+          name:"category",
+          options:mCategory,
+          value:"1",
+          iconCssClass:"",
+          cssClass:"btn-default",
+          change:function(){
+            $(this).blur();
+
+            console.log("select:"+$(this).find("option:checked").text());
+          },
+        },
+        { 
+          name:"DisplayBn",
+          title:stringMap.Display,
+          iconCssClass:"fa fa-th",
+          cssClass:"btn-info",
+          dataTarget:".table-select-panel",
+          pullRight:true,
+          click:function(){ 
+          
+            var formT = $(this).closest(".form-table");
+            var formName = formT.attr("name");
+            var tableF = formT.find("fieldset");
+            tableName = tableF.attr("gname");
+
+            var target = $(this).attr("data-target");
+            formT.ModuleTable_TriggerSelectForm(target,options.header[tableName],stringMap);
+          }
+        }
+      ]
+    } 
+
+    var searchbarJson={
+      name:"inputSearch",
+      placeholder:"Search",
+      buttons:[
+        {
+          name:"SearchBn",
+          title:"",
+          iconCssClass:"fa fa-search",
+          cssClass:"btn-default",
+          group:"",
+          click:function(){
+            var value = $("[name=inputSearch]").val();
+            //if(value===""){
+            //  return;
+            //}
+            $("[name=inputSearch]").blur();
+            var postData={
+              term:value,
+              filter:[]
+            }
+
+            if(mOptions.pages!==undefined){
+              postData["pages"]=mOptions.pages;
+            }
+
+            Search(postData);     
+          }
+        }
+      ]
+    }
+
+    var forumToolbarJson={
+      buttons:[
+        {
+          name:"PublishBn",
+          title:stringMap.Publish,
+          iconCssClass:"fa fa-pencil",
+          cssClass:"btn-primary",
+          group:"",
+          click:function(){
+            Link("UReachForumTopic.html");    
+          }
+        }
+      ]
+    }
+
+
+    $("#ForumToolBar").JSToolbar(forumToolbarJson);
+    $("#SearchToolBar").JSSearchbar(searchbarJson);
+
+      //-------------
+
+    for(name in paramJson){
+      var formOpt = paramJson[name];
+      var formType= formOpt.type;
+
+      if( formType==="form-group"){
+
+      }else if(formType==="form-table"){
+        
+        var formT = $('<div class="form-table">');
+        $("#TableContainer").append(formT);
+        formT.attr("name",name);        
+
+        for(tableName in formOpt.table){
+
+          var data = formOpt.table[tableName];
+
+          var formHeader =$('<div class=""></div>');
+
+          TableToolbarJson.title=formOpt.title;
+          var formToolbar =$('<div class="toolbar"></div>');
+          formToolbar.JSToolbar(TableToolbarJson);
+          formHeader.append(formToolbar);
+
+          var panel =$('<div class="table-select-panel"></div>');
+          formHeader.append(panel);
+          formT.append(formHeader);
+          var cdiv=$("<div style='overflow:auto;'>")
+          var fieldset = $("<fieldset disabled>");
+          cdiv.append(fieldset);
+          formT.append(cdiv);
+          fieldset.attr("gname",tableName);
+          fieldset.ModuleTable(options.header[tableName],{});
+    
+          // 設定初始值  
+          for(var i=0;i<data.length;i++){
+            var item=data[i];
+            fieldset.ModuleTable_New(item,{});  
+          }
+        }
+      }
+    }
+    $("#BasicInfoView").show("blind",{},400,null);
+
+    //-------------
+    
+    function UpdatePageControl(pages){
+      //var pages = {start:0,count:25,total:120};
+      mOptions["pages"]=pages;
+
+      $.JSPageController("#PageControl",pages,function(page){
+        
+          var postData={
+            term:mOptions.term,
+            filter:[],
+            pages:page
+          }
+          Search(postData);
+
+      });
+    }
+
+    function Link(src){
+      $('#containFrame').attr("src",src); 
+      $("#ReturnBn").click();
+    }
+
+    function Search(data){
+      var loader = $.JSUiFactory("circular3d-loader");
+      $("body").append(loader);
+      
+      $("#ResultMessageView").hide();
+
+      loader.fadeIn( 1000 ,function(){
+
+        var postData={
+          type:"Search",
+          name:mOptions.name,
+          data:data          
+        }
+
+        $.post(mWebApi,postData)
+          .done(function(rc) {
+            var rcJson = $.JSApiJSonParse(rc);  
+            if(rcJson.result==="1"){
+
+              mOptions.term = data.term;
+
+              $("#SearchView .form-table").ModuleTable_Clear();
+
+              if(rcJson.list.length===0){
+                $("#ResultMessageView").show();
+                $("#ResultMessageView .message").html(stringMap.NoResult);
+                $("[name=inputSearch]").focus();
+              }else{
+                
+                for(var i=0;i<rcJson.list.length;i++){
+                  var item = rcJson.list[i];
+
+                  for(var name in item.inputs) {
+                    var value = item.inputs[name];
+
+                    item.inputs[name] = GetOptionsTextByValue(name,value);
+                  }
+
+                  $("#SearchView .form-table").ModuleTable_New(item);
+                }
+
+                $("#SearchView .form-table tbody").find("tr").each(function(){
+                  $(this).click(function(){
+                    var link = $(this).attr("link");
+                    if(link){
+                      Link(link);
+                    }
+                    $("tr.active").removeClass("active");
+                    $(this).addClass("active");
+                  });
+                });
+
+                if(rcJson.pages){
+                  UpdatePageControl(rcJson.pages);
+                }
+              }
+            }else{
+              $("[name=inputSearch]").focus();
+              $("#ResultMessageView").show();
+              $("#ResultMessageView .message").html(stringMap.Message+":"+rcJson.message);
+            }
+          })
+          .fail(function() {
+            $("#ResultMessageView").show();
+            $("#ResultMessageView .message").html(stringMap.Message+":"+stringMap.Error);
+          })
+          .always(function() {
+            loader.fadeOut(1000,function(){
+              $(this).remove();
+            }); 
+          }); 
+        });
+    }
+    
+    $("[name=inputSearch]").keyup(function(event){
+      if(event.keyCode===13&&event.shiftKey){
+        $("[name=SearchBn]").click(); 
+      }
+    });
+    
+    $("#ReturnBn").click(function(){
+      onToggleReturnBn();
+    });
+
+    $("#ResultMessageView").hide();
+
+    var postData={term:"",filter:[]};
+    if(mOptions.pages!==undefined){
+      postData["pages"]=mOptions.pages;
+    }
+    
+    Search(postData);
+
+  }
+
+  function onToggleReturnBn(){
+    $("#SearchView").JSToggleClass("pull-xs-12");
+    $("#ContentView").JSToggleClass("pull-xs-12");
+    //$("#ReturnBn").JSToggleClass("hidden");
+  }
+
+  function initial() {
+    onResize();
+    ProcedureList(mInitJson);
+  }
+
+  //重要! Callback
+  window.Callback = {};
+  window.Callback.FromChild = function (data) {
+    if(data.act==="ok"||data.act==="cancel"||data.act==="return"){
+      onToggleReturnBn();
+    }
+    console.log(data);
+  };
+  window.Callback.FromParent = function (data) {
+    console.log(data);
+  };
+  
+  function onCallParent(data){
+    if(window.parent.Callback)
+      window.parent.Callback.FromChild(data);
+  }
+
+  function onCallChild(date){
+    var f = document.getElementById('containFrame');
+    if(f){
+      var fContent = f.contentWindow || f.contentDocument;
+      fContent.Callback.FromParent(date);
+    } 
+  }
+  //END Callback
+
+  $(window).load(function() {
+    initial();
+  });
+
+  $(window).resize(function() {
+    onResize();
+  });
+
+  function onResize() {
+  }
+</script>
+
+</head>
+<body>
+<div class="cbp cbp-box" style="background:#F8F8F8 url(images/noisebg.png);">
+  <div id="SearchView" class="cbp cbp-box cbp-left vertical-xs-12">
+    <div class="inner-vertical">
+      <div class="navbar-fixed-top">
+        <div class="container">
+          <div class="row">
+            <!-- Begin col-md-10 col-md-offset-1-->   
+            <div class="col-md-12">   
+              <div class="toolbar-inline">
+                <div id="SearchTitleBar" class="toolbar col-xs-8"><span style="font-size:140%">@Title@<!--s:text name="ShowTitle" /--></span></div>
+                <div id="SearchToolBar" class="toolbar col-xs-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container" style="padding-top:50px;padding-bottom:50px">
+        <div class="row">
+          <!-- Begin TableInfoView-->
+
+          <div class="col-md-12">   
+            <div id="TableContainer"> 
+              
+            </div>
+            <div id="ResultMessageView" style="width:100%;height:20%;top:40%;left:auto;right:auto;text-align:center;text-shadow:0px 0px 12px rgba(128,128,128,0.5)">
+              <h1 class="message">No Result!</h1>
+            </div>      
+          </div> 
+        </div>
+      </div>
+
+      <div class="navbar-fixed-bottom">
+        <div class="container">
+          <div class="row">
+            <!-- End TableInfoView-->        
+            <div id="ViewControl" class="col-md-12">
+              <div class="toolbar-inline">  
+                <div class="toolbar col-xs-4">
+                  <div id="ForumToolBar"></div>
+                </div>
+                <div class="toolbar col-xs-8">
+                  <div id="PageControl" class="pull-right"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </div>
+  <div id="ContentView" class="cbp cbp-box cbp-right pull-xs-12 vertical-xs-12">
+    <div class="inner-vertical">
+      <iframe id="containFrame" frameborder="0" class="bg-transparent"
+        src="" style="width: 100%; height: 100%"></iframe>
+    </div>
+  </div>
+  <div id="ReturnBn" class="block-btn cbp-on-top hidden"
+    style="position: absolute; top: 0px; right: 0px;">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </div>
+</div> <!--END CBP-->
+</body> 
+</html>

@@ -1,0 +1,260 @@
+bootstrap-custom-task-list.js 說明
+
+日期:20140422
+
+需求:
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.bootstrap.css" rel="stylesheet">
+    <link href="css/cbp.bootstrap.css" rel="stylesheet">
+    <link href="css/cbp.bootstrap.task.css" rel="stylesheet">
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Date Timepicker  -->
+    <link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+    <script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+    <link href="css/jquery-ui.min.css" rel="stylesheet" >
+    <script src="js/jquery/jquery.min.js"></script>
+    <script src="js/jquery/jquery-ui.min.js"></script>
+    <script src="js/jquery/jquery-sprintf.js"></script>
+ 
+    <!-- Notification  -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-custom-task-list.js"></script>
+    <script src="js/bootstrap-custom-input.js"></script>
+
+
+    <!-- Common Library  -->
+    <script src="js/common-library.js"></script>
+
+    <!-- Notification  -->    
+    <link href="assets/gritter/css/custom.gritter.css" rel="stylesheet" type="text/css" >
+    <script type="text/javascript" src="assets/gritter/js/custom.gritter.min.js"></script>
+
+---------------------------------------------------------------------
+1.
+---------------------------------------------------------------------
+
+task_state:   //任務處理狀態
+  0:""
+  1:"完成"
+  2:"處理中"
+  3:"暫停"
+  4:"取消"
+  5:"接受"
+  6:"拒絕"
+  7:"追綜"
+   
+task_priority: //任務優先權
+  0:""
+  1:"高"
+  2:"中"
+  3:"低"
+
+
+UI 設定任務狀態顯示
+  
+  state\owner  ┃   me    system   user
+  ----------------------------------------
+  0:""         ┃   v       v       v
+  1:done       ┃   v       v       v
+  2:processing ┃   v       v       v
+  3:pending    ┃   v
+  4:cancel     ┃   v
+  5:accept     ┃           v       v
+  6:reject     ┃           v       v
+  7:tracing    ┃   v
+
+
+
+---------------------------------------------------------------------
+2.一般任務新增
+---------------------------------------------------------------------
+
+postData:
+{
+  "name":"Task",
+  "type":"New",
+  "owner":"me",                       //任務來源 user/me/system
+  "id": "",                           //任務唯一編號 
+  "title": "",                        //任務標題
+  "description": "",                  //任務內容
+  "state": "7",                       //任務處理狀態 
+  "priority": "1",                    //優先權
+  "due_date": "2014/05/01",           //到期日
+  "remind_date": "2014/04/22 20:20",  //提醒日
+  "comment": "",                      //處理結果及評論
+  "worker_id": "",                    //被指派任務的員工id 
+  "worker_name": "",                  //員工名稱
+}
+
+
+return:{
+  result:"1",
+  "id":"?"     //任務id
+}
+
+---------------------------------------------------------------------
+3.指派任務新增
+---------------------------------------------------------------------
+
+postData:
+{
+  "name":"Task",
+  "type":"New",
+  "owner":"me",                       //任務來源 user/me/system
+  "id": "",                           //任務唯一編號 
+  "title": "",                        //任務標題
+  "description": "",                  //任務內容
+  "state": "7",                       //任務處理狀態 
+  "priority": "1",                    //優先權
+  "due_date": "2014/05/01",           //到期日
+  "remind_date": "2014/04/22 20:20",  //提醒日
+  "comment": "",                      //處理結果及評論
+  "worker_id": "1",                   //被指派任務的員工id 
+  "worker_name": "Shijie Wu",         //員工名稱
+}
+
+
+---------------------------------------------------------------------
+4.Update 更新task
+---------------------------------------------------------------------
+
+// ME
+postData:
+{
+  "name":"Task",
+  "type":"Update",
+  "owner":"me",                       //*任務來源 user/me/system
+  "id": "",                           //*任務唯一編號 
+  "title": "",                        //任務標題
+  "description": "",                  //任務內容
+  "state": "7",                       //任務處理狀態 
+  "priority": "1",                    //優先權
+  "due_date": "2014/05/01",           //到期日
+  "remind_date": "2014/04/22 20:20",  //提醒日
+  "comment": "",                      //處理結果及評論
+  "worker_id": "1",                       //*被指派任務的員工id 
+  "worker_name": "Shijie Wu",             //*員工名稱
+  "worker_state": "6",                    //*指派任務的處理狀態 
+  "worker_comment":"無法處理"              //*指派任務的處理結果及評論
+  "worker_remind_date":"2014/04/22 20:20" //*工作者自己的提醒時間
+}
+
+
+// USER
+postData:
+{
+  "name":"Task",
+  "type":"Update",
+  "owner":"user",                     //*任務來源 user/me/system
+  "id": "",                           //*任務唯一編號 
+  "title": "",                        //*任務標題
+  "description": "",                  //*任務內容
+  "state": "7",                       //*任務處理狀態 
+  "priority": "1",                    //*優先權
+  "due_date": "2014/05/01",           //*到期日
+  "remind_date": "2014/04/22 20:20",  //*提醒日
+  "comment": "",                      //*處理結果及評論
+  "worker_id": "1",                       //*被指派任務的員工id 
+  "worker_name": "Shijie Wu",             //*員工名稱
+  "worker_state": "6",                    //指派任務的處理狀態 
+  "worker_comment":"無法處理"              //指派任務的處理結果及評論
+  "worker_remind_date":"2014/04/22 20:20" //工作者自己的提醒時間
+}
+
+// SYSTEM
+postData:
+{
+  "name":"Task",
+  "type":"Update",
+  "owner":"system",                   //*任務來源 user/me/system
+  "id": "",                           //*任務唯一編號 
+  "title": "",                        //*任務標題
+  "description": "",                  //*任務內容
+  "state": "7",                       //*任務處理狀態 
+  "priority": "1",                    //*優先權
+  "due_date": "2014/05/01",           //*到期日
+  "remind_date": "2014/04/22 20:20",  //*提醒日
+  "comment": "",                      //*處理結果及評論
+  "worker_id": "1",                       //*被指派任務的員工id 
+  "worker_name": "Shijie Wu",             //*員工名稱
+  "worker_state": "6",                    //指派任務的處理狀態 
+  "worker_comment":"無法處理"              //指派任務的處理結果及評論
+  "worker_remind_date":"2014/04/22 20:20" //工作者自己的提醒時間
+}
+
+
+---------------------------------------------------------------------
+5.Refresh 內容
+---------------------------------------------------------------------
+  
+postData:
+{
+  name:"Task",
+  type:"List"
+}
+
+return: 
+  {
+  "result": "1",
+  "task_hash": "201403221200",
+  "user_hash": "201403221200",
+  "list": [
+    {
+      "owner":"user",                     //任務來源 user/me/system 
+      "id": "1",                          //任務唯一編號 
+      "title": "",                        //任務標題
+      "description": "",                  //任務內容
+      "state": "7",                       //任務處理狀態 
+      "priority": "1",                    //優先權
+      "due_date": "2014/05/01",           //到期日
+      "remind_date": "2014/04/22 20:20",  //提醒日
+      "comment": "",                      //處理結果及評論
+      "worker_id": "1",                   //被指派任務的員工id 
+      "worker_name": "Shijie Wu",         //員工名稱
+      "worker_state": "6",                //指派任務的處理狀態 
+      "worker_comment":"無法處理"          //指派任務的處理結果及評論
+      "worker_remind_date":"2014/04/22 20:20" //工作者自己的提醒時間
+    }
+    ,
+    {
+      "owner":"me",                       //任務來源 user/me/system
+      "id": "1",                          //任務唯一編號 
+      "title": "",                        //任務標題
+      "description": "",                  //任務內容
+      "state": "7",                       //任務處理狀態 
+      "priority": "1",                    //優先權
+      "due_date": "2014/05/01",           //到期日
+      "remind_date": "2014/04/22 20:20",  //提醒日
+      "comment": "",                      //處理結果及評論
+      "worker_id": "",                    //被指派任務的員工id 
+      "worker_name": "",                  //員工名稱
+      "worker_state": "",                 //指派任務的處理狀態 
+      "worker_comment":""                 //指派任務的處理結果及評論
+      "worker_remind_date":""
+    ,
+    {
+      "owner":"system",                             //由系統指派來的任務給員工A
+      "id": "3",
+      "title": "雅虎努力說服蘋果拋棄Google？",
+      "description": "最初由科技部落格 ",
+      "state": "3",                                 //員工A所設定任務處理狀態，將反應回指派任務者的【指派工作資訊中】
+      "priority": "3",
+      "due_date": "2014/02/16",
+      "remind_date": "",
+      "process_description": "遇到困難，正在處理中。"  //員工A的處理結果及評論，將反應回指派任務者的【指派工作資訊中】
+      "worker_id": "",                              //被指派任務的員工id 
+      "worker_name": "",                            //員工名稱
+      "worker_state": "",                           //指派任務的處理狀態 
+      "worker_comment":""                           //指派任務的處理結果及評論
+      "worker_remind_date":""     
+    }
+  ]
+}
+
+---------------------------------------------------------------------
+6
+---------------------------------------------------------------------
+
+

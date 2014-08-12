@@ -1,0 +1,500 @@
+<html>
+<head>
+<title>UReach eERP System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+
+<link href="css/cbp.bootstrap.tree.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+
+<!-- Common Library  -->
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- WYSIWYG Editor -->
+<script src="js/jquery/jquery.hotkeys.js"></script>
+<script src="js/bootstrap-wysiwyg.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+<script src="js/bootstrap-custom-pagecontroller.js"></script>
+
+<script>
+
+var stringTable = {
+en:{
+//  
+NewMeeting:"New Meeting",
+CompanyName:"Company Name",
+Create:"Create",
+BasicInfo:"Basic Info",
+EventInfo:"Discussion",
+//
+Title:"Title",
+All:"All/None",
+Edit:"Edit",
+Save:"Save",
+Add:"New",
+Delete:"Delete",
+Display:"Display",
+UpdateSuccess:"Update Success",
+UpdateFailed:"Update Failed",
+Message:"Message",
+Error:"Error",
+Ok:"OK",
+Cancel:"Cancel",
+AskDelete:"Delete Checked Items?",
+Done:"Done",
+Processing:"Processing",
+Pending:"Pending",
+Assign:"Assign",
+Accept:"Accept",
+Reject:"Reject",
+Tracing:"Tracing",
+High:"High",
+Medium:"Medium",
+Low:"Low",
+},
+tw:{
+//  
+NewMeeting:"新增會議",
+CompanyName:"公司名稱",
+Create:"建立",
+BasicInfo:"基本資訊",
+EventInfo:"討論事項",
+//
+Title:"標題",
+All:"全選/反選",
+Edit:"編輯",
+Save:"儲存",
+Add:"新增",
+Delete:"刪除",
+Display:"顯示",
+UpdateSuccess:"更新成功",
+UpdateFailed:"更新失敗",
+Message:"訊息",
+Error:"錯誤",
+Ok:"確定",
+Cancel:"取消",
+AskDelete:"是否要刪除選項目?",      
+Done:"完成",
+Processing:"處理中",
+Pending:"暫停",
+Assign:"指挀",
+Accept:"接受",
+Reject:"拒絕",
+Tracing:"追綜中",
+High:"高",
+Medium:"中",
+Low:"低",
+},
+cn:{
+//  
+NewMeeting:"新增会议",
+CompanyName:"公司名称",
+Create:"建立",
+BasicInfo:"基本资讯",
+EventInfo:"讨论事项",
+//
+Title:"标题",
+All:"全选/反选",
+Edit:"编辑",
+Save:"储存",
+Add:"新增",
+Delete:"删除",
+Display:"显示",
+UpdateSuccess:"更新成功",
+UpdateFailed:"更新失败",
+Message:"讯息",
+Error:"错误",
+Ok:"确定",
+Cancel:"取消",
+AskDelete:"是否要删除选项目?",
+Done:"完成",
+Processing:"处理中",
+Pending:"暂停",
+Assign:"指挀",
+Accept:"接受",
+Reject:"拒绝",
+Tracing:"追综中",
+High:"高",
+Medium:"中",
+Low:"低",
+}
+}
+
+//Frame資訊
+var mFrame={
+  name:"TaskListTreeView",
+  language:"en"
+}
+
+var stringMap=stringTable.en;
+
+function InitialLanguage(language){
+  if(language==="en"){
+    stringMap=stringTable.en;
+  }else if(language==="zh_TW"){
+    stringMap=stringTable.tw;
+  }else if(language==="zh_CN"){
+    stringMap=stringTable.cn;
+  }
+}
+// 會議事項
+//var mEventHeaderJson = JSON.parse(textTableHeader);
+var mHeaderJson={
+
+}
+
+var mSelectJson={
+  priority:[
+  {
+    name:"",
+    value:"0"
+  },{
+    name:stringMap.Low,
+    value:"1"
+  },{
+    name:stringMap.Medium,
+    value:"2"    
+  },{
+    name:stringMap.High,
+    value:"3"    
+  }],
+  state:[
+  {
+    name:"",
+    value:"0"
+  },{
+    name:stringMap.Done,
+    value:"1"
+  },{
+    name:stringMap.Processing,
+    value:"2"    
+  },{
+    name:stringMap.Pending,
+    value:"3"    
+  },{
+    name:stringMap.Cancel,
+    value:"4"    
+  },{
+    name:stringMap.Accept,
+    value:"5"    
+  },{
+    name:stringMap.Reject,
+    value:"6"    
+  },{
+    name:stringMap.Tracing,
+    value:"7"    
+  }
+
+  ] 
+}
+
+var mWebApi="Action/action.php";
+
+
+function ProcedureEntry(){
+  $(".tree .state").click(function(){
+    $(this).find(".cbp-star-menu").JSSwitchClass("running","reverse");
+  })
+}
+
+
+
+function ProcedureViewControl(paramJson){
+  $("#ViewControl").show("blind",{},400,null);
+
+  $("#ViewControl .navigation ul").html("");
+
+  for(name in paramJson){
+
+    if(name==="initial"||
+       name==="result"||
+       name==="type"||
+       name==="message"){
+      continue;
+    }
+
+    var uiName= name;
+    var title = paramJson[name].title;
+    var li=$('<li><a href="#"><span class="title"></span>&nbsp;<span class="state"></span></a></li>');
+
+    li.find(".title").html(title);
+
+    li.find("a").attr("data-target",uiName).click(function(){
+      if($(this).closest("li").hasClass("selected")===true)
+        return;
+      $("#ViewControl").find("li").removeClass("selected");
+  
+       var targetName = $(this).attr("data-target");
+       var target = $("[name="+targetName+"]");
+       if(target.length){
+         var t = target.scrollTop();
+         var tb = target.offset().top;
+       
+         $(".inner-vertical").animate({
+          scrollTop: $(".inner-vertical").scrollTop()+tb
+        },400); 
+      }
+    })
+
+    $("#ViewControl .navigation ul").append(li);
+  };
+
+  if($("#ViewControl .navigation ul").children().length<=1){
+    $("#ViewControl .navigation").hide();
+  }
+}
+
+//重要! Callback
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+  if(data.act==="Notification"){
+  	onCallParent(data);	
+  }else if(data.act==="Return"){
+		$("#PrimaryView").removeClass("cbp-close");
+  	$("#SecondaryView").addClass("cbp-close"); 
+
+    if(data.frame!==undefined&&data.frame.modified!==undefined ){
+      if(data.frame.modified===true){
+        RefreshTaskList(true);
+      }
+    }
+
+  }else if(data.act==="FrameLoaded"){
+    //設定link後等IFrame載入成功回復
+    $("#SecondaryView").attr("frame-name",data.frame.name);
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    ShowBlockLoading(false);
+  }else if(data.act==="GetParent"){
+    data.parent.push(mFrame);
+    onCallParent(data);
+  }else if(data.act==="Update"){
+    if(data.target===mFrame.name&&data.frame.name==="TaskFrame"){
+      var purpose = (data.purpose)?data.purpose:"";
+      if(purpose==="New"){
+        RefreshTaskList();
+      }
+    }
+  }else{
+  	onCallParent(data);	
+  }
+};
+
+window.Callback.FromParent = function (data) {
+  if(data.act==="Update"){
+    if(data.target==="TaskList"&&data.frame.name==="TaskFrame"){
+      var purpose = (data.purpose)?data.purpose:"";
+      if(purpose==="New"){
+        RefreshTaskList();
+      }
+    }
+  }
+};
+
+function onCallParent(data){
+  if(window!==window.parent&&window.parent.Callback){
+    window.parent.Callback.FromChild(data);
+  }
+}
+
+function onCallChild(date){
+  var f = document.getElementById('ContainIFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+//END Callback
+
+// Post Api Error
+function PostApiFailed(rcJson){
+  onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+}
+// 通知事件定
+//{title:"",description:""}
+function Notification(postData){
+  onCallParent({act:"Notification",data:postData});
+}
+
+function ToggleFrameReturn(){
+	onCallParent({act:"Return",frame:mFrame});
+}
+
+// Iframe Link
+function Link(src){
+  $('#SecondaryView #ContainIFrame').attr("src",src); 
+}
+
+function initial(){	
+	var param={act:"GetParent",parent:[]};
+
+	onCallParent(param);
+
+	if(param.parent.length>1){
+		$("#ReturnBn").removeClass("hidden"); 
+    $("#ReturnBn").click(function(){
+      ToggleFrameReturn();
+    });
+	}else{
+		$("#ReturnBn").addClass("hidden"); 
+	}
+
+	InitialLanguage(mFrame.language);
+
+	ProcedureEntry();
+	
+  onCallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+   initial();
+  }catch(e){
+    onCallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+    
+</script>		
+</head>
+
+<body>
+<div class="cbp cbp-3d cbp-box">
+	<div id="PrimaryView" class="cbp-box cbp-flip vertical-xs-12">
+    <div id="MenuView" class="nav navbar-inverse box-shadow">
+      
+    </div>
+		<div class="inner-vertical">
+			<!-- Modal -->
+		  <div class="container" style="padding-bottom:100px">
+	      <!--BEGIN BasicInfoView-->
+	      <div id="BasicInfoView" class="row">
+	        <div class="col-lg-12">
+	          <h2 class="page-title"></h2>
+	        </div>
+	        <div class="col-lg-12">
+	          <div class="row">   
+	            <div id="FormContainer">
+<div class="tree">
+  <ul class="cbp-node">
+    <li class="cbp-item">
+      <span class="icon"><img class="img-circle" src="images/girl.jpeg" data-original-title="" title=""></span>
+      <ul class="cbp-node">
+        <li class="cbp-item">
+          <span class="icon"><div class="state"></div></span>
+          <ul class="cbp-node">
+            <li class="cbp-item" state="1">
+              <span class="icon" state="1"><div class="state" state="1"></div></span>
+              <ul class="cbp-node">
+                <li class="cbp-item"><span class="icon"><div class="state"></div></span></li>
+                <li class="cbp-item">
+                  <span class="icon"><div class="state"></div></span>
+                  <ul class="cbp-node">
+                    <li class="cbp-item">
+                      <span class="icon"><div class="state"></div></span>
+                    </li>
+                    <li class="cbp-item">
+                      <span class="icon"><div class="state"></div></span>
+                    </li>
+                  </ul>
+                </li>
+                <li class="cbp-item">
+                  <span class="icon"><div class="state"></div></span>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li class="cbp-item">
+          <span class="icon"><div class="state"></div></span>
+          <ul class="cbp-node">
+            <li class="cbp-item">
+              <span class="icon"><div class="state">
+                
+                <ul class="cbp-star-menu">
+                  <li class="line1">
+                    <span class="ball"></span>
+                  </li>
+                  <li class="line2">
+                    <span class="ball"></span>
+                  </li>          
+                  <li class="line3">
+                    <span class="ball"></span>
+                  </li>
+                  <li class="line4">
+                    <span class="ball"></span>
+                  </li>
+                </ul>
+
+              </div></span>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+
+              </div>  
+	          </div>
+	        </div>
+	      </div>
+	      <!--END BasicInfoView-->
+			</div>
+			<!--End Container-->
+
+		</div>      
+    <div id="ViewControl" class="navbar-fixed-bottom" style="border-bottom: 1px solid #ddd;">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="navigation">
+              <ul>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--End ViewControl-->
+  	<!--End inner-vertical-->  
+    <div id="ReturnBn" class="block-btn cbp-on-top hidden"
+      style="position: absolute; top: 0px; right: 0px;">
+      <span class="fa fa-arrow-left"></span>
+    </div>
+	</div>
+  <div id="SecondaryView" class="cbp-box cbp-flip cbp-close vertical-xs-12">
+    <div class="inner-vertical">
+      <iframe id="ContainIFrame" frameborder="0" class="bg-transparent"
+        src="" style="width: 100%; height: 100%"></iframe>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,308 @@
+// API 回傳格式說明:
+
+/* 新增/修改/刪除/搜尋 */
+0.API:Action
+post:
+{
+	type: Query / New / Update / Delete / List / Search 
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// 0.1 New
+///////////////////////////////////////////////////////////////////////////
+
+/****************************************
+ 	New Customer
+****************************************/
+post:
+{
+	type:"New",
+	name:"Customer",
+	value:""      //所輸入的公司名稱
+}
+return:
+{
+	return:"1",
+	id:"1",				//company_id
+	name:""       //company_name
+}
+
+/****************************************
+ 	New Meeting
+****************************************/
+post:
+{
+	type:"New",
+	name:"Meeting",
+	id:"1"            //company_id  
+}
+
+return
+{
+	result:"1",
+	meeting_id:"1",
+	company_id:"1",
+	company_name:"",
+	establish_date:"2014/03/05 14:00",	
+	
+	/* 以下為meeting已存在使用。
+	meeting_date:"2014/03/05 14:00",	
+	meeting_location:“台灣”,
+	customer_attendee:[{id:"1",name:""},{id:"2","name"},{id:"3",name:""}],
+	ur_attendee:[{id:"1",name:""},{id:"2","name"},{id:"3",name:""}]
+	meeting_items:[{id:"1",inputs:{name:value}}]
+	*/
+}
+
+/****************************************
+ 	New Employee 新增員工
+****************************************/
+post:
+{
+	type:"New",
+	name:"Employee",
+	id:"1",            // company_id 
+	value:""           // 員工名稱
+}
+
+return
+{
+	result:"1",
+	id:"1",            	// 員工id
+	name:""  						// 員工名稱
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// 0.2 Update
+///////////////////////////////////////////////////////////////////////////
+/****************************************
+ 	Update Meeting Basic Info
+****************************************/
+post:
+{
+	type:"Update",
+	name:"Meeting",
+	meeting_id:"1",
+	company_id:"1",
+	company_name:"",
+	establish_date:"2014/03/05 14:00",	
+	meeting_date:"2014/03/05 14:00",	
+	meeting_location:“台灣”,
+	customer_attendee:[{id:"1",name:""},{id:"2","name"},{id:"3",name:""}],
+	ur_attendee:[{id:"1",name:""},{id:"2","name"},{id:"3",name:""}]
+}
+
+return
+{
+	result:"1",
+	meeting_id:"1"
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+// 1.0 API:AutoComplete
+///////////////////////////////////////////////////////////////////////////
+post:
+{
+	id:"",       // employee 時，為客戶id，其它則無此值或為空值
+	name:"",     // customer / employee / member
+	term:"",     // 搜尋字樣 
+}
+
+return:
+{
+	result:"1",  // 成功與否的回應值
+	list:[
+		{
+			id:"",
+			name:"",
+			category:""  // 顯示上的分類階層，如員工就可以顯示其所屬的部門，亦可不給。
+		}
+		,
+		{
+			id:"",
+			name:""
+		}
+		,
+		{
+			id:"",
+			name:""
+		}
+	]
+}
+
+///////////////////////////////////////////////////////////////////////////
+// 2.0 
+///////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////
+// 以下重新設計
+///////////////////////////////////////////////////////////////////////////
+
+Query API
+/* 建立客戶輸入名單時所使用的查索Api,最少需二個字*/
+1.1 Query    //取得客戶資訊
+post: 
+{
+	name:"customer",
+	term:"UR"  //此為輸入字串
+}
+ 
+return: company_list_sample.txt
+
+{  
+  "result":"1",
+  "id":"",
+  "type":"company",
+  "list":[
+    {
+      "id":"1",
+      "name":"Ureach Inc"
+    }
+    ,
+    {
+      "id":"2",
+      "name":"Bestwise"
+    }
+    ,
+    {
+      "id":"3",
+      "name":"HTC Inc"
+    }
+    ,
+    {
+      "id":"4",
+      "name":"Apple Inc"
+    }    
+  ]                 
+}
+
+/* 建立客戶輸入名單時所使用的查索Api,最少需二個字*/
+1.2 Query //取得客戶資訊
+post: 
+{
+	id:"1",    //公司id 
+	name:"emploryee",
+	term:"UR"  //此為輸入字串
+}
+ 
+return: 
+
+{  
+  "result":"1",
+  "id":1,       //公司id
+  "type":"emploryee",
+  "list":[
+    {
+      "id":"1",
+      "name":"Ureach Inc"
+    }
+    ,
+    {
+      "id":"2",
+      "name":"Bestwise"
+    }
+    ,
+    {
+      "id":"3",
+      "name":"HTC Inc"
+    }
+    ,
+    {
+      "id":"4",
+      "name":"Apple Inc"
+    }    
+  ]                 
+}
+
+/**/
+2.create_meeting.api //建立會議
+post:
+{
+	"company_id":"1"   //客戶id
+}
+
+return:
+{
+	"result":"1",      //
+	"meeting_id":"1",
+	"company_id":"1",
+	"company_name":name,
+	"establish_date":"2014/03/05 14:00"
+};
+
+
+/**/
+3.save_meeting_basic_info.api //儲存會議基本資料
+post:
+{
+	"meeting_id":"1",
+	"company_id":"1",
+	"meeting_date":"2014/03/25 14:00",
+	"meeting_location":"taiwan",
+	"attendee":[1,2,3],           //對方公司參與者
+	"ur_attendee":[1,3,5,7,9],    //我方參與者
+	"ur_minutes_taker":[5]        //我方會議記錄者
+}
+
+return:
+{
+	"result":"1",     
+	"meeting_id":"1",
+	"company_id":"1",
+};
+
+/**/
+4.new_company_contact.api  //加入公司新聯絡人
+post:
+{
+	"company_id":"1",
+	"name":"Shijie Wu",
+	"email":"sss@yyy.com",
+	"phone":"886-xxx-xxxxxxx"	
+}
+
+return:
+{
+	"result":"1",
+	"id":"10",
+	"name":"Shijie Wu",
+	"email":"sss@yyy.com",
+	"phone":"886-xxx-xxxxxxx"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

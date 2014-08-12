@@ -1,0 +1,1109 @@
+<html>
+<head>
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- Bootstrap task list Css-->
+<link href="css/cbp.bootstrap.task.css" rel="stylesheet" >
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+<script src="js/bootstrap-custom-pagecontroller.js"></script>
+
+<script>
+
+//Frame資訊
+var mFrame={
+  name:"TaskList",
+  language:"en",
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"}
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="Action/action.php";
+
+var mHeaderJson={
+
+}
+
+var mSelectJson={
+
+}
+
+
+var mTaskApi={
+  //callback={begin:,done:,fail:,always}
+  ActionPost:function(postData,callback){
+    
+    $.JSApiPost.direct(mWebApi,postData,function(act,rcJson){
+      switch(act){
+        case "begin":{
+          callback(act,rcJson);
+          break;
+        }
+        case "success":{
+          callback(act,rcJson);     
+          break;                  
+        }
+        case "fail":
+        case "error":{
+          callback(act,rcJson);
+          onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});  
+          break;    
+        }
+        case "end":{
+          callback(act,rcJson);
+          break;
+        }
+        default:{
+          break;
+        }
+      }
+    }); 
+  }, 
+  NewToDo:function(){
+    $.JSUiShowLoadingView(true);
+    var link = "UReachFormTask.html";
+    Link(link);
+  },
+  Update:function(postData,callback){
+    postData["name"]="Task";
+    postData["type"]="Update";
+    mTaskApi.ActionPost(postData,callback);
+  },
+  Refresh:function(postData,callback){
+    postData["name"]="Task";
+    postData["type"]="List";
+    mTaskApi.ActionPost(postData,callback);  
+  },
+  Delete:function(postData,callback){
+    postData["name"]="Task";
+    postData["type"]="Delete";
+    mTaskApi.ActionPost(postData,callback); 
+  },
+  // 取得hash 比對是否更新
+  Select:function(postData,callback){
+    postData["name"]="Task/Hash";
+    postData["type"]="Select";
+    mTaskApi.ActionPost(postData,callback); 
+  }
+}  
+ 
+var mInitJson={   
+  initial:{
+
+  },
+  basicInfo:{
+    title:"Task List",
+    type:"form-task-list",      
+    task_hash:"",
+    user_hash:"", 
+    list:
+    {
+			size:"0",    
+      items:[]
+    }
+  }
+}   
+
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      Done:"Done",
+      Processing:"Processing",
+      Pending:"Pending",
+      Assign:"Assign",
+      Accept:"Accept",
+      Reject:"Reject",
+      Tracing:"Tracing",
+      High:"High",
+      Medium:"Medium",
+      Low:"Low"
+    },
+    tw:{   
+      Done:"完成",
+      Processing:"處理中",
+      Pending:"暫停",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒絕",
+      Tracing:"追綜中",
+      High:"高",
+      Medium:"中",
+      Low:"低"
+    },
+    cn:{
+      Done:"完成",
+      Processing:"处理中",
+      Pending:"暂停",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒绝",
+      Tracing:"追综中",
+      High:"高",
+      Medium:"中",
+      Low:"低"
+    }
+  }
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+
+// 建立frame menu
+function ProcedureFrameMenu(opts){
+
+  var param={act:"GetParent",parent:[]};
+
+  onCallParent(param);
+
+  $("#ReturnBn").addClass("hidden"); 
+ 
+  if(param.parent.length>1 && param.parent[0].name!=="root"){
+
+    $("#ReturnBn").removeClass("hidden"); 
+    $("#ReturnBn").click(function(){
+      onToggleReturnBn();
+    });
+  
+  }
+}
+
+
+function ProcedureEntry(){
+  if(mInitJson){
+    var rcJson = $.JSInitJsonParse(mInitJson);
+    ProcedureBasicInfo(rcJson);
+    ProcedureViewControl(rcJson);
+    ProcedureFrameMenu({Pinfocus:false});
+    return;
+  }
+}
+
+//更新工作列表timer物件 {id: ,tickcount}
+var mTaskTimer={tickcount:2000,timer:0,max:60000}; 
+var mTaskList={
+    task_hash:"",
+    user_hash:"", 
+    list:{
+      size:0,    
+      items:[]}
+    };
+
+function ProcedureBasicInfo(paramJson){
+
+  TaskList=paramJson.basicInfo;
+  // 定義動態 ui 介面其名稱與post參數名相同
+  // 其ui介面由bootstrap-custom-form-factory中定義
+  var options={
+    language:mFrame.language,
+    initial:paramJson.initial,
+    autocomplete:{
+    },
+    ui:{        
+    },
+    api:{
+    },
+    select:mSelectJson,
+    header:mHeaderJson,
+    onEvent:function(act,data){
+      
+      if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        if(name==="newToDoBn"){
+          mTaskApi.NewToDo();
+        }
+        else if(name==="refreshBn"){
+          var blocking=true;
+          RefreshTaskList(blocking); 
+        }
+      }else if(act==="selectChange"){
+        var name = data.ui.attr("name");
+
+        if(name==="sortSelect"){
+          data.ui.blur();
+          var value = data.ui.val();
+          var list=formH.find("ul.cbp-tmtask");
+          list.attr("sort-method",value);
+
+          SortTaskByMethod(list);
+        }else if(name==="showByStateSelect"||name==="showByRoleSelect"){
+          data.ui.blur();
+          var toolbar = data.ui.closest(".toolbar");
+          var state = toolbar.find("[name=showByStateSelect]").val();
+          var role = toolbar.find("[name=showByRoleSelect]").val();
+
+          var list=formH.find("ul.cbp-tmtask");
+          list.attr("state-filter",state);
+          list.attr("role-filter",role);            
+
+          ShowTaskByFilter(list);
+        }else if(act==="state"){
+          UpdateViewControlState(data.name,data.state);
+        }else if(act==="notification"){
+          Notification(data);
+        }
+      }
+    }
+  };
+   
+  for(name in paramJson){
+    var formData = paramJson[name];
+    var formType= formData.type;
+
+    if( formType==="form-task-list"){
+      var formH = $('<div class="form-horizontal">');
+      $("#FormContainer").append(formH);
+      formH.attr("name",name);
+
+      var formHeader =$('<div></div>');
+      formH.append(formHeader);
+
+			var toolbarOps = {
+				title:formData.title,
+				language:mFrame.language,
+        formName:name,//=>Form Name 
+        formOptions:options,
+        formData:formData,
+				onEvent:options.onEvent
+			}
+
+			var formToolbar = $.JSToolbarFactory("basic-task-toolbar",toolbarOps);  
+
+      $("#MenuView").append(formToolbar);
+
+      var list = $('<ul class="cbp-tmtask task-list">');
+      formH.append(list);
+
+      var menu = $('<ul class="dynamic-menu">');
+      menu.attr("data-target",name);
+      list.append(menu);
+
+      menu.append('<li class="item" priority="1"></li>');
+      menu.append('<li class="item" priority="2"></li>');
+      menu.append('<li class="item" priority="3"></li>');
+      menu.append('<li class="item" priority="0"></li>');
+
+      menu.find("[priority=1]").tooltip({
+        placement:"top",
+        title:mStringMap.High
+      });
+      menu.find("[priority=2]").tooltip({
+        placement:"top",
+        title:mStringMap.Medium
+      });
+      menu.find("[priority=3]").tooltip({
+        placement:"top",
+        title:mStringMap.Low
+      });
+
+      menu.mouseenter(function(){
+        menu.prop("mouseenter",true);
+      });
+
+      menu.mouseleave(function(){
+        menu.prop("mouseenter",false);
+        menu.removeClass("in");
+      });    
+      
+      menu.find("[priority]").click(function(){
+        var priority=$(this).attr("priority");
+        console.log("priority:"+priority);
+        var menu = $(this).closest(".dynamic-menu");
+        menu.removeClass("in");
+        var tid =menu.attr("target-id");
+        var list=menu.closest("ul.cbp-tmtask");
+        var item=list.find("li[tid="+tid+"]");
+        
+        mTaskApi.Update({id:tid,priority:priority},function(act,rcJson){
+          if(act==="success"){
+            mTaskList["user_hash"]=rcJson.user_hash; 
+            item.attr("priority",priority);
+            SortTaskByMethod(list);            
+          }
+        });
+      });
+
+      //var hashCode=formOpt.task_hash+formOpt.user_hash;
+      //UpdateList(list,formOpt.list,hashCode);
+
+      RefreshTaskList(true);
+      RefreshTaskTimer();
+    }
+  }
+  $("#BasicInfoView").show("blind",{},400,null);
+}
+
+function SortTaskByMethod(list){
+  var value = (list.attr("sort-method"))?list.attr("sort-method"):"0";
+  if(value==="0"){ //sort by deadline
+    var items=list.find("li.task-item").sort(SortListByDeadline);
+    list.append(items);
+  }else if(value==="1"){ //sort by priority
+    var items=list.find("li.task-item").sort(SortListByPriority); 
+    list.append(items);
+  } 
+}
+
+function ShowTaskByFilter(list){
+
+  var state = (list.attr("state-filter"))?list.attr("state-filter"):"0";
+  var role  = (list.attr("role-filter"))?list.attr("role-filter"):"0";       
+
+  list.find("li.task-item").each(function(){
+    var item = $(this);
+    if(state==="0"){ //all
+      if(role==="0"){
+        item.removeClass("close").prop("effect",false);
+      }else if(role==="1"&&item.attr("role")!="tracker"){ // worker 
+        item.removeClass("close").prop("effect",false);
+      }else if(role==="2"&&item.attr("role")==="tracker"){
+        item.removeClass("close").prop("effect",false);
+      }else{
+        item.addClass("close").prop("effect",false);
+      }
+    }else if(state==="1"&&item.attr("state")==="1"){
+      if(role==="0"){
+        item.removeClass("close").prop("effect",false);
+      }else if(role==="1"&&item.attr("role")!="tracker"){ // worker 
+        item.removeClass("close").prop("effect",false);
+      }else if(role==="2"&&item.attr("role")==="tracker"){
+        item.removeClass("close").prop("effect",false);
+      }else{
+        item.addClass("close").prop("effect",false);
+      }
+    }else if(state==="2"&&item.attr("state")!="1"){
+      if(role==="0"){
+        item.removeClass("close").prop("effect",false);
+      }else if(role==="1"&&item.attr("role")!="tracker"){ // worker 
+        item.removeClass("close").prop("effect",false);
+      }else if(role==="2"&&item.attr("role")==="tracker"){
+        item.removeClass("close").prop("effect",false);
+      }else{
+        item.addClass("close").prop("effect",false);
+      }
+    }else{
+      item.addClass("close").prop("effect",false);
+    }
+  });
+
+}
+
+/*End ProcedureBasicView*/
+function SortListByDeadline(a,b){
+  var ad = $(a).attr('deadline');
+  var bd = $(b).attr('deadline');
+
+  var va=$.JSDateToInteger(ad);
+  var vb=$.JSDateToInteger(bd);
+  //console.log(va+":"+vb);
+
+  if(va > vb) {
+    return 1;
+  }
+  if(va < vb) {
+    return -1;
+  }
+
+  var an = $(a).attr('priority');
+  var bn = $(b).attr('priority');
+
+  var pa = (parseInt(an)+4)%5;
+  var pb = (parseInt(bn)+4)%5;
+
+  if(pa > pb) {
+    return 1;
+  }
+  if(pa < pb) {
+    return -1;
+  }
+
+  return 0; 
+}
+
+function SortListByPriority(a,b){
+  var an = $(a).attr('priority');
+  var bn = $(b).attr('priority');
+
+  //  1 high / 2 medium / 3 low  /0 none
+  //  相同時以deadline排序 
+  var va = (parseInt(an)+4)%5;
+  var vb = (parseInt(bn)+4)%5;
+
+  if(va > vb) {
+    return 1;
+  }
+  if(va < vb) {
+    return -1;
+  }
+
+  var ad = $(a).attr('deadline');
+  var bd = $(b).attr('deadline'); 
+  
+  var da=$.JSDateToInteger(ad);
+  var db=$.JSDateToInteger(bd);
+
+  if(da > db) {
+    return 1;
+  }
+  if(da < db) {
+    return -1;
+  }
+
+  return 0; 
+}
+
+//取得工作列表與更新
+function RefreshTaskList(blocking){
+  mTaskApi.Refresh({},function(act,rcJson){
+    if(act==="begin"){
+      $.JSUiShowLoadingView(blocking);
+      //重新計數更新
+      mTaskTimer.timer=mTaskTimer.max; 
+    }else if(act==="success"){
+      mTaskList["task_hash"]=rcJson.task_hash;
+      mTaskList["user_hash"]=rcJson.user_hash; 
+      mTaskList.list=null;
+      mTaskList.list=rcJson.list;
+
+      var list=$(".form-horizontal[name=basicInfo] ul.cbp-tmtask");
+      var hashCode=rcJson.task_hash+rcJson.user_hash;
+
+      UpdateList(list,mTaskList.list,hashCode);
+      //更新
+      onCallParent({act:"Update",frame:mFrame,target:"root",data:rcJson.list});       
+    }else if(act==="fail"||act==="error"){
+    }else if(act==="end"){
+      $.JSUiShowLoadingView(false);
+    }
+  }); 
+}
+
+//更新timer
+function RefreshTaskTimer(){
+  if(mTaskTimer["id"]){
+    window.clearInterval(mTaskTimer["id"]);
+  }
+
+  var GetHashCode = function(){  
+
+    if(mTaskTimer.timer>0){
+      mTaskTimer.timer-=mTaskTimer.tickcount;
+      //console.log("time:"+mTaskTimer.timer);
+      return;
+    } 
+    mTaskTimer.timer = mTaskTimer.max;
+
+    var postData={user_hash:mTaskList.user_hash,task_hash:mTaskList.task_hash};
+    mTaskApi.Select(postData,function(act,rcJson){
+      if(act==="begin"){
+      }else if(act==="success"){
+        if(rcJson.user_hash!==mTaskList.user_hash||rcJson.task_hash!==mTaskList.task_hash){
+          console.log("HashCode has been updated.");
+          RefreshTaskList();
+        }    
+      }else if(act==="fail"||act==="error"){
+      }else if(act==="end"){
+      }
+    }); 
+  }
+
+  GetHashCode();
+  
+  mTaskTimer["id"]=setInterval(GetHashCode,mTaskTimer.tickcount);    
+}
+//更新local storage
+function UpdateLocalStorageItem(id,data){
+  var text = localStorage.getItem("TaskList");
+  var Tasks=null;
+  if(text!==null){
+    Tasks=$.JSJSonParse(text);
+    var name = "task_"+id;
+
+    if(Tasks[name]){
+      console.log("found");
+      Tasks[name].newreplys=data.newreplys;
+      localStorage.setItem("TaskList",JSON.stringify(Tasks));
+    }
+  } 
+}
+
+function UpdateLocalStorage(items,hashCode){
+  var text = localStorage.getItem("TaskList");
+  var Tasks=null;
+  if(text!==null){
+    Tasks=$.JSJSonParse(text);
+  }else{
+    Tasks={};
+  }
+  
+  for(var i=0;i<items.length;i++){
+    var item = items[i];
+    var name = "task_"+item.id;
+
+    if(Tasks[name]){ 
+      var count = parseInt(item.replycount); 
+      if(Tasks[name].replycount!==count){
+        Tasks[name].newreplys += (count-Tasks[name].replycount);
+        Tasks[name].replycount=count;  
+      }
+      Tasks[name].hashCode=hashCode;
+
+      item["newreplys"]=Tasks[name].newreplys; 
+    }else{
+      Tasks[name]={id:item.id,title:item.title,link:item.link,replycount:parseInt(item.replycount),newreplys:parseInt(item.replycount),hashCode:hashCode};
+
+      item["newreplys"]=Tasks[name].newreplys;
+    }
+  }
+
+  for(var name in Tasks){
+    if(Tasks[name].hashCode!==hashCode){
+      console.log(Tasks[name].hashCode+":"+hashCode);
+      Tasks[name]=undefined;
+    }
+  }
+
+  localStorage.setItem("TaskList",JSON.stringify(Tasks));
+}
+
+
+//更新列表
+function UpdateList(parent,list,hashCode){
+
+  UpdateLocalStorage(list.items,hashCode);
+
+  //用來更新標記更新記錄，
+  //若item跟parent不一致時，
+  //則代表此列表已無此項目，則刪除。
+  parent.attr("hashCode",hashCode);
+
+  for(var i=0;i<list.items.length;i++){
+    var item = list.items[i];
+    UpdateListItem(parent,item);
+  }
+
+  parent.find("li[hashCode]").each(function(){
+    if($(this).attr("hashCode")!==hashCode){
+      $(this).remove();
+    }
+  });
+
+  SortTaskByMethod(parent);
+  ShowTaskByFilter(parent);
+}
+
+// 更新列表中的項目
+function UpdateListItem(parent,json){
+  var hashCode = parent.attr("hashCode");
+
+  var item = parent.find("li.task-item[tid="+json.id+"]");
+
+  if(item.length===0){
+    item = $('<li class="task-item">'+ 
+      '<div class="progressbar"></div>'+ 
+      '<div class="cbp-tmcontainer">'+  
+        '<div class="detail">'+  
+           
+          '<div class="subject"></div>'+ 
+          '<ul class="statebar inline-list"></ul>'+  
+          /*'<div class="description panel-collapse collapse"></div>'+  */     
+        '</div>'+          
+        //'<div class="cbp-tmtime"></div>'+  
+        '<div class="cbp-tmicon"></div>'+  
+        '<div class="cbp-new-replys"></div>'+ 
+        '<div class="cbp-tail"></div>'+ 
+      '</div>'+       
+    '</li>');
+
+    parent.append(item);
+
+    //if(json.role==="worker"){
+
+    //}else{
+    item.find(".cbp-tmicon").click(function(){
+      var icon=$(this);
+      var item = $(this).closest("li");  
+      var tid = item.attr("tid");
+      var state = item.attr("state");
+      var menu = $(".dynamic-menu").removeClass("in");
+
+      if(state==="1"){
+        state="2";
+      }else if(state==="3"||state==="4"){
+        state="2";
+      }else{
+        state="1";
+      }
+
+      mTaskApi.Update({id:tid,state:state},function(act,rcJson){
+        if(act==="begin"){
+
+        }else if(act==="success"){
+          mTaskList["user_hash"]=rcJson.user_hash; 
+          item.attr("state",state);
+          item.prop("effect",true);
+        }else if(act==="fail"||act==="error"){
+
+        }else if(act==="end"){
+
+        }
+      });
+    }).addClass("enabled");
+    
+    // 滑鼠右鍵
+    item.find(".cbp-tmicon").bind("contextmenu", function(e) { 
+      e.preventDefault();
+    //item.find(".cbp-tmicon").mouseenter(function(e){
+      var p=$(this).position();
+      var pp=$(this).parent().position();
+      var ppp=$(this).parent().parent().position();
+      var item = $(this).closest("li");
+      var formH = $(this).closest(".form-horizontal");
+      var li = $(this).closest("li");
+      var menu = $(".dynamic-menu[data-target="+formH.attr("name")+"]");
+
+      var role = li.attr("role");
+      var state = li.attr("state");
+
+      menu.css("left",p.left+pp.left+ppp.left+26).css("top",p.top+pp.top+ppp.top);
+      
+      if(menu.attr("target-id")===li.attr("tid")){
+        menu.toggleClass("in");
+        return;
+      }else{
+        menu.addClass("in");
+      }  
+
+      menu.attr("target-id",li.attr("tid"));    
+    });
+
+    // progressbar 動畫結束
+    item.find(".progressbar").on('transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd', 
+      function() {
+        var list = $(this).closest(".task-list");
+        var item = $(this).closest(".task-item");
+        if(item.attr("state")==="1"){
+          if(item.prop("effect")===true){
+            console.log("EffectEnd");
+            ShowTaskByFilter(list); 
+          }
+          item.prop("effect",false); 
+        }
+    });
+  } 
+
+  item.attr("tid",json.id);
+  item.attr("deadline",json.deadline);
+  item.attr("link",json.link);  
+
+  if(json.read){
+    item.attr("read",true);
+  }else{
+    item.attr("read",false);
+  }
+  //此為任務狀態，非個人狀態
+  //item.attr("state",json.state);
+
+  //此為個人優先權，非任務
+  item.attr("priority",json.priority);
+  item.attr("role",json.role);
+
+  var uiState = item.find(".statebar");
+  uiState.html(""); 
+  
+
+  if(json.deadline!==""){
+    var li=$("<li class='date'>");
+    var dataJson = $.JSStandardDateJson(json.deadline);
+    li.attr("duestate",dataJson.state);
+    li.html(dataJson.date);
+    uiState.append(li);
+  }
+    
+  if(json.role==="worker"){
+    if(json.owner){
+      var li=$("<li>");
+      uiState.append(li);
+      var ownerG = $('<span class="fa fa-user">');
+      li.append(ownerG);
+      
+      var user = $("<span class='user'>");
+      user.attr("state",json.owner.state);
+      user.attr("tid",json.owner.id);
+      user.append("<span class='name'>"+json.owner.name+"</span>");
+      li.append("&nbsp;");
+      li.append(user);
+
+      item.attr("ownerstate",json.owner.state);
+
+
+      var state=json.owner.state;
+      var tString="";
+
+      if(state==="1"){
+        tString=mStringMap.Done;
+      }else if(state==="2"){
+        tString=mStringMap.Processing;
+      }else if(state==="3"){
+        tString=mStringMap.Pending;
+      }else if(state==="4"){
+        tString=mStringMap.Cancel;
+      }else if(state==="6"){
+        tString=mStringMap.Reject;
+      }else if(state==="7"){
+        tString=mStringMap.Tracing;
+      }
+
+      user.tooltip({
+        title:tString,
+        placement:"top"
+      });
+    }
+  }else{
+    if(mFrame.user.id===json.owner.id){
+      item.attr("state",json.owner.state);
+    }
+  }
+  
+  if(json.member){
+    var size = parseInt(json.member.size);
+    if(size>0){
+      var li=$("<li>");
+      uiState.append(li);
+      var memberG = $('<span class="fa fa-group">');
+      li.append(memberG);
+      for(var i=0;i<json.member.items.length;i++){
+        var name = json.member.items[i].name;
+        var id = json.member.items[i].id;
+        var state= json.member.items[i].state;
+
+        if(json.role==="worker"){
+          if(mFrame.user.id===id){
+            item.attr("state",state);
+          }else{
+            continue;
+          }
+        }        
+
+        var user = $("<span class='user'>");
+        user.attr("tid",id);
+        user.attr("state",state);
+        user.append("<span class='name'>"+name+"</span>");
+        li.append("&nbsp;");
+        li.append(user);
+
+        var tString="";
+
+        if(state==="1"){
+          tString=mStringMap.Done;
+        }else if(state==="2"){
+          tString=mStringMap.Processing;
+        }else if(state==="3"){
+          tString=mStringMap.Pending;
+        }else if(state==="4"){
+          tString=mStringMap.Cancel;
+        }else if(state==="6"){
+          tString=mStringMap.Reject;
+        }else if(state==="7"){
+          tString=mStringMap.Tracing;
+        }
+
+        user.tooltip({
+          title:tString,
+          placement:"top"
+        });
+      }
+    }
+  }
+
+  if(json.newreplys){
+    item.find(".cbp-new-replys").html("").append("<span class='badge'>"+json.newreplys+"</span>");
+  }else{
+    item.find(".cbp-new-replys").html("");
+  }
+
+  //item.find(".cbp-tail").click(function(){
+  item.find(".subject").click(function(){
+    console.log("click:detailBn");
+    var task = $(this).closest(".task-item");
+    var id = task.attr("tid");
+    var link = task.attr("link");
+    if(link!==""){
+      UpdateLocalStorageItem(id,{newreplys:0});
+      item.find(".cbp-new-replys").html("");
+      Link(link);
+    }
+  });
+
+  var uiSubject = item.find(".subject");
+  uiSubject.html(json.title);
+  item.attr("hashCode",hashCode);
+}
+
+//更新page控制狀態
+function UpdateViewControlState(formName,state){
+  if(state==="loading"){
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-refresh effect-rotate">');
+  }else if(state==="ok"){
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-check">');
+  }else if(state==="error"){
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-times">');
+  }else{
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html("");
+  }
+}
+
+function ProcedureViewControl(paramJson){
+  $("#ViewControl").show("blind",{},400,null);
+
+  $("#ViewControl .navigation ul").html("");
+
+  for(name in paramJson){
+
+    if(name==="initial"||name==="result"||name==="type"||name==="message"){
+      continue;
+    }
+
+    var uiName= name;
+    var title = paramJson[name].title;
+    var li=$('<li><a href="#"><span class="title"></span>&nbsp;<span class="state"></span></a></li>');
+
+    li.find(".title").html(title);
+
+    li.find("a").attr("data-target",uiName).click(function(){
+      if($(this).closest("li").hasClass("selected")===true)
+        return;
+      $("#ViewControl").find("li").removeClass("selected");
+  
+       var targetName = $(this).attr("data-target");
+       var target = $("[name="+targetName+"]");
+       if(target.length){
+         var t = target.scrollTop();
+         var tb = target.offset().top;
+       
+         $(".inner-vertical").animate({
+          scrollTop: $(".inner-vertical").scrollTop()+tb
+        },400); 
+      }
+    })
+
+    $("#ViewControl .navigation ul").append(li);
+  };
+
+  if($("#ViewControl .navigation ul").children().length<=1){
+    $("#ViewControl .navigation").hide();
+  }
+}
+
+
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+  if(data.act==="Return"){
+		$("#PrimaryView").removeClass("cbp-close");
+  	$("#SecondaryView").addClass("cbp-close"); 
+
+    if(data.frame!==undefined&&data.frame.modified!==undefined ){
+      if(data.frame.modified===true){
+        RefreshTaskList(true);
+      }
+    }
+  }else if(data.act==="FrameLoaded"){
+    //設定link後等IFrame載入成功回復
+    $("#SecondaryView").attr("frame-name",data.frame.name);
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    $.JSUiShowLoadingView(false);
+  }else if(data.act==="FrameError"){
+    $.JSUiShowLoadingView(false);
+    onCallParent(data); 
+  }else if(data.act==="GetParent"){
+    data.parent.push(mFrame);
+    onCallParent(data);
+  }else if(data.act==="Update"){
+    if(data.target===mFrame.name&&data.frame.name==="TaskFrame"){
+      var purpose = (data.purpose)?data.purpose:"";
+      if(purpose==="New"){
+        RefreshTaskList();
+      }
+    }
+  }else{
+  	onCallParent(data);	
+  }
+};
+
+window.Callback.FromParent = function (data) {
+  if(data.act==="Update"){
+    if(data.target==="TaskList"&&data.frame.name==="TaskFrame"){
+      var purpose = (data.purpose)?data.purpose:"";
+      if(purpose==="New"){
+        RefreshTaskList();
+      }
+    }
+  }
+};
+
+function onCallParent(data){
+  if(window!==window.parent&&window.parent.Callback){
+    window.parent.Callback.FromChild(data);
+  }
+}
+
+function onCallChild(date){
+  var f = document.getElementById('ContainIFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+//END Callback
+// 通知事件定
+//{title:"",description:""}
+function Notification(postData){
+  onCallParent({act:"Notification",data:postData});
+}
+
+function ToggleFrameReturn(){
+	onCallParent({act:"Return",frame:mFrame});
+}
+
+// Iframe Link
+function Link(src,options){
+  var opt = (options)?options:{direct:false};
+
+  if($('#SecondaryView #ContainIFrame').length===0){
+   $('#SecondaryView').append('<iframe id="ContainIFrame" frameborder="0" class="frame">'); 
+  }
+
+  if(opt.direct){
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    $('#SecondaryView #ContainIFrame').attr("src",src); 
+  }else if(opt.newPage){
+    onCallParent({act:"Link",data:{src:src,newPage:true}});
+  }else{
+    $.JSUiShowLoadingView(true); 
+    $('#SecondaryView #ContainIFrame').attr("src",src); 
+  }
+}
+
+function initial(){	
+
+	$("#BasicInfoView").hide();
+	$("#ViewControl").hide("blind",{},400,null);
+	//$("#BasicInfoView").find(".page-title").html(mStringMap.MeetingInfo);
+
+	ProcedureEntry();
+
+  onCallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+    initial();
+  }catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    onCallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+    
+</script>		
+</head>
+
+<body>
+<div class="cbp-box background">
+	<div id="PrimaryView" class="cbp cbp-box cbp-left">
+    <div id="MenuView" class="nav navbar-inverse box-shadow">
+      
+    </div>
+		<div class="inner-vertical">
+			<!-- Modal -->
+		  <div class="container" style="padding-bottom:100px">
+	      <!--BEGIN BasicInfoView-->
+	      <div id="BasicInfoView" class="row">
+	        <div class="col-lg-12">
+	          <h2 class="page-title"></h2>
+	        </div>
+	        <div class="col-lg-12">
+	          <div class="row">   
+	            <div id="FormContainer"></div>  
+	          </div>
+	        </div>
+	      </div>
+	      <!--END BasicInfoView-->
+			</div>
+		</div> 
+    <!--End inner-vertical-->       
+    <!--End Container-->
+    <div id="ViewControl" class="navbar-fixed-bottom hidden">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="navigation">
+            <ul>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--End ViewControl-->
+    <div class="frame-menu">          
+      <div id="ReturnBn" class="block-btn hidden">
+        <span class="fa fa-arrow-left"></span>
+      </div>
+    </div>
+	</div>
+  <div id="SecondaryView" class="cbp cbp-box cbp-right cbp-close">
+
+  </div>
+</div>
+</body>
+</html>

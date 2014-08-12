@@ -1,0 +1,417 @@
+<html>
+<head>
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-api.js"></script>
+<script src="js/common-string-map.js"></script>
+<script src="js/common-library.js"></script>
+<script src="js/common-app.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+
+
+<link href='assets/fullcalendar/fullcalendar.css' rel='stylesheet' />
+<link href='assets/fullcalendar/fullcalendar.print.css' rel='stylesheet' media='print' />
+
+<script src='assets/fullcalendar/lib/moment.min.js'></script>
+<script src='assets/fullcalendar/fullcalendar.min.js'></script>
+<script src='assets/fullcalendar/lang-all.js'></script>
+
+<script>
+
+//Frame資訊
+var mFrame={
+  name:"CalendarFrame",
+  language:"en",
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"},
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="action";
+
+var mPageApi="Form_CalendarItem";
+
+var mColors={
+  Red:"#DD5555",
+  Green:"#55DD55",
+  Blue:"#5555DD",
+  Gray:"#C0C0C0"
+}
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      Calendar:"Calendar" 
+    },
+    tw:{   
+      Calendar:"行事曆" 
+    },
+    cn:{
+      Calendar:"行事历" 
+    }
+  }
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+
+var mInitJson={
+  initial:{},
+  calendarInfo:{
+    title:"Calendar",
+    type:"form-calendar",
+    events:{
+      size:"0",
+      items:[ //<s:text name="formdata.event" /> 
+        {
+          title:'All Day Event',
+          start:'2014/06/01',
+          link:"UReachFormTask.html"
+        },
+        {
+          title:'Long Event',
+          start:'2014/06/07',
+          end: '2014/06/10',
+          state:"0"
+        },
+        {
+          id: 999,
+          title:'Repeating Event',
+          start:'2014/06/09',
+          state:"1",
+          color:"#FF00FF"
+        },
+        {
+          id: 999,
+          title:'Repeating Event',
+          start:'2014/06/16',
+          state:"2"
+
+        },
+        {
+          title: 'Meeting',
+          start: '2014/06/12',
+          end: '2014/06/12',
+          state:"7"
+        },
+        {
+          title: 'Lunch',
+          start: '2014/06/12',
+          state:"2"
+        },
+        {
+          title: 'Birthday Party',
+          start: '2014/06/13'
+        },
+        {
+          title: 'Click for Google Click for Google Click for Google Click for Google Click for Google',
+          link:  'http://google.com/',
+          start: '2014/06/28',
+          state:"2"
+        },
+        {
+          title:'Routine1 Click for Google Click for Google Click for Google Click for Google Click for Google',
+          link: 'UReachFormTask.html',
+          state:"2"
+        },
+        {
+          title: 'Routine2',
+          link: 'UReachFormTask.html',
+          state:"2"
+        }
+      ]
+    }
+  }
+}
+
+
+function ProcedureEntry(){
+  
+  $.JSApp.Create("",{effect:true});
+
+  $.JSApp.CreateMenu({
+    position:"left",
+    title:mStringMap.Calendar,
+    frame:mFrame,
+    items:[]
+  });
+
+  var view = $.JSApp.ToggleView("PrimaryView");
+
+  view.append(
+    '<div class="inner-vertical">'+
+      '<div class="row">'+
+        '<div id="LeftView" class="left col-lg-3">'+
+          '<div id="EventView" class="panel"></div>'+
+          '<div id="RepeatEventView" class="panel"></div>'+
+        '</div>'+
+        '<div id="RightView" class="right formContainer col-lg-9">'+     
+        '</div>'+
+      '</div>'+
+    '</div>'); 
+
+  if(mInitJson){
+    var rcJson = $.JSInitJsonParse(mInitJson);
+    ProcedureBasicInfo(rcJson);
+  }
+
+  return true;
+}
+
+function ProcedureBasicInfo(paramJson){
+  $("#BasicInfoView").show();
+
+  var options={
+    onEvent:function(act,data){
+      if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        console.log(act+":"+name);          
+        if(name==="PrevBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( 'prev' );
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="PrevYearBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( 'prevYear' );  
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="PrevBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( 'prev' ); 
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="NextBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( 'next' );   
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="NextYearBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( 'nextYear' ); 
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="TodayBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( 'today' ); 
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="MonthBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( "changeView","month" ); 
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }else if(name==="WeekBn"){
+          var formH = data.ui.closest('.form-horizontal');
+          var calendar = formH.find(".calendar");
+          calendar.fullCalendar( "changeView","basicWeek" ); 
+          var date =calendar.fullCalendar('getView').title;
+          formH.find(".toolbar > .title").html(date);  
+          $.JSApp.SetTitle(date);
+        }
+      }else if(act==="notification"){
+        $.JSApp.Notification(data);
+      }else if(act==="link"){
+        if(data.ui.closest("fieldset").prop("disabled")){
+          $.JSApp.LinkFrame(data.link);
+        }  
+      }
+    }
+  };
+
+  for(name in paramJson){
+    var formData = paramJson[name];
+    
+    if(name==="initial"||name==="type"||name==="result"||name==="message"||formData.disabled){
+      continue;
+    }
+
+    var formType= formData.type;
+
+    if( formType==="form-calendar"){
+      var formH = $('<div class="form-horizontal panel">');
+      formH.attr("name",name);
+      $(".formContainer").append(formH);
+      
+      var toolbarOps = {
+        title:formData.title,
+        language:mFrame.language,
+        formName:name,
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onEvent
+      }
+
+      var formToolbar = $.JSToolbarFactory("calendar-toolbar",toolbarOps);  
+      formToolbar.addClass("panel-heading");
+      formH.append(formToolbar);
+
+      formToolbar =$.JSToolbarFactory("basic-title-toolbar",{title:""});
+      formToolbar.addClass("panel-heading");
+      $("#EventView .panel").append(formToolbar);
+      $("#EventView .panel").append('<ul class="list-group">');
+                    
+      var calendar = $("<div class='calendar'>");
+      formH.append(calendar);
+
+      var events = [];
+
+      for(var i = 0 ; i < formData.events.items.length ; i++){
+        var event = formData.events.items[i];
+
+        if(event.start){
+
+          var date= $.JSStandardDateJson(event.start);
+
+          if(event.state!==undefined){
+            var workingState = parseInt(event.state);
+            if(workingState===1){
+              event["color"]=mColors.Green;
+            }else if(workingState===7){
+              event["color"]=mColors.Gray;
+            }else{
+              if(date.state===-1){
+                event["color"]=mColors.Red;
+              }else{
+                event["color"]=mColors.Blue;
+              }
+            }
+          }
+
+          event.start = moment(event.start).format('YYYY-MM-DD');
+          if(event.end){
+            event.end = moment(event.end).format('YYYY-MM-DD');  
+          }
+
+          events.push(event);
+        }else{
+          var li = $("<li class='list-group-item'>");
+          li.data("event",event);
+          li.html(event.title);
+          $("#LeftView .panel .list-group").append(li);
+        }
+      }
+
+      $(".list-group-item").click(function(){
+        var event = $(this).data("event");
+        if(event.link){
+          $.JSApp.LinkFrame(event.link);
+        }
+      });
+
+      calendar.fullCalendar({
+        header: {
+          left: '',
+          center:'',//title prevYear,prev,next,nextYear',
+          right:'',// 'today month,basicWeek'
+        },
+        defaultDate: '2014-06-12',
+        editable: false,
+        lang:mFrame.language.toLowerCase(),
+        events:events,   
+        eventClick: function(event) {
+          if (event.link) {
+            $.JSApp.LinkFrame(event.link);
+            return false;
+          }
+        }, 
+        eventRender: function(event, element) {
+
+        },
+        dayClick: function(date, jsEvent, view) {
+          //alert('Clicked on: ' + date.format());
+          mPageApi
+        }
+      });
+
+      calendar.fullCalendar( 'today' );  
+      calendar.fullCalendar('option', 'aspectRatio', 1.6);
+
+      formH.find(".toolbar > .title").html(calendar.fullCalendar('getView').title);
+      $.JSApp.SetTitle(calendar.fullCalendar('getView').title);
+
+    }
+  }
+}
+
+function initial(){   
+  ProcedureEntry();
+  $.JSApp.CallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+    initial();
+  }catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    $.JSApp.CallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+
+</script>		
+</head>
+
+<body>
+</body>
+</html>

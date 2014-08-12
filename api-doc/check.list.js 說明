@@ -1,0 +1,103 @@
+bootstrap-custom-task-list.js 說明
+
+日期:20140422
+
+需求:
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/custom.bootstrap.css" rel="stylesheet">
+    <link href="css/cbp.bootstrap.css" rel="stylesheet">
+    <link href="css/cbp.bootstrap.task.css" rel="stylesheet">
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Date Timepicker  -->
+    <link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+    <script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+    <link href="css/jquery-ui.min.css" rel="stylesheet" >
+    <script src="js/jquery/jquery.min.js"></script>
+    <script src="js/jquery/jquery-ui.min.js"></script>
+    <script src="js/jquery/jquery-sprintf.js"></script>
+ 
+    <!-- Notification  -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-custom-task-list.js"></script>
+    <script src="js/bootstrap-custom-input.js"></script>
+
+
+    <!-- Common Library  -->
+    <script src="js/common-library.js"></script>
+
+    <!-- Notification  -->    
+    <link href="assets/gritter/css/custom.gritter.css" rel="stylesheet" type="text/css" >
+    <script type="text/javascript" src="assets/gritter/js/custom.gritter.min.js"></script>
+
+---------------------------------------------------------------------
+1.基本資料
+---------------------------------------------------------------------
+type:""
+name:"Exhabit"
+id:"",
+title:"COMPUTEX TAIPEI 2014",
+description:"",                      //介面不顯示
+location:"",                         //展出地點
+date_start:"2014/06/23",
+date_end:"2014/07/03",
+attendee:[{id:"",name:""}],          //參與者
+company:        　　//參與公司
+                    '
+                    UReach<br/>
+                    佳鋒電子
+                    '
+,
+host_information:  //主辨單                           
+                    '"中華民國對外貿易發展協會<br/>
+                    "台北市信義區11011信義路五段5號<br/>
+                    "蘇亦梅 / Sammi Su<br/>
+                    "樊祥琳 / Eve Fan<br/>
+                    "曾群佩 / Judy Tseng<br/>
+                    "電話：+886-2-2725-5200 Ext. 2683/2632/2650<br/>
+                    "傳真：+886-2-2729-1089<br/>
+                    "信箱：computex@taitra.org.tw'
+                      
+
+
+---------------------------------------------------------------------
+2.工作項目
+---------------------------------------------------------------------
+CheckList:[
+  {
+    id:"1",
+    title:"",
+    description:"",
+    state:"1",
+    deadline:"",
+    worker_deliver_date:"",
+    workers:[
+      {
+        id:"1",
+        name:"Shijie Wu",
+        state:"1",
+        comment:""
+      },
+      {
+        id:"2",
+        name:"Jason",
+        state:"1",
+        comment:""
+      }
+    ],
+    attachments:[
+      {
+        id:"",
+        title:"",
+        Description:"",
+        file_type:"",//jpg png pdf doc mp4 mp3
+        url:"",
+        thumb:""
+      }
+    ]
+  }
+]
+
+
+

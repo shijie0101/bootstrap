@@ -1,0 +1,103 @@
+{  
+  "result":"1",
+  "id":0,
+  "type":"employees",
+  "list":[
+    {
+      "id":"1",
+      "name":"Brant Isaac",
+      "category":"管理部"
+    }
+    ,
+    {
+      "id":"2",
+      "name":"Ethelred Jay",
+      "category":"業務部"
+    }
+    ,
+    {
+      "id":"3",
+      "name":"Ned Harlow",
+      "category":"測試部"
+    }
+    ,
+    {
+      "id":"4",
+      "name":"Shijie Wu",
+      "category":"研發部"
+    }
+    ,
+    {
+      "id":"5",
+      "name":"Ste Tylor",
+      "category":"管理部"
+    }
+    ,
+    {
+      "id":"6",
+      "name":"Harper Humphry",
+      "category":"業務部"
+    }
+    ,
+    {
+      "id":"7",
+      "name":"Wystan Shaw",
+      "category":"測試部"
+    }
+    ,
+    {
+      "id":"8",
+      "name":"Norris Keir",
+      "category":"研發部"
+    } 
+    ,
+    {
+      "id":"9",
+      "name":"Christopher Ernie",
+      "category":"管理部"
+    }
+    ,
+    {
+      "id":"10",
+      "name":"Harry Ty",
+      "category":"業務部"
+    }
+    ,
+    {
+      "id":"11",
+      "name":"Finley Morton",
+      "category":"測試部"
+    }
+    ,
+    {
+      "id":"12",
+      "name":"Fulke Jeffrey",
+      "category":"研發部"
+    }   
+    ,
+    {
+      "id":"13",
+      "name":"Thornton Hilary",
+      "category":"管理部"
+    }
+    ,
+    {
+      "id":"14",
+      "name":"Manny Cash",
+      "category":"業務部"
+    }
+    ,
+    {
+      "id":"15",
+      "name":"Felix Addison",
+      "category":"測試部"
+    }
+    ,
+    {
+      "id":"16",
+      "name":"Reilly Ethan",
+      "category":"研發部"
+    }   
+  ]                 
+}
+

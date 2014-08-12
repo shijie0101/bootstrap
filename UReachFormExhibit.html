@@ -1,0 +1,1049 @@
+<!--
+Designed by shijie
+Date:20140207
+Exhibit 
+-->
+<html>
+<head>
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<!-- Bootstrap Css-->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+<script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+
+<script>
+
+var mFrame={
+  name:"",
+  language:"en",//"<s:property value="formdata.lang" />",
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"},//user:<s:text name="formdata.user_info" />
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="Action/action.php";
+
+var mHeaderJson={ 
+  //臨時公司資訊
+  companyInfo:{
+  id: "0",
+  title: "",
+  description: "",
+  type:"form",
+  api: "",
+  inputs: [
+    {
+      sortable:"true",
+      tooltip:"true",  
+      id: "1",
+      name: "company",
+      type: "text",
+      title: "名稱",
+      placeholder: ""
+    },
+    {
+      id: "2",
+      name: "address",
+      type: "text",
+      title: "地址",
+      placeholder: ""
+    },
+    {
+      id: "3",
+      name: "contact",
+      type: "text",
+      title: "聯絡人",
+      placeholder: ""
+    },
+    {
+      id: "4",
+      name: "position",
+      type: "text",
+      title: "部門/職級",
+      placeholder: ""
+    },
+    {
+      id: "5",
+      name: "phone",
+      type: "text",
+      title: "電話",
+      placeholder: ""
+    },
+    {
+      id: "6",
+      name: "ext",
+      type: "text",
+      title: "分機",
+      placeholder: ""
+    },
+    {
+      id: "7",
+      name: "cellphone",
+      type: "text",
+      title: "手機",
+      placeholder: ""
+    },
+    {
+      id: "8",
+      name: "email",
+      type: "text",
+      title: "E-Mail",
+      placeholder: "e-mail"
+    },
+    {
+      id: "9",
+      name: "product",
+      type: "textarea",
+      title: "產品"
+    },
+    {
+      id: "10",
+      name: "note",
+      type: "list",
+      title: "備註"
+    }
+  ]}
+}
+
+var mInitJson={   
+  initial:{
+    id:"0", //exhibit_id
+  },
+  basicInfo:{
+    title:mStringMap.BasicInfo,
+    type:"form-group",
+    inputs:
+    {
+      title:"Computex Taipei 2014",
+      date_begin:"2014/06/23",
+      date_end:"2014/06/30",
+      location:"Taiwan",
+      member:{size:"2",items:[{id:"1",name:"HTC"},{id:"2",name:"APPLE"}]},
+      host:"COMPUTEX TAIPEI Organizing Team<br/><br/>Taiwan External Trade Development Council<br/><br/>No. 5, Hsin-yi Rd., Sec. 5, Taipei 11011, Taiwan<br/><br/>Sue Lu<br/><br/>P. +886.2.2725.5200 Ext. 2634<br/>F. +886.2.2729.1089<br/>Email:computex@taitra.org.tw<br/>",
+      note:{size:"2",items:[{value:"WWWW jAKJLF"},{value:"ASDKLJDLASKL KKLASDLK"}]}
+    }
+  },
+  companyInfo:{
+    title:mStringMap.CompanyInfo,
+    type:"form-table",
+    table:{
+      size:"2",
+      items:[
+      {
+        id:"1",
+        inputs:{company:"U-Reach",position:"",ext:"1",contact:"Shijie Wu",email:"ggj0101@hotmail.com",phone:"",cellphone:"",product:"HDD V12",
+          note:{size:"2",items:[{value:"WWWW jAKJLF"},{value:"ASDKLJDLASKL KKLASDLK"}]}
+        }},
+      {
+        id:"2",inputs:
+        {company:"C-Protek",position:"",ext:"1",contact:"Tony",email:"Tony@hotmail.com",phone:"",cellphone:"",product:"",
+          note:{size:"2",items:[{value:"WWWW jAKJLF"},{value:"ASDKLJDLASKL KKLASDLK"}]}
+      }}]
+    }
+  }
+
+}  
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      Establish:"Create",
+      ExhibitInfo:"Information",
+      BasicInfo:"Basic Info",
+      CompanyInfo:"Company Info"
+    },
+    tw:{
+      Establish:"建立",
+      ExhibitInfo:"展覽",
+      BasicInfo:"基本資料",
+      CompanyInfo:"公司資料"
+    },
+    cn:{
+      Establish:"建立",
+      ExhibitInfo:"展览",
+      BasicInfo:"基本资料",
+      CompanyInfo:"公司资料"
+    }
+  }
+
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+// 建立frame menu
+function ProcedureFrameMenu(opts){
+
+  var param={act:"GetParent",parent:[]};
+
+  onCallParent(param);
+
+  $("#ReturnBn").addClass("hidden"); 
+  $("#FrameMenu").addClass("hidden"); 
+
+  if(param.parent.length>1 && param.parent[0].name!=="root"){
+    if(opts.Pinfocus){
+      $("#FrameMenu").removeClass("hidden"); 
+      $("#FrameMenu #BackBn").click(function(){
+        onToggleReturnBn();
+      });
+
+      $("#FrameMenu #PinBn").click(function(){
+        var frame = {title:"Pinfocus",name:mFrame.name,url:location.href};
+        onCallParent({act:"Pinfocus",frame:frame});
+      });
+    }else{
+      $("#ReturnBn").removeClass("hidden"); 
+      $("#ReturnBn").click(function(){
+        onToggleReturnBn();
+      });
+    }
+  }
+}
+
+function ProcedureEntry(){
+  
+  if(mInitJson){
+    var rcJson = $.JSInitJsonParse(mInitJson);
+    ProcedureBasicInfo(rcJson);
+    ProcedureViewControl(rcJson);
+    ProcedureFrameMenu({Pinfocus:true});
+    return;
+  }
+
+  ProcedureFrameMenu({Pinfocus:false});
+
+  $("#EntryView").show("blind",{},400,null);
+  $("#EntryView label[for=title]").html(mStringMap.Title);
+
+  var ToolbarJson={
+    space:"none",
+    buttons:[
+      {
+        name:"EstablishBn",
+        title:mStringMap.Establish,
+        iconCssClass:"fa fa-plus",
+        cssClass:"btn-info",
+        group:""
+
+      },  
+      {
+        name:"EditBn",
+        title:mStringMap.Edit,
+        iconCssClass:"fa fa-pencil-square-o",
+        cssClass:"btn-primary",
+        group:""
+      },          
+      {
+        name:"SaveBn",
+        title:mStringMap.Save,
+        iconCssClass:"fa fa-save",
+        cssClass:"btn-success",
+        group:""
+      }
+    ]
+  }
+
+  $("#EntryView [name=toolbar]").JSToolbar(ToolbarJson);
+
+  var inputTitle = $("#EntryView [name=title]");
+  var CreateBn = $("#EntryView [name=EstablishBn]").addClass("hidden");
+  var EditBn = $("#EntryView [name=EditBn]").addClass("hidden");
+  var SaveBn = $("#EntryView [name=SaveBn]").addClass("hidden");
+
+
+  CreateBn.click(function(){ 
+    var title = $("#EntryView [name=title]").val();
+    if(title===""){
+      return;
+    }
+
+    var postData={
+      type:"New",
+      name:"Exhibit",
+      title:title
+    };
+
+    PostDataWithBlocking(postData,function(act,rcJson){
+      if(act==="success"){
+        //rcJson=mInitJson;
+        $("#EntryView").hide();
+        ProcedureBasicInfo(rcJson);
+        ProcedureViewControl(rcJson); 
+      }else if(act==="end"){
+        UpdateButtonState(); 
+      }
+    });
+
+  });
+
+  EditBn.click(function(){ 
+    inputTitle.prop("disabled",false).focus();
+
+    $("#BasicInfoView fieldset").prop("disabled",true);
+
+    UpdateButtonState();
+  });
+
+  SaveBn.click(function(){ 
+    var title = inputTitle.val();
+
+    if(title===""){
+      return;
+    }
+
+    $("#BasicInfoView fieldset").prop("disabled",false);
+
+    var postData={
+      type:"Update",
+      name:"Exhibit",
+      id:"",
+      title:title
+    };
+
+    PostDataWithBlocking(postData,function(act,rcJson){
+      if(act==="success"){
+
+      }else if(act==="end"){
+        UpdateButtonState(); 
+        $("[data-target=#FormView] .state").hide(); 
+      }
+    });
+
+  }
+  );
+
+  function UpdateButtonState(){
+  
+    var title = $("#EntryView [name=title]").val();
+    if(title===""){
+      CreateBn.addClass("disabled");
+      EditBn.addClass("disabled");
+      SaveBn.addClass("disabled"); 
+    }else{
+      CreateBn.removeClass("disabled");
+      EditBn.removeClass("disabled");
+      SaveBn.removeClass("disabled");       
+    }
+    
+    CreateBn.removeClass("hidden");
+    EditBn.addClass("hidden");
+    SaveBn.addClass("hidden"); 
+  }
+
+  $("#EntryView [name=title]").change(function(){
+    UpdateButtonState();
+  }).change();
+
+  $("#EntryView [name=title]").keyup(function(event){
+    UpdateButtonState();
+    if(event.keyCode ===13){
+      var title = $("#EntryView [name=title]").val();
+      if(title==="")
+        return;
+
+      CreateBn.click();
+      
+      $(this).blur();
+    }
+  });      
+}
+
+function ProcedureBasicInfo(paramJson){
+  // 定義動態 ui 介面其名稱與post參數名相同
+  // 其ui介面由bootstrap-custom-form-factory中定義
+ var options={
+    language:mFrame.language,
+    initial:paramJson.initial,
+    webApi:mWebApi,
+    select:{
+      
+    },
+    autocomplete:{
+      member:{
+        minLength:0,
+        api:"json/meeting/employee_list_sample.txt",//AutoComplete
+        method:"Post",
+        postData:{
+          name:"member",
+          term:""
+        } 
+      }
+    },
+    ui:{      
+      
+    },
+    api:{
+      basicInfo:{
+        name:"Exhibit"
+      },
+      companyInfo:{
+        name:"Exhibit/Company/Item"
+      }
+    },
+    header:mHeaderJson,
+    onEvent:function(act,data){
+      // form data change
+      if(act==="dataChange"){
+        var formH    = data.ui.closest(".form-horizontal");
+        var formName = formH.attr("name");
+        var fieldset = formH.find("fieldset[gname="+formName+"]");
+        var formData = fieldset.data("formData");
+        var formType = formData.type;
+        var formInputs=formData.inputs;
+        
+        if(formType==="form-group-submit"||formType==="form-group-list"||fieldset.prop("disabled")){
+          return;
+        }
+
+        var initData = fieldset.data("initial");
+        var webApi   = fieldset.data("webApi");
+        var formApi  = fieldset.data("api");
+        
+        var postData={type:"Update"};
+        
+        for(var iname in initData){
+          postData[iname]=initData[iname];
+        }
+        
+        for(var iname in formApi){
+          postData[iname]=formApi[iname];
+        }    
+
+        for(var iname in data.data){
+          postData[iname]=data.data[iname];
+        }
+
+        PostFormData(formName,postData,function(state,rcJson){
+          if(state==="success"){
+            //標記已變動內容
+            mFrame["modified"]=true;
+          }
+        });   
+
+      }else if(act==="selectChange"){
+
+      }else if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        console.log(act+":"+name);
+        if(name==="EditBn"){
+          var formH = data.ui.closest(".form-horizontal");
+          ChangeViewMode(formH,"EditMode");
+        }else if(name==="SaveBn"){
+          var formH    = data.ui.closest(".form-horizontal");
+          var formName = formH.attr("name");
+          var fieldset = formH.find("fieldset[gname="+formName+"]");
+          var formData = fieldset.data("formData");
+      
+          var formType = formData.type;
+          var formInputs=formData.inputs;
+      
+          var initData = fieldset.data("initial");
+          var formApi  = fieldset.data("api");
+
+          console.log(initData);
+          console.log(formApi);
+          
+          var postData={type:"Update"};
+          
+          for(var iname in initData){
+            postData[iname]=initData[iname];
+          }
+          
+          for(var iname in formApi){
+            postData[iname]=formApi[iname];
+          }    
+
+          for(var iname in formInputs){
+            postData[iname]=formInputs[iname];
+          }
+
+          PostDataWithBlocking(postData,function(state,rcJson){
+            if(state==="success"){
+              //標記已變動內容
+              Notification({title:mStringMap.Message,description:mStringMap.UpdateSuccess});
+              mFrame["modified"]=true;
+              ChangeViewMode(formH,"ViewMode");
+            }
+          }); 
+        }
+      }else if(act==="state"){
+        UpdateViewControlState(data.name,data.state);
+      }else if(act==="notification"){
+        Notification(data);
+      }else if(act==="link"){
+        if(data.ui.closest("fieldset").prop("disabled")){
+          Link(data.link);
+        }  
+      }
+      
+    },
+    onTableEvent:function(act,data){
+      // form data change
+      if(act==="rowChange"){
+        var row = data.ui;
+        var formT = row.closest(".form-table");
+        var formName = formT.attr("name");
+        var fieldset = formT.find("fieldset");
+        var tableName = fieldset.attr("gname");
+
+        var initData = fieldset.data("initial");
+        var formApi  = fieldset.data("api");
+
+        console.log(initData);
+        console.log(formApi);
+
+        var tid=row.attr("tid");
+
+        var postData={};
+
+        postData["type"]="Update";
+        
+        for(var iname in initData){
+          postData[iname]=initData[iname];
+        }
+        
+        for(var iname in formApi){
+          postData[iname]=formApi[iname];
+        }    
+        
+        postData["items"]=[];
+          
+        var items = formT.ModuleTable_GetDataById(tid);
+
+        postData.items = items;
+
+        PostFormData(formName,postData,function(state,rcJson){
+          if(state==="success"){
+            //標記已變動內容
+            mFrame["modified"]=true;
+          }
+        }); 
+      }else if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        console.log(act+":"+name);
+        if(name==="EditBn"){
+          var formH = data.ui.closest(".form-table");
+          ChangeViewMode(formH,"EditMode");
+        }else if(name==="SaveBn"){
+          var formH = data.ui.closest(".form-table");
+          ChangeViewMode(formH,"ViewMode");
+        }
+      }else if(act==="state"){
+        UpdateViewControlState(data.name,data.state);
+      }else if(act==="notification"){
+        Notification(data);
+      }else if(act==="link"){
+        if(data.ui.closest("fieldset").prop("disabled")){
+          Link(data.link);
+        }  
+      }
+    }
+  };
+   
+  function ChangeViewMode(ui,mode){
+    if(mode==="EditMode"){
+      //console.log(ui);  
+      ui.find("fieldset").removeAttr("disabled"); 
+      ui.find(".toolbar [group=ViewMode]").addClass("disabled");  
+      ui.find(".toolbar [group=EditMode]").removeClass('disabled');
+
+      ui.find("fieldset [group=EditMode]").show();
+      ui.find("fieldset [group=ViewMode]").hide();
+
+      ui.find("fieldset .alert .close").show();
+      ui.find("fieldset .remove-self").show();
+
+      ui.find("fieldset .sortable").sortable('enable').find(".draggable").show();
+
+      ui.find("tbody tr [type=checkbox]").prop("checked",false);
+    }else{
+      ui.find("fieldset").attr("disabled",true);  
+      ui.find(".toolbar [group=EditMode]").addClass("disabled");  
+      ui.find(".toolbar [group=ViewMode]").removeClass('disabled');
+
+      ui.find("fieldset [group=EditMode]").hide();
+      ui.find("fieldset [group=ViewMode]").show();
+
+      ui.find("fieldset .alert .close").hide();
+      ui.find("fieldset .remove-self").hide();
+
+      ui.find("fieldset .sortable").sortable('disable').find(".draggable").hide();
+
+      ui.find("tbody tr [type=checkbox]").prop("checked",false);
+     
+      ui.ModuleTable_RefreshOrder();
+    }
+    UpdateViewControlState(ui.attr("name"),"none");
+  }
+
+  for(name in paramJson){
+    var formData = paramJson[name];
+    
+    if(name==="initial"||name==="type"||name==="result"||name==="message"||formData.disabled){
+      continue;
+    }
+
+    var formType= formData.type;
+
+    if( formType==="form-group"){
+      var formH = $('<div class="form-horizontal">');
+      $("#FormContainer").append(formH);
+      formH.attr("name",name);
+
+      var formHeader =$('<div class="page-header"></div>');
+      formH.append(formHeader);
+
+
+      var toolbarOps = {
+        title:formData.title,
+        language:mFrame.language,
+        formName:name,
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onEvent
+      }
+
+      var formToolbar = $.JSToolbarFactory("basic-edit-toolbar",toolbarOps);  
+
+      if(formData.readonly){
+        formToolbar.find("button").remove();
+      }
+
+      formHeader.append(formToolbar);
+
+      var fieldset = $("<fieldset>");
+      fieldset.attr("gname",name);
+      formH.append(fieldset);
+      
+      $.JSFormFactory(fieldset,formData,options);
+
+      ChangeViewMode(formH,"ViewMode");
+
+    }else if(formType==="form-table"){
+      
+      var formT = $('<div class="form-table">');
+      $("#TableContainer").append(formT);
+      formT.attr("name",name); 
+
+      var formHeader =$('<div class="page-header"></div>');
+
+      var toolbarOps = {
+        title:formData.title,
+        language:mFrame.language,
+        formName:name,
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onTableEvent
+      }
+
+      var formToolbar = $.JSToolbarFactory("table-edit-toolbar",toolbarOps);  
+
+      formHeader.append(formToolbar);
+
+      if(formData.readonly){
+        formToolbar.find("[group=EditMode]").remove();
+        formToolbar.find("[group=ViewMode]").remove();
+      }
+
+      //FireFox 修正-->begin 
+      var panel =$('<div class="table-select-panel"></div>');
+      formHeader.append(panel);
+      formT.append(formHeader);
+
+      //解決scroll問題
+      var cdiv=$('<div style="overflow-x:auto">');
+      cdiv.bind('DOMMouseScroll mousewheel', function (e) {
+        if(e.ctrlKey||e.shiftKey||e.altKey){
+          if(e.originalEvent.wheelDeltaX===e.originalEvent.wheelDelta){
+            return true;
+          }
+          else{
+            $(this).scrollLeft($(this).scrollLeft()-e.originalEvent.wheelDelta);
+            return false;
+          }
+        }
+        return true;
+      });
+
+      var fieldset = $("<fieldset>");
+      cdiv.append(fieldset);
+      formT.append(cdiv);
+      fieldset.attr("gname",name);
+      fieldset.data("initial",options.initial);
+      fieldset.data("api",options.api[name]);
+
+      fieldset.ModuleTable(options.header[name],{});
+   
+      // 設定初始值  
+      var items = formData.table.items;
+      for(var i=0;i<items.length;i++){
+        var item=items[i];
+        if(formData.readonly){
+          fieldset.ModuleTable_New(item,{});  
+        }else{
+          fieldset.ModuleTable_New(item,toolbarOps); 
+        }
+      }
+     
+      ChangeViewMode(formT,"ViewMode");
+    }
+  }
+  $("#BasicInfoView").show("blind",{},400,null);
+
+}
+
+//更新page控制狀態
+function UpdateViewControlState(formName,state){
+  if(state==="loading"){
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-refresh effect-rotate">');
+  }else if(state==="ok"){
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-check">');
+  }else if(state==="error"){
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-times">');
+  }else{
+    $("#ViewControl .navigation").find("[data-target="+formName+"] .state").html("");
+  }
+}
+
+function ProcedureViewControl(paramJson){
+  $("#ViewControl").show("blind",{},400,null);
+
+  $("#ViewControl .navigation ul").html("");
+
+  for(name in paramJson){
+
+    if(name==="initial"||name==="result"||name==="type"||name==="message"){
+      continue;
+    }
+
+    var uiName= name;
+    var title = paramJson[name].title;
+    var li=$('<li><a href="#"><span class="title"></span>&nbsp;<span class="state"></span></a></li>');
+
+    li.find(".title").html(title);
+
+    li.find("a").attr("data-target",uiName).click(function(){
+      if($(this).closest("li").hasClass("selected")===true)
+        return;
+      $("#ViewControl").find("li").removeClass("selected");
+  
+       var targetName = $(this).attr("data-target");
+       var target = $("[name="+targetName+"]");
+       if(target.length){
+         var t = target.scrollTop();
+         var tb = target.offset().top;
+       
+         $(".inner-vertical").animate({
+          scrollTop: $(".inner-vertical").scrollTop()+tb
+        },400); 
+      }
+    })
+
+    $("#ViewControl .navigation ul").append(li);
+
+  };
+}
+
+//重要! Callback
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+  if(data.act==="Return"){
+    $("#PrimaryView").removeClass("cbp-close");
+    $("#SecondaryView").addClass("cbp-close");   
+  }else if(data.act==="FrameLoaded"){
+    //設定link後等IFrame載入成功回復
+    $("#SecondaryView").attr("frame-name",data.frame.name);
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    $.JSUiShowLoadingView(false);
+  }else if(data.act==="FrameError"){
+    $.JSUiShowLoadingView(false);
+  }else if(data.act==="GetParent"){
+    data.parent.push(mFrame);
+    onCallParent(data);
+  }else{
+    onCallParent(data); 
+  }
+};
+window.Callback.FromParent = function (data) {
+  //console.log(data);
+};
+
+function onCallParent(data){
+  if(window!==window.parent&&window.parent.Callback){
+    window.parent.Callback.FromChild(data);
+  }
+}
+
+function onCallChild(date){
+  var f = document.getElementById('ContainIFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+//END Callback
+
+// Post 
+// state:"success","fail","error","end","begin"
+function PostFormData(formName,postData,callback){
+  $.JSApiPost.direct(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        UpdateViewControlState(formName,"loading");
+        break;
+      }
+      case "success":{
+        UpdateViewControlState(formName,"ok"); 
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        UpdateViewControlState(formName,"error");
+        onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+// Post 使用loading view
+function PostDataWithBlocking(postData,callback){
+
+  $.JSApiPost.block(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        break;
+      }
+      case "success":{
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+
+// 通知事件定
+function Notification(postData){
+  onCallParent({act:"Notification",data:postData});
+}
+
+function onToggleReturnBn(){
+  onCallParent({act:"Return",frame:mFrame});
+}
+
+// Iframe Link
+function Link(src,options){
+  var opt = (options)?options:{direct:false};
+
+  if($('#SecondaryView #ContainIFrame').length===0){
+   $('#SecondaryView').append('<iframe id="ContainIFrame" frameborder="0" class="frame">'); 
+  }
+  
+  if(opt.direct){
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    $('#SecondaryView #ContainIFrame').attr("src",src); 
+  }else if(opt.newPage){
+    onCallParent({act:"Link",data:{src:src,newPage:true}});
+  }else{
+    $.JSUiShowLoadingView(true); 
+    $('#SecondaryView #ContainIFrame').attr("src",src); 
+  }
+}
+
+function initial() {
+
+  $("#EntryView").hide();
+  $("#BasicInfoView").hide();
+  $("#ViewControl").hide("blind",{},400,null);
+
+  $("#EntryView .page-title").html(mStringMap.ExhibitInfo);
+  $("#BasicInfoView .page-title").html(mStringMap.BasicInfo);
+
+  ProcedureEntry(); 
+
+  onCallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+    initial();  
+  }catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    onCallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+
+</script>
+
+</head>
+  
+<body >
+<div class="cbp-box background">
+  <div id="PrimaryView" class="cbp cbp-box disable-effect">
+    <div class="inner-vertical">
+      <div class="container" style="padding-bottom:100px">
+        <!--程式-->
+        <!--Begin Container-->
+        <div id="EntryView" class="row">
+          <div class="col-lg-12">
+            <h2 class="page-title">@Exhibit Information@</h2>
+          </div>
+          <div class="col-md-10 col-md-offset-1">
+            <div class="row"> 
+              <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                <strong>Hint:</strong>請先按輸入展覽名稱，完成請按[建立]。
+              </div>        
+              <div class="form-horizontal">
+                <div class="form-group">
+                  <label for="title" class="col-sm-2 control-label">@Title@:</label>
+                  <div class="col-sm-10">
+                    <div class="row">
+                      <div class="col-sm-9"> <input type="text" class="form-control" name="title" placeholder="Title"></div>
+                      <div class="col-sm-3" name="toolbar">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>  
+        <!--END EntryView-->
+
+        <!--BEGIN BasicInfoView-->
+        <div id="BasicInfoView" class="row">
+          <div class="col-lg-12">
+            <h2 class="page-title">@Company Information@</h2>
+          </div>
+          <div class="col-md-10 col-md-offset-1">
+            <div class="row">   
+              <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                <strong>Hint:</strong>請先按[編輯]，項目新增修改都將會自動更新，完成編輯後請按[儲存]。
+              </div>  
+              <div id="FormContainer"></div>  
+            </div>
+          </div>
+        </div>
+        <!--END BasicInfoView-->
+
+        <!-- Begin TableInfoView-->
+        <div id="TableInfoView" class="row"> 
+          <div class="col-lg-12">
+            <h2 class="page-title"></h2>
+          </div>
+          <div class="col-md-10 col-md-offset-1">   
+            <div class="row">
+              <div class="alert alert-warning alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+                <strong>Hint:</strong>請先按[編輯]，項目新增修改都將會自動更新，完成編輯後請按[儲存]。
+              </div>  
+              <div id="TableContainer"> 
+                
+              </div>       
+            </div>
+          </div> 
+        </div> 
+        <!-- End TableInfoView-->
+      </div>
+      <!--End Container-->
+    </div> <!--End inner-vertical-->       
+    <!--Begin ViewControl-->
+    <div id="ViewControl" class="navbar-fixed-bottom">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="navigation">
+            <ul>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--End ViewControl-->
+    <div class="frame-menu">          
+      <div id="ReturnBn" class="block-btn hidden">
+        <span class="fa fa-arrow-left"></span>
+      </div>
+      <dropdown id="FrameMenu" class="hidden">
+        <input id="toggleFrameMenu" type="checkbox">
+        <label for="toggleFrameMenu" class="animate"><i class="fa fa-list"></i></label>
+        <ul>
+          <li id="BackBn" class="animate"><i class="fa fa-arrow-left"></i><span>Back</span></li>
+          <li id="PinBn" class="animate"><i class="fa fa-thumb-tack"></i><span>Pin To Home Page</span></li>
+        </ul>
+      </dropdown>
+    </div>
+  </div>
+  <div id="SecondaryView" class="cbp cbp-box disable-effect cbp-close">
+  </div>
+</div>
+</body>
+</html>

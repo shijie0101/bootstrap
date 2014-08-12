@@ -1,0 +1,188 @@
+<html>
+<head>
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+<script src="js/common-app.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+
+
+
+
+<script>
+
+//Frame資訊
+var mFrame={
+  name:"TaskFrame",
+  language:"en",
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"}, //user:<s:text name="formdata.user_info" />
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="Action/action.php";
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      //  
+      NewTask:"New Task",
+      Create:"Create",
+      BasicInfo:"Basic Info",
+      EventInfo:"Discussion",
+      Done:"Done",
+      Processing:"Processing",
+      Pending:"Pending",
+      Assign:"Assign",
+      Accept:"Accept",
+      Reject:"Reject",
+      Tracing:"Tracing",
+      High:"High",
+      Medium:"Medium",
+      Low:"Low"
+    },
+    tw:{
+      //  
+      NewTask:"新增任務",
+      Create:"建立",
+      BasicInfo:"基本資訊",
+      EventInfo:"討論事項",
+      Done:"完成",
+      Processing:"處理中",
+      Pending:"暫停",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒絕",
+      Tracing:"追綜中",
+      High:"高",
+      Medium:"中",
+      Low:"低"
+      },
+    cn:{
+      //  
+      NewTask:"新增任务",
+      Create:"建立",
+      BasicInfo:"基本资讯",
+      EventInfo:"讨论事项",
+      Done:"完成",
+      Processing:"处理中",
+      Pending:"暂停",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒绝",
+      Tracing:"追综中",
+      High:"高",
+      Medium:"中",
+      Low:"低"
+    }
+  }
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+// 建立frame menu
+function ProcedureFrameMenu(opts){
+}
+
+function ProcedureEntry(){
+
+}
+
+
+function ProcedureBasicInfo(paramJson){
+
+}
+
+// 更新localstorage task item資料
+
+function GetLocalStorageItem(id){
+ 
+}
+
+function UpdateLocalStorageItem(id,data){
+
+}
+
+function initial(){	
+
+  $.JSApp.Create("name",{effect:true});
+
+  $.JSApp.CreateMenu({
+    position:"left",
+    title:"Task List",
+    frame:mFrame,
+    items:[
+      {
+        name:"PinBn",
+        cssClass:"fa fa-thumb-tack",
+        click:function(){
+          var frame = {title:"Pinfocus",name:mFrame.name,url:location.href};
+          $.JSApp.CallParent({act:"Pinfocus",frame:frame});
+        }
+      }
+    ]
+  });
+
+  var view = $.JSApp.View("PrimaryView");
+
+  view.append("<div class='btn btn-primary'>Link IFrame</div>");
+  view.find(".btn").click(function(){
+    $.JSApp.LinkFrame("UReachFormGenerator.html");
+  });
+
+  $.JSApp.ToggleView("PrimaryView");
+
+  $.JSApp.CallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+	  initial();
+  }catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    $.JSApp.CallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+    
+</script>		
+</head>
+
+<body>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{  
+  "id":"0",
+  "title":"範例",
+  "description":"",                                         
+  "type":"form", 
+  "api":"new_meeting.php",
+  "inputs":[
+    {
+      "id":"1",
+      "name":"customer_name",
+      "type":"text",
+      "title":"客戶名稱:",
+      "value":"",
+      "placeholder":"Company Name",
+      "important":"",
+      "uiDependent":""
+    }
+    ,
+    {
+      "id":"2",
+      "name":"meeting_date",
+      "type":"datepicker",
+      "format":"yy-mm-dd",
+      "title":"會議日期:",
+      "value":"",
+      "placeholder":"yy-mm-dd"
+    }
+    ,
+    {
+      "id":"3",
+      "name":"meeting_date",
+      "type":"text",
+      "title":"會議地點:",
+      "value":"",
+      "placeholder":"Earth"
+    }
+    ,
+    {   
+      "id":"",
+      "title":"",
+      "type":"uigroup",
+      "uiDependentOn":"1",
+      "inputs":[
+        {
+          "id":"4",
+          "name":"customer_attendee",
+          "type":"person",
+          "title":"對方參與:",
+          "values":[{"name":"Shijie Wu","id":"0"},{"name":"Salina Lu","id":"1"}],
+          "multiple":""
+        }
+        ,
+        {
+          "id":"5",
+          "name":"company_attendee",
+          "type":"person",
+          "title":"我方參與:",
+          "values":[{"name":"Shijie Wu","id":"0"},{"name":"Salina Lu","id":"1"}],
+          "multiple":""
+        }
+        ,
+        {
+          "id":"6",
+          "name":"company_minutes_taker",
+          "type":"person",
+          "title":"記錄人:",
+          "values":[{"name":"Shijie Wu","id":"0"},{"name":"Salina Lu","id":"1"}],
+          "multiple":""
+        }
+      ]
+    }
+  ]                
+}

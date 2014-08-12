@@ -1,0 +1,516 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet">
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+<script src="js/common-app.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-pagecontroller.js"></script>
+
+<script>
+
+var mFrame={
+  name:"",
+  language:"en", //"<s:property value="#request.locale"/>";
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"}, //user:<s:text name="formdata.user_info" />
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="Action/action.php"; //"Action"
+
+var mOptions={ 
+	name:"Company",//"<s:property value="%{#parameters.target}" />",
+	term:"",
+	pages:{
+		start:0,     //
+		count:25,    //
+		total:0,
+    maxshow:6
+	}
+}
+
+
+var mHeaderJson={
+  ListInfo:{
+	  id:"0",
+	  title:"Search",
+	  description: "",
+	  type:"table",
+	  enableOrder:"true",
+	  inputs: [
+	  	{
+	    	sortable: "true",
+	      id: "0",
+	      name: "level",
+	      type: "select",
+	      title: "@Level@",
+	      options:[
+	      {value:"0",text:""},
+	      {value:"1",text:"低"},
+	      {value:"2",text:"中"},
+	      {value:"3",text:"高"}]
+	    },
+	    {
+	    	sortable: "true",
+	      id: "2",
+	      name: "cname",
+	      type: "text",
+	      title: "@CompanyName@"
+	    },
+	    {
+	    	sortable: "true",
+	      id: "3",
+	      name: "ename",
+	      type: "text",
+	      title: "@ECompanyName@"
+	    },
+	    {
+	    	sortable: "true",
+	      id: "4",
+	      name: "address",
+	      type: "text",
+	      title: "@Address@"
+	    },
+	    {
+	      id: "5",
+	      name: "phone",
+	      type: "text",
+	      title: "@Phone@"
+	    },
+	    {
+	      id: "6",
+	      name: "fax",
+	      type: "text",
+	      title: "@Fax@"
+	    },
+	    {
+	      id: "7",
+	      name: "note",
+	      type: "textarea",
+	      title: "@Note@",
+	    },
+	  ]
+	}
+}
+
+var mInitJson={   
+  initial:{
+  },
+  ListInfo:{
+    type:"form-table",
+    table:{
+      size:"0",
+      items:[]
+    }
+  }
+}  
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      NoResult: "No search results."
+    },
+    tw:{
+      NoResult:"無搜尋結果"
+    },
+    cn:{
+      NoResult:"无搜寻结果"
+    }
+  }
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+
+function ProcedureEntry(){
+
+  $.JSApp.Create("SearchView",{effect:true});
+
+  $.JSApp.CreateMenu({
+    position:"left",
+    title:mStringMap.NewTask,
+    frame:mFrame,
+    items:[]
+  });
+
+  var view = $.JSApp.ToggleView("PrimaryView");
+
+  view.append(
+    '<div class="inner-vertical">'+
+      '<div class="navbar-fixed-top">'+ 
+        '<div class="toolbar-inline">'+
+          '<div id="TopLeftToolBar" class="toolbar col-xs-8"></div>'+
+          '<div id="TopRightToolBar" class="toolbar col-xs-4"></div>'+
+        '</div>'+
+      '</div>'+
+      '<div id="TableContainer" style="padding-top:50px;padding-bottom:50px"> </div>'+
+      '<div id="ResultMessageView" style="width:100%;height:20%;top:40%;left:auto;right:auto;text-align:center;text-shadow:0px 0px 12px rgba(128,128,128,0.5)">'+
+        '<h1 class="message"></h1>'+ //No Result!
+      '</div>'+      
+      '<div class="navbar-fixed-bottom"> '+    
+        '<div id="ViewControl" class="toolbar-inline">'+
+          '<ul id="PageControl" class="pull-right"></ul>'+
+        '</div>'+
+      '</div> '+ 
+    '</div>');  
+  if(mInitJson){
+    var rcJson = $.JSInitJsonParse(mInitJson);
+    ProcedureList(rcJson);
+    return;
+  }
+}
+
+//介面table header
+function ProcedureList(paramJson){ 
+
+  var options={
+    language:mFrame.language,
+    initial:paramJson.initial,
+    webApi:mWebApi,
+    select:{     
+    },
+    autocomplete:{
+    },
+    ui:{        
+    },
+    header:mHeaderJson,
+    tableApi:{
+    },
+    onTableEvent:function(act,data){}
+  };
+
+  // table 控制
+  var TableToolbarJson={
+    title:"",
+    buttons:[
+      { 
+        name:"DisplayBn",
+        title:mStringMap.Display,
+        iconCssClass:"fa fa-th",
+        cssClass:"btn-info",
+        dataTarget:".table-select-panel",
+        click:function(){ 
+        
+          var formT = $("#TableContainer .form-table");
+          var formName = formT.attr("name");
+          var tableF = formT.find("fieldset");
+          tableName = tableF.attr("gname");
+
+          var target = $(this).attr("data-target");
+          formT.ModuleTable_TriggerSelectForm(target,options.header[tableName],mStringMap);
+        }
+      }
+    ]
+  } 
+
+  var searchbarJson={
+    name:"inputSearch",
+    placeholder:"Search",
+    buttons:[
+      {
+        name:"SearchBn",
+        title:"",
+        iconCssClass:"fa fa-search",
+        cssClass:"btn-default",
+        group:"",
+        click:function(){
+          var value = $("[name=inputSearch]").val();
+          //if(value===""){
+          //  return;
+          //}
+          $("[name=inputSearch]").blur();
+          var postData={
+            term:value,
+            filter:[]
+          }
+
+          if(mOptions.pages!==undefined){
+            postData["pages"]=mOptions.pages;
+          }
+
+          Search(postData);     
+        }
+      }
+    ]
+  }
+
+  $("#TopLeftToolBar").JSToolbar(TableToolbarJson);
+	$("#TopRightToolBar").JSSearchbar(searchbarJson);
+  
+  //-------------
+  for(name in paramJson){
+    var formOpt = paramJson[name];
+    var formType= formOpt.type;
+
+    if( formType==="form-group"){
+
+    }else if(formType==="form-table"){
+      
+      var formT = $('<div class="form-table">');
+      $("#TableContainer").append(formT);
+      formT.attr("name",name);        
+
+      var formHeader =$('<div class=""></div>');
+
+      //解決scroll問題
+      var cdiv=$('<div style="overflow-x:auto">');
+      cdiv.bind('DOMMouseScroll mousewheel', function (e) {
+        if(e.ctrlKey||e.shiftKey||e.altKey){
+          if(e.originalEvent.wheelDeltaX===e.originalEvent.wheelDelta){
+            return true;
+          }
+          else{
+            $(this).scrollLeft($(this).scrollLeft()-e.originalEvent.wheelDelta);
+            return false;
+          }
+        }
+        return true;
+      });
+
+      var panel =$('<div class="table-select-panel"></div>');
+      formHeader.append(panel);
+      formT.append(formHeader);
+     
+      var fieldset = $("<fieldset disabled>");
+      cdiv.append(fieldset);
+      formT.append(cdiv);
+      fieldset.attr("gname",name);
+      fieldset.ModuleTable(options.header[name],{});
+
+      var onEvent = function(act,data){
+        if(act==="notification"){
+          Notification(data);
+        }else if(act==="Link"){
+          if(data.ui.closest("fieldset").prop("disabled")){
+            if(data.ui.closest("fieldset").prop("disabled")){
+              data.ui.closest("tbody").find("tr").removeClass("active");
+              data.ui.addClass("active");
+              $.JSApp.LinkFrame(data.link);
+            }
+          }
+        }
+      }
+
+      var Opt = {
+        onEvent:onEvent,
+        readonly:true
+      }
+
+      // 設定初始值  
+      var items = formOpt.table.items;
+      for(var i=0;i<items.length;i++){
+        var item=items[i];
+        fieldset.ModuleTable_New(item,Opt); 
+      }
+    }
+  }
+  $("#BasicInfoView").show("blind",{},400,null);
+
+  //-------------
+  
+  function UpdatePageControl(pages){
+    //var pages = {start:0,count:25,total:120};
+    mOptions["pages"]=pages;
+
+    $.JSPageController("#PageControl",pages,function(page){
+      
+        var postData={
+          term:mOptions.term,
+          filter:[],
+          pages:page
+        }
+        Search(postData);
+
+    });
+  }
+
+  function Search(searchData){
+
+    var postData={
+      type:"Search",
+      name:mOptions.name,
+      data:searchData   
+    }
+
+    PostDataWithBlocking(postData,function(act,rcJson){
+      if(act==="begin"){
+        $("#ResultMessageView").hide();
+      }else if(act==="success"){
+        mOptions.term = searchData.term;
+        $("#TableContainer .form-table").ModuleTable_Clear();
+        
+        if(rcJson.list.length===0){
+          $("#ResultMessageView").show();
+          $("#ResultMessageView .message").html(mStringMap.NoResult);
+          $("[name=inputSearch]").focus();
+        }else{
+          var onEvent = function(act,data){
+            if(act==="notification"){
+              $.JSApp.Notification(data);
+            }else if(act==="link"){
+              if(data.ui.closest("fieldset").prop("disabled")){
+                data.ui.closest("tbody").find("tr").removeClass("active");
+                data.ui.addClass("active");
+                $.JSApp.LinkFrame(data.link);
+              }
+            }
+          }
+
+          var Opt = {
+            onEvent:onEvent,
+            readonly:true
+          }
+                    
+          for(var i=0;i<rcJson.list.length;i++){
+            var item = rcJson.list[i];
+            $("#TableContainer .form-table").ModuleTable_New(item,Opt);
+          }
+
+          if(rcJson.pages){
+            UpdatePageControl(rcJson.pages);
+          }
+        }
+
+      }else if(act==="fail"||act==="error"){
+        $("#ResultMessageView").show();
+        $("#ResultMessageView .message").html(mStringMap.Message+":"+rcJson.message);
+      }else if(act==="end"){
+     
+      }
+    });
+  }
+  
+  $("[name=inputSearch]").keyup(function(event){
+    if(event.keyCode===13&&event.shiftKey){
+      $("[name=SearchBn]").click(); 
+    }
+  });
+  
+  $("#ResultMessageView").hide();
+
+  var postData={term:"",filter:[]};
+  if(mOptions.pages!==undefined){
+    postData["pages"]=mOptions.pages;
+  }
+  
+  Search(postData);
+}
+
+// Post 
+// state:"success","fail","error","end","begin"
+function PostFormData(formName,postData,callback){
+  $.JSApiPost.direct(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+   
+        break;
+      }
+      case "success":{
+
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        $.JSApp.CallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+// Post 使用loading view
+function PostDataWithBlocking(postData,callback){
+
+  $.JSApiPost.block(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        break;
+      }
+      case "success":{
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        $.JSApp.CallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+function initial(){
+  ProcedureEntry();  
+  $.JSApp.CallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+    initial();
+  }catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    $.JSApp.CallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+
+</script>
+
+</head>
+<body>
+</body> 
+</html>

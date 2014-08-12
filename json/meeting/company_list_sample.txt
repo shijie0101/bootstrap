@@ -1,0 +1,26 @@
+{  
+  "result":"1",
+  "id":0,
+  "type":"company",
+  "list":[
+    {
+      "id":"1",
+      "name":"Ureach Inc"
+    }
+    ,
+    {
+      "id":"2",
+      "name":"Bestwise"
+    }
+    ,
+    {
+      "id":"3",
+      "name":"HTC Inc"
+    }
+    ,
+    {
+      "id":"4",
+      "name":"Apple Inc"
+    }    
+  ]                 
+}

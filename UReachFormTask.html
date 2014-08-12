@@ -1,0 +1,1064 @@
+<html>
+<head>
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+<link href="css/cbp.bootstrap.line.css" rel="stylesheet" >
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+<script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+<script src="js/common-app.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+<script src="js/bootstrap-custom-pagecontroller.js"></script>
+
+<!-- Image List -->
+<link href="css/cbp.images.css" rel="stylesheet">
+<link href="assets/blueimp-file-upload/css/jquery.fileupload.css" rel="stylesheet">
+<link href="assets/blueimp-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet">
+
+<!--<script src="assets/blueimp-file-upload/js/jquery.iframe-transport.js"></script>-->
+<script src="assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-process.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-image.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-audio.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-video.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-validate.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-ui.js"></script>
+
+<script>
+
+//Frame資訊
+var mFrame={
+  name:"TaskFrame",
+  language:"en",
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"}, //user:<s:text name="formdata.user_info" />
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="Action/action.php";
+
+var mHeaderJson={
+
+}
+
+var mSelectJson={
+  priority:[
+  {
+    name:"",
+    value:"0"
+  },{
+    name:mStringMap.High,
+    value:"1"
+  },{
+    name:mStringMap.Medium,
+    value:"2"    
+  },{
+    name:mStringMap.Low,
+    value:"3"    
+  }],
+  state:[
+  {
+    name:"",
+    value:"0"
+  },{
+    name:mStringMap.Done,
+    value:"1"
+  },{
+    name:mStringMap.Processing,
+    value:"2"    
+  },{
+    name:mStringMap.Pending,
+    value:"3"    
+  },{
+    name:mStringMap.Cancel,
+    value:"4"    
+  },{
+    name:mStringMap.Accept,
+    value:"5"    
+  },{
+    name:mStringMap.Reject,
+    value:"6"    
+  },{
+    name:mStringMap.Tracing,
+    value:"7"    
+  }
+
+  ] 
+}
+
+var mAutoComplete={
+  member:{
+    minLength:0,
+    api:"json/meeting/employee_list_sample.txt",//AutoComplete
+    method:"Post",
+    postData:{
+      name:"member",
+      term:""
+    } 
+  }  
+}
+
+var mWebApi="Action/action.php";
+
+var mInitJson={   
+  initial:{
+    id:"1",
+  },
+  basicInfo:{
+    title:"Basic Info",
+    type:"form-group",
+    //需驗証之表欄位
+    required:{
+      title:true,
+    },
+    validate:{
+      title:true,
+    },
+    //設定唯讀資訊
+    //readonly:true,
+    //各欄位帶預設值
+    inputs:
+    {
+			title:"新任務",
+      remind:"",     
+      priority:"1",
+      state:"1",
+      deadline:"2014/04/28 14:00", 
+      member:{size:"1",items:[{id:"1",name:"SHijie"}]},
+      //html:"",
+      //description:"<div>XAHAL AJLSK</div><ul><li>1231</li><ul></div>",
+      attachment:{size:"1",items:[{id:"0",name:"Image Name",size:"123455",type:"image/png",url:"images/1.jpg",thumbnailUrl:"images/1.jpg",deleteUrl:"action/?file=ps4-5%20%2810%29.jpg"}]}
+    }
+  },
+  taskInfo:{
+    title:"Description Info",
+    type:"form-group",
+    inputs:{
+      remark:{size:"2",items:[{id:"1",text:"<div>XAHAL AJLSK</div><ul><li>1231</li><ul></div>",date:"2014/07/21 14:00"},{id:"2",text:"XAHAL AJLSK",date:"2014/07/21 15:00"}]}               
+    }
+  },
+  personInfo:{
+    title:"Personal Info",
+    type:"form-group",
+    inputs:{
+      state:"1",
+      remind:"2014/09/20 14:00",                 
+      priority:"1"                
+    }
+  }, 
+  replyList:{
+    title:"Replys",
+    type:"form-group-list",
+    list:{
+      size:"",
+      items:[{
+        publisher:{id:"12",name:"JJ SOHO",icon:"images/girl.jpeg"},
+        time:"2014/06/17 14:00", 
+        comment:"今晚打老虎",
+        attachment:{size:"1",items:[{id:"0",name:"Image Name",size:"123455",type:"image/png",url:"images/1.jpg",thumbnailUrl:"images/1.jpg"}]}    
+      },{
+        publisher:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"},
+        time:"2014/06/17 15:00", 
+        comment:"你的錢就是我的錢，我的錢還是我的錢",
+        attachment:{size:"0",items:[]}    
+      }]
+    },
+    validate:{
+      comment:true
+    },
+    datapackage:"reply",
+    inputs:{
+      comment:"",
+      attachment:{size:"0",items:[]}  
+    }    
+  },
+  linkInfo:{
+    title:"Menu",
+    type:"form-group-buttons",
+    buttons:[
+      {
+        title:"新增客戶",
+        link:"UReachFormTask.html",
+        method:"newPage"
+      },{
+        title:"轉派任務",
+        link:"UReachFormTask.html",
+        method:"askNewPage"
+      }
+      ,{
+        title:"轉派任務",
+        link:"UReachFormTask.html",
+      }
+      ,{
+        title:"任務樹",
+        link:"UReachFormTask.html",
+        method:"newPage"
+      }
+    ]
+  }
+}  
+
+
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      //  
+      TaskInfo:"Task Information",
+      NewTask:"New Task",
+      Create:"Create",
+      BasicInfo:"Basic Info",
+      EventInfo:"Discussion",
+      Done:"Done",
+      Processing:"Processing",
+      Pending:"Pending",
+      Assign:"Assign",
+      Accept:"Accept",
+      Reject:"Reject",
+      Tracing:"Tracing",
+      High:"High",
+      Medium:"Medium",
+      Low:"Low"
+    },
+    tw:{
+      //  
+      TaskInfo:"任務資訊",
+      NewTask:"新增任務",
+      Create:"建立",
+      BasicInfo:"基本資訊",
+      EventInfo:"討論事項",
+      Done:"完成",
+      Processing:"處理中",
+      Pending:"暫停",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒絕",
+      Tracing:"追綜中",
+      High:"高",
+      Medium:"中",
+      Low:"低"
+      },
+    cn:{
+      //  
+      TaskInfo:"任务资讯",
+      NewTask:"新增任务",
+      Create:"建立",
+      BasicInfo:"基本资讯",
+      EventInfo:"讨论事项",
+      Done:"完成",
+      Processing:"处理中",
+      Pending:"暂停",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒绝",
+      Tracing:"追综中",
+      High:"高",
+      Medium:"中",
+      Low:"低"
+    }
+  }
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+function ProcedureEntry(){
+
+  $.JSApp.Create("BasicView",{effect:true});
+
+  if(mInitJson){
+    var rcJson = $.JSInitJsonParse(mInitJson);
+    ProcedureBasicInfo(rcJson);
+    return;
+  }  
+
+  $.JSApp.CreateMenu({
+    position:"left",
+    title:mStringMap.NewTask,
+    frame:mFrame,
+    items:[]
+  });
+
+  $.JSApp.ToggleView("PrimaryView");
+  
+  var basicInfo={
+    title:mStringMap.BasicInfo,
+    type:"form-group-submit",
+    //標記為必填欄位
+    required:{
+      title:true,
+    },
+    //需驗証之表欄位
+    validate:{
+      title:true,
+    },
+    //設定唯讀資訊
+    readonly:{
+      subject:true
+    },
+    //各欄位帶預設值
+    inputs:
+    {
+      title:"新任務",   
+      deadline:$.JSGetCurrentDay(), 
+      member:{size:"1",items:[{id:"1",name:"SHijie"}]},
+      description:"<div>XAHAL AJLSK</div><ul><li>1231</li><ul></div>",
+      attachment:{size:"1",items:[{id:"0",name:"Image Name",size:"123455",type:"image/png",url:"action/files/ps4-5%20%2810%29.jpg",thumbnailUrl:"action/files/thumbnail/ps4-5%20%2810%29.jpg",deleteUrl:"action/?file=ps4-5%20%2810%29.jpg"}]}
+    }
+  }
+
+  var options={
+    language:mFrame.language,
+    initial:{},
+    ui:{},
+    header:mHeaderJson,
+    select:mSelectJson,
+    autocomplete:mAutoComplete,
+    webApi:mWebApi,
+    api:{
+      basicInfo:{
+        name:"Task",
+        type:"New"
+      }
+    },
+    upload:{
+      basicInfo:{
+        api:"Upload",
+        target:"Task"
+      }
+    },
+    onEvent:function(act,data){
+      if(act==="dataChange"){
+        var formH    = data.ui.closest(".form-horizontal");
+        var formName = formH.attr("name");
+        var fieldset = formH.find("fieldset[gname="+formName+"]");
+        var formData = fieldset.data("formData");
+        var formType = formData.type;
+        var formInputs=formData.inputs;
+        
+        if(formType==="form-group-submit"||formType==="form-group-list"||fieldset.prop("disabled")){
+          return;
+        }   
+
+      }else if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        if(name==="CancelBn"){
+          ToggleFrameReturn();
+        }else if(name==="SubmitBn"){
+          var formH    = data.ui.closest(".form-horizontal");
+          var formName = formH.attr("name");
+          var fieldset = formH.find("fieldset[gname="+formName+"]");
+          var formData = fieldset.data("formData");
+      
+          var formType = formData.type;
+          var formInputs=formData.inputs;
+      
+          var initData = fieldset.data("initial");
+          var webApi   = fieldset.data("webApi");
+          var formApi  = fieldset.data("api");
+          
+          var postData={type:"New"};
+          
+          for(var iname in initData){
+            postData[iname]=initData[iname];
+          }
+          
+          for(var iname in formApi){
+            postData[iname]=formApi[iname];
+          }    
+
+          var validate = (formData.validate)?formData.validate:{};
+          for(var iname in formInputs){
+            postData[iname]=formInputs[iname];
+            if(validate[iname]&&formInputs[iname]===""){
+              var label = fieldset.find(".control-label[for="+iname+"]").html();
+              Notification({title:mStringMap.Message,description:"["+label+"] - "+mStringMap.HintEmpty});
+              return;
+            }
+          }
+
+          PostDataWithBlocking(postData,function(state,rcJson){
+            if(state==="success"){
+              //標記已變動內容
+              Notification({title:mStringMap.Message,description:mStringMap.UpdateSuccess});
+              mFrame["modified"]=true;
+              ProcedureBasicInfo(rcJson);
+              $("#EntryView").hide("blind",{},400,null);
+            }
+          }); 
+        }
+      }else if(act==="state"){
+        $.JSApp.UpdateViewControlState(data.name,data.state);
+      }else if(act==="notification"){
+        $.JSApp.Notification(data);
+      }
+    }
+  }
+
+  var name = "basicInfo"; 
+  var formData = basicInfo;
+  var formType = formData.type;
+    
+  var formH = $('<div class="form-horizontal">');
+  formH.attr("name",name);
+  $("#EntryView .formContainer").append(formH);
+
+  var formHeader = $('<div class="page-header">');
+  formHeader.html($.JSToolbarFactory("basic-title-toolbar",{title:formData.title}));
+  formH.append(formHeader);
+  
+  var fieldset = $("<fieldset>");
+  formH.append(fieldset);
+  fieldset.attr("gname",name);
+
+  $.JSFormFactory(fieldset,formData,options);
+  
+  var formToolbar = $.JSToolbarFactory("basic-submit-toolbar",{
+    title:"",
+    language:mFrame.language,
+    formOptions:options,
+    formData:formData,
+    onEvent:options.onEvent
+  }); 
+
+  var formFooter =$('<div class="page-footer"></div>');
+  formFooter.append(formToolbar);
+  formH.append(formFooter);
+
+  $("#EntryView").show("blind",{},400,null);
+}
+
+
+function ProcedureBasicInfo(paramJson){
+
+  $.JSApp.CreateViewControl(paramJson);
+
+  $.JSApp.CreateMenu({
+    position:"left",
+    title:mStringMap.TaskInfo,
+    frame:mFrame,
+    items:[
+      {
+        name:"PinBn",
+        cssClass:"fa fa-thumb-tack",
+        click:function(){
+          var frame = {title:"Pinfocus",name:mFrame.name,url:location.href};
+          $.JSApp.CallParent({act:"Pinfocus",frame:frame});
+        }
+      }
+    ]
+  });
+
+  $.JSApp.ToggleView("PrimaryView");
+
+  //$("#BasicInfoView .page-title").html(mStringMap.NewTask);
+  // 定義動態 ui 介面其名稱與post參數名相同
+  // 其ui介面由bootstrap-custom-form-factory中定義
+  var options={
+    language:mFrame.language,
+    initial:paramJson.initial,  
+    select:mSelectJson,
+    autocomplete:mAutoComplete,
+    header:mHeaderJson,
+    ui:{},
+    webApi:mWebApi,
+    api:{
+    	basicInfo:{
+    		name:"Task",
+        type:"Update"
+    	},
+      taskInfo:{
+        name:"Task",
+        type:"Update"
+      },
+      personInfo:{
+        name:"Task",
+        type:"Update"
+      },
+      replyList:{
+        name:"Task",
+        type:"Update"
+      }
+    },
+    upload:{
+      basicInfo:{
+        api:"action/upload.php",
+        target:"Task"
+      },
+      replyList:{
+        api:"action/upload.php",
+        target:"Task/Reply"
+      }
+    },
+    onEvent:function(act,data){      
+      if(act==="dataChange"){
+        var formH    = data.ui.closest(".form-horizontal");
+        var formName = formH.attr("name");
+        var fieldset = formH.find("fieldset[gname="+formName+"]");
+        var formData = fieldset.data("formData");
+        var formType = formData.type;
+        var formInputs=formData.inputs;
+        
+        if(formType==="form-group-submit"||formType==="form-group-list"||fieldset.prop("disabled")){
+          return;
+        }
+
+        var initData = fieldset.data("initial");
+        var webApi   = fieldset.data("webApi");
+        var formApi  = fieldset.data("api");
+        
+        var postData={type:"Update"};
+        
+        for(var iname in initData){
+          postData[iname]=initData[iname];
+        }
+        
+        for(var iname in formApi){
+          postData[iname]=formApi[iname];
+        }    
+
+        for(var iname in data.data){
+          postData[iname]=data.data[iname];
+        }
+
+        PostFormData(formName,postData,function(state,rcJson){
+          if(state==="success"){
+            //標記已變動內容
+            mFrame["modified"]=true;
+          }
+        });   
+         
+      }else if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        
+        if(name==="EditBn"){
+          var formH = data.ui.closest(".form-horizontal");
+          ChangeViewMode(formH,"EditMode");
+        }
+        else if(name==="SaveBn"){
+          var formH    = data.ui.closest(".form-horizontal");
+          var formName = formH.attr("name");
+          var fieldset = formH.find("fieldset[gname="+formName+"]");
+          var formData = fieldset.data("formData");
+      
+          var formType = formData.type;
+          var formInputs=formData.inputs;
+      
+          var initData = fieldset.data("initial");
+          var webApi   = fieldset.data("webApi");
+          var formApi  = fieldset.data("api");
+          
+          var postData={type:"Update"};
+          
+          for(var iname in initData){
+            postData[iname]=initData[iname];
+          }
+          
+          for(var iname in formApi){
+            postData[iname]=formApi[iname];
+          }    
+
+          for(var iname in formInputs){
+            postData[iname]=formInputs[iname];
+          }
+
+          PostDataWithBlocking(postData,function(state,rcJson){
+            if(state==="success"){
+              //標記已變動內容
+              $.JSApp.Notification({title:mStringMap.Message,description:mStringMap.UpdateSuccess});
+              mFrame["modified"]=true;
+              ChangeViewMode(formH,"ViewMode");
+            }
+          });  
+        }
+        else if(name==="PublishBn"){  
+          // replys相關操作 
+          var formH    = data.ui.closest(".form-horizontal");
+          var formName = formH.attr("name");
+          var fieldset = formH.find("fieldset[gname="+formName+"]");
+          var formData = fieldset.data("formData");
+          var formType = formData.type;
+          var formInputs=formData.inputs;
+      
+          var initData = fieldset.data("initial");
+          var webApi   = fieldset.data("webApi");
+          var formApi  = fieldset.data("api");
+
+          if($.trim(formInputs["comment"])===""&&
+             formInputs["attachment"].items.length===0){
+            return;
+          }
+
+          var postData={type:"Update"};
+
+          for(var iname in initData){
+            postData[iname]=initData[iname];
+          }
+
+          for(var iname in formApi){
+            postData[iname]=formApi[iname];
+          }    
+         
+          if(formData.datapackage){
+            var pack ={};
+
+            for(iname in formInputs){
+              pack[iname]=formInputs[iname];
+            }
+            //特別加入目前狀態
+            pack["state"]=paramJson.personInfo.inputs.state;
+            postData[formData.datapackage]=pack;      
+
+          }else{
+            for(iname in formData.inputs){
+              postData[iname]=formData.inputs[iname];
+            }
+          }
+
+          PostDataWithBlocking(postData,function(state,rcJson){
+            if(state==="success"){
+              // 清除icon及文字
+              formH.find("textarea").val("");
+              formH.find(".ff-items").html("");
+
+              var item={
+                publisher:mFrame.user,
+                time:$.JSGetCurrentDate(),
+                comment:formData.inputs["comment"].replace(/\n/g,"<br>").replace(/\\n/g,"<br>"),
+                attachment:formData.inputs["attachment"]
+              }
+
+              var tmline = formH.find("ul.cbp-tmline");
+              
+              AddReplyList(tmline,item); 
+
+              UpdateLocalStorageItem(initData.id,{replycount:tmline.find("li").length});                
+
+              for(iname in formData.inputs){
+                if(iname==="comment")
+                  formData.inputs.comment="";
+                else if(iname==="attachment"){
+                  formData.inputs.attachment.items.length=0;
+                }
+              }              
+            }
+          });
+
+          return true;
+        }else if(name==="LinkBn"){
+          var btnData = data.ui.data("data");
+          if(btnData.link){
+            if(btnData.method==="newPage"){
+              $.JSApp.LinkFrame(btnData.link,{newPage:true});
+            }else if(btnData.method==="askNewPage"){
+              $.JSApp.LinkFrame(btnData.link,{askNewPage:true});
+            }else{
+              $.JSApp.LinkFrame(btnData.link);
+            }       
+          }
+        }
+      }else if(act==="state"){
+        // none ok error loading
+        $.JSApp.UpdateViewControlState(data.name,data.state);
+      }else if(act==="notification"){
+        Notification(data);
+      }     
+    }
+  };
+   
+  function ChangeViewMode(ui,mode){
+    if(mode==="EditMode"){
+      ui.find(".toolbar [group=ViewMode]").addClass("disabled");  
+      ui.find(".toolbar [group=EditMode]").removeClass('disabled');
+			ui.find("fieldset").prop("disabled",false); 
+      ui.find("fieldset [group=EditMode]").show();
+      ui.find("fieldset [readonly] [group=EditMode]").hide();
+      ui.find("fieldset [group=ViewMode]").hide();
+      ui.find("fieldset .sortable").sortable('enable').find(".draggable").show();
+      ui.find("tbody tr [type=checkbox]").prop("checked",false);
+      ui.find("fieldset [type=editable]").prop("disabled",false);      
+    }else{      
+      ui.find(".toolbar [group=EditMode]").addClass("disabled");  
+      ui.find(".toolbar [group=ViewMode]").removeClass('disabled');
+			ui.find("fieldset").prop("disabled",true); 
+      ui.find("fieldset [group=EditMode]").hide();
+      ui.find("fieldset [group=ViewMode]").show();
+      ui.find("fieldset .sortable").sortable('disable').find(".draggable").hide();
+      ui.find("tbody tr [type=checkbox]").prop("checked",false);  
+      ui.find("fieldset [type=editable]").prop("disabled",true); ;
+      ui.ModuleTable_RefreshOrder();
+    }
+    $.JSApp.UpdateViewControlState(ui.attr("name"),"none");
+  }
+
+
+  for(name in paramJson){
+
+    var formData = paramJson[name];
+
+    if(name==="initial"||name==="type"||name==="result"||name==="message"||formData.disabled){
+      continue;
+    }
+
+    var formType= formData.type;
+    var formH = $('<div class="form-horizontal">');
+    $("#BasicInfoView .formContainer").append(formH);
+    formH.attr("name",name);
+
+    var fieldset = $("<fieldset>");
+    fieldset.attr("gname",name);
+      
+    console.log(name+":"+formType);
+    
+    if( formType==="form-group"){ 
+    
+      var formHeader =$('<div class="page-header"></div>');
+      formH.append(formHeader);
+
+      var toolbarOps = {
+        title:formData.title,
+        language:mFrame.language,
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onEvent
+      }
+
+      var formToolbar = $.JSToolbarFactory("basic-edit-toolbar",toolbarOps);  
+
+      if(formData.readonly){
+        formToolbar.find("button").remove();
+      }
+
+      formHeader.append(formToolbar);
+
+      formH.append(fieldset);
+      
+      $.JSFormFactory(fieldset,formData,options);
+
+      ChangeViewMode(formH,"ViewMode");
+
+    }else if( formType==="form-group-list"){
+    
+      var formHeader = $('<div class="page-header">');
+      formHeader.html($.JSToolbarFactory("basic-title-toolbar",{title:formData.title}));
+      formH.append(formHeader); 
+
+      var ul = $('<ul class="cbp-tmline">');
+
+      formH.append(ul);
+
+      for(var i =0 ; i<formData.list.items.length ;i++){
+        var item=formData.list.items[i];
+        AddReplyList(ul,item); 
+      } 
+
+      var toolbarOps = {
+        title:mStringMap.Publish,
+        language:options.language,
+        formName:name, //=>Form Name 
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onEvent
+      }
+
+      var formToolbar = $.JSToolbarFactory("basic-reply-toolbar",toolbarOps);  
+      var formFooter =$('<div class="page-footer"></div>'); 
+      formFooter.append(formToolbar);
+      formH.append(formFooter);
+
+    }else if(formType==="form-group-buttons"){
+
+      var toolbarOps = {
+        language:options.language,
+        formName:name, //=>Form Name 
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onEvent
+      }
+      var formHeader = $('<div class="page-header">');
+      formHeader.html($.JSToolbarFactory("basic-link-button-toolbar",toolbarOps));
+      formH.append(formHeader); 
+    }
+
+    if(formData.readonly&&typeof(formData.readonly)==='object'){
+      for(name in formData.readonly){
+        var formG = formH.find(".form-group[gname="+name+"]");
+        formG.attr("readonly",true);
+        formG.find("input").prop("readonly",true).addClass("disabled");
+        formG.find("select").prop("readonly",true).addClass("disabled");
+        formG.find("textarea").prop("readonly",true).addClass("disabled");
+        formG.find("button").prop("readonly",true).addClass("disabled");
+      }
+    }else if(formData.readonly||typeof(formData.readonly)==='boolean'){
+      var fieldset = formH.find("fieldset");
+      fieldset.prop("disabled",true);
+      fieldset.find(".form-group").attr("readonly",true);
+      fieldset.find("input").prop("readonly",true).addClass("disabled");
+      fieldset.find("select").prop("readonly",true).addClass("disabled");
+      fieldset.find("textarea").prop("readonly",true).addClass("disabled");
+      fieldset.find("button").prop("readonly",true).addClass("disabled");
+    }
+  }
+
+  $("#BasicInfoView").show("blind",{},400,null);
+
+}
+
+// 更新localstorage task item資料
+function UpdateLocalStorageItem(id,data){
+  var text = localStorage.getItem("TaskList");
+  var Tasks=null;
+  if(text!==null){
+    Tasks=$.JSJSonParse(text);
+    var name = "task_"+id;
+
+    if(Tasks[name]){
+      console.log("found");
+      Tasks[name].replycount=data.replycount;
+      Tasks[name].newreplys =0;
+      localStorage.setItem("TaskList",JSON.stringify(Tasks));
+    }
+  } 
+}
+
+function AddReplyList(parent,json){
+
+  var li = $('<li>'+             
+    '<div class="cbp-tmperson">'+ 
+      '<span class="icon"></span>' +                        
+    '</div>'+
+    '<div class="cbp-tmcontainer">'+
+      '<div class="description"></div>'+
+    '</div> '+                    
+    '<div class="cbp-tmtime">'+
+      '<span class="date"></span><br>'+
+      '<span class="time"></span>'+
+    '</div>'+
+  '</li>');
+  li.hide(); 
+
+  var side="left";        
+  if(json.publisher.id===mFrame.user.id){
+    li.addClass("right");
+    side = "right";
+  }else{
+    li.addClass("left");
+  }
+
+  var timeS = $.JSDateParseToJSon(json.time);
+  //console.log("Time:e");
+  //console.log(json.time);
+  //console.log(timeS);
+  //<img class="img-circle" src="images/jobs.jpeg">
+  //'<span class="badge name"></span>'+ ;
+  if(json.publisher.icon!==undefined&&json.publisher.icon!==""){
+    var img = $('<img class="img-circle">');
+    img.attr("src",json.publisher.icon);
+    img.tooltip({
+      placement:side,
+      title:json.publisher.name
+    });
+    li.find(".icon").append(img);
+  }else{
+    var vspan = $('<span class="badge name">');
+    vspan.html(json.publisher.name);
+    li.find(".icon").append(vspan);
+  }
+  
+  li.find(".description").html(json.comment);
+  li.find(".date").html(timeS.M+"/"+timeS.d);
+  li.find(".time").html(timeS.h+":"+timeS.m);
+  
+  if(json.attachment&&json.attachment.items.length ){
+    var uiC = li.find(".cbp-tmcontainer");
+    var imgG = $("<div class=''>");
+    //console.log(json.attachment);
+    for(var i = 0 ; i < json.attachment.items.length ; i++){
+      var item = json.attachment.items[i];
+
+      var ext =$.JSGetFileExtFromUrl(item.url);
+
+      var uiFile=$("<img>");
+    
+      if(ext==="jpg"||ext==="jpeg"||ext==="png"){
+        uiFile.css("padding","5px 0").css("width","100%");      
+        uiFile.attr("src",item.url);
+      }else{ 
+        uiFile.attr("src",item.thumbnailUrl); 
+        uiFile.tooltip({
+          placement:"bottom",
+          title:item.name
+        });
+      }
+
+      uiFile.data("file",item);
+
+      uiFile.click(function(e){
+        e.preventDefault();
+
+        var img=$(this);
+
+        $("<div>").JSModalDialogOkCancel({
+            title:mStringMap.Message,
+            message:mStringMap.AskDownload,
+            ok:{
+              title:mStringMap.Ok,
+              click:function(){
+                var file = img.data("file");
+                var fext=$.JSGetFileExtFromUrl(file.name);
+                var ext =$.JSGetFileExtFromUrl(file.url);
+                var filename = file.name;
+                if(fext!==ext){
+                  filename = file.name+"."+ext;
+                }
+                var a = $("<a>").attr("href",file.url).attr("download", filename).appendTo("body");
+                a[0].click();
+                a.remove();               
+              }
+            },
+            cancel:{
+              title:mStringMap.Cancel
+            }
+          });
+
+      });
+
+      imgG.append(uiFile);
+
+    }
+    uiC.append(imgG);      
+  }
+
+  parent.append(li);
+
+  li.show().addClass("in");
+
+}
+
+/*End ProcedureBasicView*/
+
+// state:"success","fail","error","end","begin"
+function PostFormData(formName,postData,callback){
+  $.JSApiPost.direct(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        $.JSApp.UpdateViewControlState(formName,"loading");
+        break;
+      }
+      case "success":{
+        $.JSApp.UpdateViewControlState(formName,"ok"); 
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        $.JSApp.UpdateViewControlState(formName,"error");
+        $.JSApp.CallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+// Post 使用loading view
+// callback(state,rcJson);state:"success","fail","error","always"
+function PostDataWithBlocking(postData,callback){
+
+  $.JSApiPost.block(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        break;
+      }
+      case "success":{
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        $.JSApp.CallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        //{title:stringMap.Message,description:stringMap.UpdateFailed}
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+
+function initial(){	
+  
+  ProcedureEntry();
+
+  $.JSApp.CallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+  try{
+	  initial();
+  }catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    $.JSApp.CallParent({act:"FrameError",frame:mFrame,data:e});
+  }
+});
+    
+</script>		
+</head>
+
+<body>
+</body>
+</html>

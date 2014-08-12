@@ -1,0 +1,29 @@
+{  
+  "description":"此為搜尋例範列",                                         
+  "type":"table", 
+  "tables":[{
+              "title":"客戶列表1",
+              "ths":["#","Company Name","Contact","Cellphone","Address"],
+              "trs":[ ["1","UReach","Shijie","0933261519","Taiwan"],
+                      ["2","UReach","Shijie","0933261519","Taiwan"],
+                      ["3","UReach","Shijie","0933261519","Taiwan"],
+                      ["4","UReach","Shijie","0933261519","Taiwan"],
+                      ["5","UReach","Shijie","0933261519","Taiwan"],
+                      ["6","UReach","Shijie","0933261519","Taiwan"] ],
+              "links":["buttons.html","","","","",""],
+              "readonly":"0"   
+            },
+            {
+              "title":"客戶列表2",
+              "ths":["#","Company Name","Contact","Cellphone","Address"],
+              "trs":[ ["1","UReach","Shijie","0933261519","Taiwan"],
+                      ["2","UReach","Shijie","0933261519","Taiwan"],
+                      ["3","UReach","Shijie","0933261519","Taiwan"],
+                      ["4","UReach","Shijie","0933261519","Taiwan"],
+                      ["5","UReach","Shijie","0933261519","Taiwan"],
+                      ["6","UReach","Shijie","0933261519","Taiwan"] ],
+              "links":["","","","","",""],
+              "readonly":"1"   
+            }
+  ]                   
+}

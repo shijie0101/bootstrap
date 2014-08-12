@@ -1,0 +1,813 @@
+<!--
+修改說明:
+-->
+<html>
+<head>
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+
+<!-- Common Library  -->
+<script src="js/common-api.js"></script>
+<script src="js/common-string-map.js"></script>
+<script src="js/common-library.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-menucontroller.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+
+<!-- Notification  -->    
+<link href="assets/gritter/css/custom.gritter.css" rel="stylesheet" type="text/css" >
+<script type="text/javascript" src="assets/gritter/js/custom.gritter.min.js"></script>
+
+<!-- Easy Pie Chart  --> 
+<script type="text/javascript" src="assets/easy-pie-chart/dist/jquery.easypiechart.min.js"></script>
+
+<script>
+
+  var mFrame={
+    name:"root",
+    language:"en",
+    user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"}
+  }
+
+  var mStringMap=GetStringMap(mFrame.language);
+  // 取得字串表
+  function GetStringMap(language){
+
+    var stringTable = {
+      en:{
+      },
+      tw:{    
+      },
+      cn:{
+      }
+    }
+
+    var stringMap=stringTable.en;
+
+    if(mFrame.language==="zh_TW"){
+      stringMap=stringTable.tw;
+      $.extend(stringMap,$.JSStringMap.tw);
+    }else if(mFrame.language==="zh_CN"){
+      stringMap=stringTable.cn;
+      $.extend(stringMap,$.JSStringMap.cn);
+    }else{
+      $.extend(stringMap,$.JSStringMap.en);
+    }
+
+    return stringMap;
+  }
+
+  //{title:"UReach Calendar",link:"UReachFormCalendar.html",method:"reload"}, method: (reload/direct)
+  //iframe暫存時重新檢視時採取重新載入or直接顯示iframe
+  var LeftMenu={
+    items:[
+      {
+        title:"Developing",
+        links:[
+          {title:"UReach Calendar",link:"UReachFormCalendar.html",method:"reload"},
+          {title:"UReach Task Tree",link:"UReachFormStructure.html",method:"reload"},
+          {title:"UReach Task Symbol",link:"TaskSymbol.html",method:"reload"},
+          {title:"UReach Task List",link:"UreachFormTaskList.html",method:"reload"},
+          {title:"UReach Form Generator",link:"UreachFormGenerator.html",method:"reload"},
+          {title:"UReach ForumTopic",link:"UreachForumTopic.html",method:"reload"},
+          {title:"UReach Forum",link:"UreachForum.html"},
+          {title:"ToDoList",link:"to_do_list.html"},
+          {title:"UReach Preview",link:"UReachFormPreview.html"},
+          {title:"UReach FileUpload",link:"UReachFileUpload.html"}, 
+          {title:"UReach Company",link:"UReachFormCompany.html"} ,
+          {title:"UReach Exhibit",link:"UReachFormExhibit.html"},  
+          {title:"UReach Meeting",link:"UReachFormMeeting.html"} ,
+          {title:"UReach List",link:"UReachList.html"} ,
+          {title:"Search Meeting",link:"UReachMeetingList.html"},
+          {title:"Ureach UserProfile",link:"UReachFormUserProfile.html"} ,
+          {title:"Ureach Timeout",link:"UReachFormTimeout.html"}           
+        ]
+      },
+      {
+        title:"CSS",
+        links:[
+          {title:"Headings",link:"headings.html"},{title:"TextStyle",link:"texts.html"},{title:"Colors",link:"colors.html"},{title:"CSS-Position",link:"http://www.barelyfitz.com/screencast/html-training/css/positioning/"}
+        ]
+      },
+      {
+        title:"Components",
+        links:[
+          {title:"Buttons",link:"buttons.html"},{title:"Icons",link:"icons.html"},{title:"Table",link:"sticky_table.html"},{title:"Tabs",link:"tabs.html"},{title:"List",link:"order_list_sample.html"},
+          {title:"AutoCompleteInput",link:"AutoCompleteInput_Sample.html"},{title:"awesome icon",link:"font_awesome.html"},{title:"awesome icon value",link:"font_awesome_value.html"}
+        ]
+      },
+      {
+        title:"Forms",
+        links:[
+          {title:"DialogSamples",link:"form_dialog_sample.html"}, 
+          {title:"Search Result",link:"search_result_sample.html"},
+          {title:"Search",link:"search_sample.html"},
+          {title:"Fourm",link:"forum_sample.html"},
+          {title:"Meeting",link:"form_meeting.html"},
+          {title:"Meeting2",link:"form_meeting2.html"},
+          {title:"Meeting3",link:"form_meeting3.html"},
+          {title:"UploadFile",link:"upload_sample.html"},
+          {title:"Exhabit",link:"form_exhabit.html"},
+          {title:"EditableTable",link:"editable_table_sample.html"}, 
+          {title:"iFrameCommunication",link:"iframe_container_sample.html"},
+          {title:"Editable Table",link:"table_sample.html"},
+        ]
+      },
+      {
+        title:"Effects",
+        links:[
+          {title:"SortEffect",link:"sortEffect.html"},
+          {title:"SlideEffect",link:"slideEffect.html"},
+          {title:"FlipEffect",link:"flip_sample.html"},
+          {title:"AffixSample",link:"affix_sample.html"},
+        ]
+      },
+      {
+        title:"Jquery",
+        links:[
+          {title:"selectable",link:"selectable_sample.html"},
+          {title:"DrapDrop",link:"dropdrap_sample.html"},
+        ]
+      }
+    ]
+  } 
+
+  function initial(){ 
+    onResize();
+
+    $("#Calendar .today").html($.JSGetToday()); 
+
+    $("#UserProfile .person-icon").attr("src",mFrame.user.icon);
+    $("#UserProfile .person-name").html(mFrame.user.name);
+
+    $.JSMenuController("#MenuView",LeftMenu,onMenuEvent);
+
+    //Main Menu 
+    $(".navbar-brand").click(ToggleHome);
+
+    $("#ToggleMenuBtn").click(ToggleHome);
+
+    //$("button.page-switcher").hide();
+
+    $("button.page-switcher").click(function(){
+      var target = $(this).attr("target");
+      onFocusFrame(target);
+    });
+
+    $("button.page-switcher").on("mouseover",function(){
+      var target = $(this).attr("target");
+      onShowPreviewFrame(target,true);
+    });
+
+    $("button.page-switcher").on("mouseleave",function(){
+      var target = $(this).attr("target");
+      onShowPreviewFrame(target,false);
+    });
+
+    $("#WorkingMenu .menu-switcher").click(function(){
+      $("#WorkingMenu").addClass("cbp-close");
+    });
+
+
+    //ToggleHome();
+
+
+    RunCountEffect(".state-overview .tasks .count",101);
+    RunCountEffect(".state-overview .done .count",40);
+    RunCountEffect(".state-overview .undone .count",41);
+    RunCountEffect(".state-overview .reminds .count",45);
+    RunCountEffect(".state-overview .comments .count",0);
+    RunTaskProgressEffect(50);
+
+
+    //只有list可排序
+    $(".sortable").sortable({
+      start: function (event, ui) {
+          //var currPos1 = ui.item.index();
+      },
+      change:  function (event, ui) {
+          //var currPos2 = ui.item.index();
+      },
+      update: function(event, ui) {
+        //console.log("update");
+
+      },
+      stop: function (event, ui) {
+
+      }      
+    });
+
+  }
+
+  function ToggleHome() {
+    //$(this).find("span").JSSwitchClass("effect-rotate-to-right","effect-rotate-to-left");        
+    if($("#WorkingMenu").hasClass("cbp-close")){
+      ShowHomeMenu(true);
+    }else{
+      ShowHomeMenu(false);
+    }
+  }
+
+  function ShowHomeMenu(show){
+    if(show){
+      $("#DashBoardView").removeClass("cbp-close");
+      $("#WorkingMenu").removeClass("cbp-close");
+      var CVIView = $("#ContentView .inner-vertical");
+      CVIView.addClass("cbp-3d-push-center");      
+    }else{
+      $("#DashBoardView").addClass("cbp-close");
+      $("#WorkingMenu").addClass("cbp-close"); 
+      var CVIView = $("#ContentView .inner-vertical");
+      CVIView.removeClass("cbp-3d-push-center");
+    }    
+  }
+
+  function RunUpdateTaskList(){
+
+    var text = localStorage.getItem("TaskList");
+    var Tasks=null;
+    if(text!==null){
+      Tasks=$.JSJSonParse(text);
+    }else{
+      Tasks={};
+    }
+    
+    var count=0;
+    var newreplys=0;
+
+    for(var name in Tasks){
+      count++;
+      if(Tasks[name].newreplys){
+        newreplys+=Tasks[name].newreplys;
+      }
+    }
+    RunCountEffect(".cbp-task-count",count);
+    RunCountEffect(".state-overview .comments .count",parseInt(newreplys));
+  }
+
+  // 執行任務計算更新
+  function RunCountEffect(selector,count){
+
+    var div_by = 100,
+    speed = Math.round(count / div_by),
+    $display = $(selector),
+    run_count = 1,
+    int_speed = 40;
+
+    if(parseInt($display.text())===count){
+      $display.text(count); 
+      return;
+    }
+
+    $display.text("0");
+
+    var timer = setInterval(function() {
+        if(run_count < div_by){
+            var est =parseInt($display.text())+ 1 + (speed * run_count);
+            if(est>=count){
+              $display.text(count);
+              run_count=div_by;
+              return;
+            }
+
+            $display.text(est);
+            run_count+=1;
+        } else if(parseInt($display.text()) < count) {
+            var curr_count = parseInt($display.text()) + 1;
+            $display.text(curr_count);
+        } else {
+            clearInterval(timer);
+        }
+    }, int_speed);
+  }
+
+  function RunTaskProgressEffect(progress){
+    var chart = $('.task-progress-chart').data('easyPieChart');
+
+    if(chart===undefined||chart.length===0){
+      $('.task-progress-chart').easyPieChart({
+        size:96,
+        onStep: function(from, to, percent) {
+          $(this.el).find('.percent').text(Math.round(percent));
+        }
+      });  
+      //chart = $('.task-progress-chart').data('easyPieChart');  
+      chart = window.chart =  $('.task-progress-chart').data('easyPieChart');  
+    }
+    chart.update(progress);
+  }
+
+  // 通知事件定
+  function Notification(postData){
+    var data={
+      title:postData.title,
+      text: postData.description,
+      position:"bottom-right",
+      class_name:"",
+      sticky:false,
+      time:2000,
+      before_open:function(){
+        if($('.gritter-item-wrapper').length == 3)
+        {
+          return false;
+        }
+      }
+    }
+    $.gritter.add(data);
+  }
+
+  function Pinfocus(frame){
+    console.log(frame);
+    var div = $('<div class="col-lg-3 col-sm-6"></div>');
+    var section=$('<section class="panel"></section>');
+    var icon=$('<div class="symbol blue"><i class="fa fa-link"></i></div>');
+    var value=$('<div class="value"><p></p></div>');
+
+    section.append(icon);
+    section.append(value);
+
+    value.find("p").html(frame.title);
+
+    div.append(section);
+
+    div.data("link",frame.url);
+
+    $("#DashBoardView .state-overview").append(div);
+
+    div.click(function(){
+      var link = $(this).data("link");
+      if(link){
+        ToggleHome();
+        onLinkEvent(link,"direct"); 
+      }
+    });
+
+    alert("OK");
+  }
+
+  //重要! Callback
+  window.Callback = {};
+  window.Callback.FromChild = function (data) {
+    if(data.act==="Change"){
+      //使用者基本資訊
+      if(data.name==="UserProfile"){
+        mFrame.user.name = data.data.user;
+        mFrame.user.icon = data.data.icon;
+        syslang = data.data.language;
+
+        if(mFrame.language!==syslang){
+          location.reload();
+        }else{
+          $("#UserProfile .person-icon").attr("src",mFrame.user.icon);
+          $("#UserProfile .person-name").html(mFrame.user.name);
+        }
+      }
+    }else if(data.act==="FrameLoaded"){
+      //設定link後等IFrame載入成功回復
+      var frameName = data.frame.name; 
+
+      $("#ContentView").JSUiLoadingView(false,function(act){
+        if(act==="end"){
+          var iframeName = $("#ContentView").attr("target");
+          $("#ContentView").attr("target-frame-name",data.frame.name);
+          onFocusFrame(iframeName);
+        }
+      });     
+    }else if(data.act==="FrameError"){
+      //IFrame載入失敗
+      $("<div>").JSModalDialogOk({
+        title:mStringMap.Message,
+        message:mStringMap.PageFailedToLoad+"<br>"+data.data,
+        ok:{
+          title:mStringMap.Ok,
+          click:function(){
+          }
+        }
+      });
+      Notification({title:mStringMap.Message,description:mStringMap.PageFailedToLoad+"<br>"+data.data});
+    }else if(data.act==="Update"){
+      if(data.frame.name==="TaskList"){
+        RunUpdateTaskList();
+      }else if(data.frame.name==="UserProfile"){
+        mFrame.user.name = data.frame.user.name;
+        mFrame.user.icon = data.frame.user.icon;
+        if(mFrame.language!==data.frame.language){
+          location.reload();
+        }else{
+          $("#UserProfile .person-icon").attr("src",mFrame.user.icon);
+          $("#UserProfile .person-name").html(mFrame.user.name);
+        }
+      }
+    }else if(data.act==="PostApiResult"){
+      var returnCode = parseInt(data.data.result);
+      // session timeout
+      if(returnCode===-1){
+        $("<div>").JSModalDialogOk({
+            title:mStringMap.Message,
+            message:data.data.message,
+            ok:{
+              title:mStringMap.Ok,
+              click:function(){
+                window.location.replace('./');
+              }
+            }
+          });
+      }else if(returnCode===1){
+
+      }
+      else{
+        //console.log(data.data);
+        Notification({title:mStringMap.Message,description:data.data.message});
+      }
+    }else if(data.act==="Notification"){
+      Notification(data.data); 
+    }else if(data.act==="Return"){
+       
+    }else if(data.act==="GetParent"){
+      data.parent.push(mFrame);
+      onCallParent(data);
+    }else if(data.act==="Link"){
+      if(data.data.newPage){
+        //console.log("Link NewPage: Unimplemented");
+        if(onLinkEvent(data.data.link,"direct")){
+          HideTopView();
+        }
+      }
+    }else if(data.act==="Pinfocus"){
+      Pinfocus(data.frame);
+    }
+
+    return true;
+  };
+  window.Callback.FromParent = function (data) {
+    console.log(data);
+  };
+
+  function onCallParent(data){
+
+    if(window!==window.parent&&window.parent.Callback){
+      window.parent.Callback.FromChild(data);
+    }
+  }
+
+  function onCallChild(id,date){
+    //需指名frame id 
+    var f = document.getElementById(id);
+
+    if(f){
+      var fContent = f.contentWindow || f.contentDocument;
+      fContent.Callback.FromParent(date);
+    } 
+  }
+    
+  $(window).load(function() {
+    try{
+      initial();
+    }catch(e){
+      alert(e);
+    }
+  });
+  
+  $(window).resize(function() {
+    onResize();
+  });
+  
+  function onResize(){
+    
+    var windows = {w:$(this).width(),h:$(this).height()};  
+    var header  = {w:$("header").width(),h:$("header").height()};  
+    var footer  = {w:0,h:0};
+    //var footer  = {w:$("footer").width(),h:$("footer").height()};  
+    var tView=$("#contain-viewport");
+    if(tView.length){
+      tView.children().css({"padding-top":""+header.h+"px"});
+      tView.children().css({"padding-bottom":""+footer.h+"px"});
+    }
+  }
+
+  function onNavMenuClick(link){
+    //$('#containFrame').attr("src",link); 
+    onMenuEvent({title:"Forum",link:link,method:"direct"});
+    //HideAllMenu();
+    ShowHomeMenu(false);
+  }
+
+  function onFocusFrame(iframeName){
+    if(iframeName==="containIFrameSecondary"){
+      $('#containIFramePrimary').addClass("cbp-close");
+      $('#containIFrameSecondary').removeClass("cbp-close");  
+      $("#ContentView").attr("target","containIFrameSecondary"); 
+      $('button[target=containIFramePrimary]').show();
+      $('button[target=containIFrameSecondary]').hide();
+    }else if(iframeName==="containIFramePrimary"){
+      $('#containIFramePrimary').removeClass("cbp-close");
+      $('#containIFrameSecondary').addClass("cbp-close"); 
+      $("#ContentView").attr("target","containIFramePrimary");    
+      $('button[target=containIFramePrimary]').hide();
+      $('button[target=containIFrameSecondary]').show(); 
+    }
+  }
+
+
+  function onShowPreviewFrame(iframeName,show){
+    if(iframeName==="containIFrameSecondary"){
+      if(show){
+        $('#containIFrameSecondary').addClass("cbp-preview");
+      }else{
+        $('#containIFrameSecondary').removeClass("cbp-preview");
+      }
+    }else if(iframeName==="containIFramePrimary"){
+      if(show){
+        $('#containIFramePrimary').addClass("cbp-preview");
+      }else{
+        $('#containIFramePrimary').removeClass("cbp-preview");
+      } 
+    }
+  }
+
+  function onLinkEvent(link,method){
+   
+    var method=(method)?method:"";
+
+    var srcPrimary=$('#containIFramePrimary').attr("src");
+    var srcSecondary=$('#containIFrameSecondary').attr("src");
+
+    if( srcPrimary===""||srcPrimary===link){
+      $("#ContentView").attr("target","containIFramePrimary");
+      //if(srcPrimary===""||method==="reload"){
+      $("#ContentView").JSUiLoadingView(true,function(act){
+        if(act==="end"){       
+          $('#containIFramePrimary').attr("src",link); 
+        }
+      });         
+      //}
+    }else if(srcSecondary===""||srcSecondary===link){
+      $("#ContentView").attr("target","containIFrameSecondary");
+      //if(srcPrimary===""||method==="reload"){  
+      $("#ContentView").JSUiLoadingView(true,function(act){
+        if(act==="end"){      //
+          $('#containIFrameSecondary').attr("src",link); 
+        }
+      });      
+      //}
+    }else if($('#containIFramePrimary').hasClass("cbp-close")){
+      $("#ContentView").attr("target","containIFramePrimary");
+
+      $("#ContentView").JSUiLoadingView(true,function(act){
+        if(act==="end"){      
+          $('#containIFramePrimary').attr("src",link); 
+        }
+      });
+    }else if($('#containIFrameSecondary').hasClass("cbp-close")){
+      $("#ContentView").attr("target","containIFrameSecondary");
+
+      $("#ContentView").JSUiLoadingView(true,function(act){
+        if(act==="end"){      
+          $('#containIFrameSecondary').attr("src",link); 
+        }
+      }); 
+    }
+
+    HideTopView();
+
+    return true;
+  }
+
+  function onMenuEvent(item){
+    
+    var title=item.title;
+    var link=item.link;
+    var method=(item.method)?item.method:"";
+
+    if(onLinkEvent(link,method)){
+      ToggleMenu();  
+      HideTopView();
+    } 
+  }
+
+  function ToggleMenu(){
+    ToggleHome();
+  }
+
+  function HideTopView(){
+    $("#ToDoListView").addClass("cbp-close");
+    $("#MessageView").addClass("cbp-close");  
+  }
+
+  // run the currently selected effect
+  function onToggleTopView(id) {
+    
+    ShowHomeMenu(false);
+
+    if(id==="ToDoListView"){
+      $("#ToDoListView").JSToggleClass("cbp-close");
+      $("#MessageView").addClass("cbp-close");
+    }else if("MessageView"){
+      return;
+    }
+  };
+</script>
+</head>
+
+<body style="background:url(images/noisebg.png);">
+  <header class="navbar-fixed-top navbar-inverse" role="navigation">
+    <div>
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="nav navbar-nav"> 
+        <a id="ToggleMenuBtn">
+          <div class="nav-btn big">
+            <span class="fa fa-bars"></span>
+          </div>
+        </a>
+      </div>
+
+      <div class="navbar-brand">
+        <span class="fa fa-home"></span><span class="title">Bootstrap Sample Code</span>     
+      </div>        
+      <!-- Collect the nav links, forms, and other content for toggling --> 
+      <ul class="nav navbar-nav pull-right"> 
+        <li id="Forum" class="nav-btn"> 
+          <a onclick=onNavMenuClick('UReachForum.html')>
+            <span class="fa fa-book"></span>&nbsp;<span class="badge pull-right">Forum</span>
+          </a>  
+        </li>
+        <li id="Calendar" class="nav-btn">  
+          <a onclick="onToggleTopView('CalendarView')">
+            <span class="fa fa-calendar"></span>&nbsp;<span class="today badge pull-right">&nbsp;</span>
+          </a>  
+        </li>
+        <li id="ToDoList" class="nav-btn">
+          <a onclick="onToggleTopView('ToDoListView')">
+          <span class="fa fa-tasks"></span>&nbsp;<span class="cbp-task-count badge pull-right">&nbsp;</span>
+          </a>  
+        </li>
+        <li id="Message" class="nav-btn">
+          <a onclick="onToggleTopView('MessageView')">
+            <span class="fa fa-comment"></span>&nbsp;<span class="badge pull-right">&nbsp;</span>
+          </a>  
+        </li>     
+        <li id="UserProfile" class="nav-btn">          
+          <a class="dropdown-toggle" data-toggle="dropdown"> 
+            <img class="person-icon img-circle" src=""/>
+            <span class="user-icon fa fa-user"></span>&nbsp;<span><span class="person-name badge">&nbsp;</span>&nbsp;<b class="caret"></b></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#">User Profile</a></li>
+            <li role="presentation" class="divider"></li>
+            <li><a href="login.html">Logout</a></li>
+          </ul>
+        </li>       
+      </ul>       
+    </div>
+  </header>
+
+  <div id="contain-viewport" class="container cbp-push" style="width:100%;height:100%;overflow:hidden;">      
+    <div id="ContentView" class="cbp cbp-box cbp-left vertical-xs-12">
+      <div class="cbp-box cbp-3d-pull">
+        <button target="containIFramePrimary" class="page-switcher left"><span class="fa fa-caret-left"></span>
+        </button>
+        <iframe id="containIFramePrimary" frameborder="0" src="" class="frame cbp cbp-box cbp-left vertical-xs-12">
+        </iframe>
+        <iframe id="containIFrameSecondary" frameborder="0" src="" class="frame cbp cbp-box cbp-right vertical-xs-12 cbp-close"></iframe>
+        <button target="containIFrameSecondary" class="page-switcher right"><span class="fa fa-caret-right"></span>
+        </button>
+      </div>
+    </div>
+    <div id="CalendarView" class="cbp cbp-box tiny cbp-right cbp-close vertical-xs-6">    
+      <iframe id="CalendarFrame" frameborder="0" src="UReachFormCalendar.html" class="frame"></iframe>
+    </div>
+    <div id="ToDoListView" class="cbp cbp-box tiny cbp-right cbp-close vertical-xs-6 frame-shadow" >
+      <iframe id="TaskListFrame" frameborder="0" src="UReachFormTaskList.html" class="frame"></iframe>  
+    </div>
+    <div id="MessageView" class="cbp cbp-box tiny cbp-right cbp-close vertical-xs-6">   
+    </div>  
+    <div id="DashBoardView" class="cbp cbp-box tiny cbp-right vertical-xs-10" style="background-color:rgba(0,0,0,0.8);">
+      <div class="inner-vertical cbp-3d-pull cbp-3d" style="overflow-y:auto">
+        <div class="col-lg-6 col-sm-12">
+          <div class="row state-overview">
+            <div class="col-lg-12 col-sm-12">
+              <section class="panel panel-info">
+                <div class="panel-heading">更新項目:(2014/08/15)</div>
+                <div class="panel-body">
+                  <ul>
+                    <li>移除部分頁面切換動畫</li>
+                    <li>首頁加入修改說明</li>
+                  </ul>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 col-sm-12 ">
+          <div class="row state-overview sortable">
+            <div class="col-lg-6 col-sm-12">
+              <section class="tasks panel">
+                <div class="symbol yellow">
+                  <i class="fa fa-tasks"></i>
+                </div>
+                <div class="value">
+                  <h1 class="count"></h1>
+                  <p>Tasks</p>
+                </div>
+              </section>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+              <section class="done panel">
+                <div class="symbol red">
+                  <i class="fa fa-check-square-o"></i>
+                </div>
+                <div class="value">
+                  <h1 class="count"></h1>
+                  <p>Done</p>
+                </div>
+              </section>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+              <section class="undone panel">
+                <div class="symbol gray">
+                  <i class="fa fa-linkedin-square"></i>
+                </div>
+                <div class="value">
+                  <h1 class="count"></h1>
+                  <p>Undone</p>
+                </div>
+              </section>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+              <section class="comments panel">
+                <div class="symbol blue">
+                  <i class="fa fa-comments"></i>
+                </div>
+                <div class="value">
+                  <h1 class="count"></h1>
+                  <p>New Comments</p>
+                </div>
+              </section>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+              <section class="reminds panel">
+                <div class="symbol blue">
+                  <i class="fa fa-bell"></i>
+                </div>
+                <div class="value">
+                  <h1 class="count"></h1>
+                  <p>Reminds</p>
+                </div>
+              </section>
+            </div>
+            <div class="col-lg-6 col-sm-12">
+              <section class="panel">
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-lg-6 col-sm-6 text-center">
+                      <span class="task-progress-chart easy-pie-chart" data-percent="0">
+                        <span class="percent"></span>
+                      </span>
+                    </div>
+                    <div class="col-lg-6 col-sm-6">
+                      <div class="chart-info chart-position">
+                        <span class="increase"></span>
+                        <span>Done</span>
+                      </div>
+                      <div class="chart-info">
+                        <span class="decrease"></span>
+                        <span>Undone</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  <!-- End DashBoardView-->   
+    <div id="WorkingMenu" class="cbp cbp-box cbp-left sm vertical-xs-2 frame-shadow" >
+      <div class="inner-vertical" style="overflow-y:auto">
+        <div id="MenuView" class="bg-frame-menu" style="min-height:100%;width:100%;"></div>
+      </div>
+      <button class="mobile menu-switcher bg-frame-menu">
+        <span class="fa fa-caret-left"></span>
+      </button>
+    </div> <!-- End WorkingMenu--> 
+  </div>  <!-- End contain-viewport-->    
+
+  <footer class="navbar navbar-default navbar-fixed-bottom" style="display:none">
+  </footer>
+</body>
+</html>

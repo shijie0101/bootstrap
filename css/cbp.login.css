@@ -1,0 +1,356 @@
+/* 
+ * 20140423
+ */
+body{
+  padding:0px;
+  margin:0px;
+}
+
+body, .login-submit, .login-submit:before, .login-submit:after {
+  background-color:#323236;
+}
+
+body {
+  font: 14px/20px "Times New Roman",'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #fff;
+}
+
+a {
+  color: #00a1d2;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+
+.about {
+  position:absolute;
+  bottom:0px;
+  padding:0px;
+  overflow:hidden;
+  width: 100%;
+  font-size: 12px;
+  color: #ccc;
+  text-align: center;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.25);
+  background: rgba(250, 250, 250, 0.1);
+  background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1));
+  background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1));
+  background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1));
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1));
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 6px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 6px rgba(0, 0, 0, 0.2);
+}
+.about a {
+  color: #fff;
+  text-decoration: none;
+  border-radius: 2px;
+  -webkit-transition: background 0.1s;
+  -moz-transition: background 0.1s;
+  -o-transition: background 0.1s;
+  transition: background 0.1s;
+}
+.about a:hover {
+  text-decoration: none;
+  background: #fafafa;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.about-links {
+  height: 30px;
+}
+.about-links > a {
+  float: left;
+  width: 50%;
+  line-height: 30px;
+  font-size: 12px;
+}
+
+.about-author {
+  margin-top: 5px;
+}
+.about-author > a {
+  padding: 1px 3px;
+  margin: 0 -1px;
+}
+
+.login {
+  position: relative;
+  margin-top: 220px;
+  margin-left:-200px;
+  width: 500px;
+  padding-right: 32px;
+  font-weight: 300;
+  color: #a8a7a8;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+.login p {
+  margin: 0 0 10px;
+}
+
+input, button, label {
+  font-family: "Times New Roman",'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color:#ddd;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+input[type=text], input[type=password] {
+  padding: 0 10px;
+  width: 300px;
+  height: 40px;
+  color: #bbb;
+  text-shadow: 1px 1px 1px black;
+  background: rgba(0, 0, 0, 0.16);
+  border: 0;
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.06);
+}
+input[type=text]:focus, input[type=password]:focus {
+  color: white;
+  background: rgba(0, 0, 0, 0.1);
+  outline: 0;
+}
+
+label {
+  float: left;
+  width: 200px;
+  line-height: 40px;
+  padding-right: 10px;
+  font-weight: 100;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+.remember-me {
+  float:left;
+  padding-left:20px;
+  font-size: 13px;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+.forgot-password {
+  padding-left: 200px;
+  float:left;
+  font-size: 13px;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+  cursor:pointer;
+}
+
+.login-submit {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  padding: 8px;
+  border-radius: 32px;
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+}
+.login-submit:before, .login-submit:after {
+  content: '';
+  z-index: 1;
+  position: absolute;
+}
+.login-submit:before {
+  top: 28px;
+  left: -4px;
+  width: 4px;
+  height: 10px;
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.06);
+}
+.login-submit:after {
+  top: -4px;
+  bottom: -4px;
+  right: -4px;
+  width: 36px;
+}
+
+.login-button {
+  position: relative;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  padding: 0 0 48px;
+  /* Fix wrong positioning in Firefox 9 & older (bug 450418) */
+
+  background: none;
+  border: 0;
+  border-radius: 24px;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2), 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2), 0 1px rgba(255, 255, 255, 0.1);
+  /* Must use another pseudo element for the gradient background because Webkit */
+  /* clips the background incorrectly inside elements with a border-radius.     */
+}
+
+
+.login-button[disabled]{
+  cursor:not-allowed;
+}
+
+.login-button[disabled]:before{
+  opacity: 0.4;
+}
+
+.login-button[disabled]:after{
+  opacity: 0.4;
+}
+
+.login-button[disabled]:active:before {
+  background: #00a2d3;
+  background-image: -webkit-linear-gradient(top, #00a2d3, #0d7796);
+  background-image: -moz-linear-gradient(top, #00a2d3, #0d7796);
+  background-image: -o-linear-gradient(top, #00a2d3, #0d7796);
+  background-image: linear-gradient(to bottom, #00a2d3, #0d7796);
+  -webkit-box-shadow: inset 0 0 0 1px #00a2d3, 0 0 0 5px rgba(0, 0, 0, 0.16);
+  box-shadow: inset 0 0 0 1px #00a2d3, 0 0 0 5px rgba(0, 0, 0, 0.16);  
+  opacity: 0.4;
+}
+
+.login-button:before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  background: #00a2d3;
+  border-radius: 24px;
+  background-image: -webkit-linear-gradient(top, #00a2d3, #0d7796);
+  background-image: -moz-linear-gradient(top, #00a2d3, #0d7796);
+  background-image: -o-linear-gradient(top, #00a2d3, #0d7796);
+  background-image: linear-gradient(to bottom, #00a2d3, #0d7796);
+  -webkit-box-shadow: inset 0 0 0 1px #00a2d3, 0 0 0 5px rgba(0, 0, 0, 0.16);
+  box-shadow: inset 0 0 0 1px #00a2d3, 0 0 0 5px rgba(0, 0, 0, 0.16);
+}
+.login-button:active:before {
+  background: #0591ba;
+  background-image: -webkit-linear-gradient(top, #0591ba, #00a2d3);
+  background-image: -moz-linear-gradient(top, #0591ba, #00a2d3);
+  background-image: -o-linear-gradient(top, #0591ba, #00a2d3);
+  background-image: linear-gradient(to bottom, #0591ba, #00a2d3);
+}
+.login-button:after {
+  position:absolute;
+  content: "\f061"; 
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  top: 14px;
+  left: 16px;
+  font-size:20px;
+  color:rgba(0,0,64, 0.2);
+}
+
+.brand{
+  font: 14px/20px 'Impact', Helvetica, Arial, sans-serif;
+  text-align: center;
+  margin-top: 120px ;
+  margin-left:100px;
+  font-size: 150px;
+  color: #ddd;
+  text-shadow: 2px 2px 6px #222;
+  white-space: nowrap;
+}
+
+.language{
+  position:absolute;
+  top:auto;
+  left:auto;
+  right:0px;
+  bottom:0px;
+  padding:10px 6px;
+  font-size:14px;
+}
+
+.language label select {
+  padding:10px;
+  margin: 0;
+  background:transparent;
+  color:#aaa;
+  border:none;
+  outline:none;
+  display: inline-block;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  cursor:pointer;
+  text-shadow: 1px 1px 2px black;
+}
+
+
+.language label {
+  position:relative;
+}
+
+.language label:after {
+ 
+}
+.language label:before {
+  position:absolute;
+  content: "\f0ac"; 
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  margin-left:-10px;
+  margin-top:-2px;
+}
+
+
+@media (max-width: 720px){
+  .login {
+    margin-left:-280px;
+  }
+
+  .brand {
+    font-size:42px;
+    margin-left:0px;
+    margin-top:40px;
+  } 
+
+  .login{
+    margin-left:-220px;
+    margin-top:120px;
+  }
+
+  input[type=text], input[type=password]{
+    width:140px;
+  }
+
+  .login-submit{
+    right:160px;
+  }
+
+  .remember-me {
+    float:left;
+    padding-left: 20px;
+    font-size: 11px;
+    font-weight: 100;
+    letter-spacing: 1px;
+  }
+
+  .forgot-password {
+    padding-left: 80px;
+    float:left;
+    font-size: 11px;
+    font-weight: 100;
+    letter-spacing: 1px;
+  }
+
+
+}
+

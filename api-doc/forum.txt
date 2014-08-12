@@ -1,0 +1,91 @@
+/*Forum Api*/
+
+
+/*新增討論文章*/
+addForum
+{
+	title:     							//主題
+	content:   							//內文
+	category:  							//所屬分類
+	images:[{								//附屬文件
+						id:           //經由 addForumFile上傳圖 回應之id   
+						title:
+						content:          
+	}]   	
+}
+
+return
+{
+	result:                 // 0 - 有問題  1 - 成功
+	id:						// 文章序號
+	category:			// 分類
+	title:				// 主題
+	publisher:		// 發佈人
+	icon:					// 發佈人像
+	publishdate: 	// 2014-02-27
+	readonly:			// 0-1   
+}
+
+/*取得討論文章*/
+listForum
+{
+	category:  	//分類用
+	start:     	//起始文章位置  
+	count:	    //取得文章數量
+}
+
+
+return
+{  
+  result:                 // 0 - 有問題  1 - 成功
+  start:									//起始文章位置         
+  count:									//取得文章數量
+  total:									//所有的文章總數
+  lists:[{
+            id:						// 文章序號
+            category:			// 分類
+            title:				// 主題
+            publisher:		// 發佈人
+            icon:					// 發佈人像
+            date: 				// 2014-02-27
+            readonly:			// 0-1    
+          },...
+        ]                  
+};    
+
+
+/*取得文章內容*/
+getForum
+{
+	id:				//文章序號
+}
+
+return 
+{
+	result:                 // 0 - 有問題  1 - 成功
+	id:											// 文章序號
+	title: 									// 主題
+	content:                // 內文
+	images:[{
+						title:
+						content: 
+						src:   
+					},...
+				 ]
+}
+
+/*上傳圖片*/
+addForumFile
+{
+	uploadFile:file,
+	uploadFile:file,...	//多圖上傳
+}
+
+return
+{
+	"result":"1",
+	"images":[{"id":12,"path":"42ef5791358e69c302b069d31e78cd7b.jpg"}] //為陣列可多個
+}
+
+
+

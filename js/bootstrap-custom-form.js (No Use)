@@ -1,0 +1,341 @@
+/*
+	作者:shijie
+	日期:20140308
+	說明:form controller 
+	額外套件 : jquery-ui-datetimepicker.js
+	先當作範列
+*/
+
+(function($) { 
+	'use strict';
+	/*bootstrap custom alert form*/
+	$.fn.AlertForm = function(json,options){
+		if(json.type!=="form"){
+			return;
+		}
+
+		var view = $(this);	
+		view.html("");
+		view.css({margin:"5px 0px"});
+
+		//alert-success alert-info alert-warning alert-danger
+		var alert = $('<div class="alert alert-light alert-dismissable">');
+		var closebtn = $('<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>');
+		var btnToolbar = $("<div class='btn-toolbar'>");
+		var form=$("<div class='row' style='padding:5px;margin:5px;'>");
+		var message=$("<div>");	
+		var footer=$("<div class='row' style='padding:5px;margin:5px;height:40px;'>");	
+
+		footer.append(btnToolbar);
+		alert.append(closebtn);
+		alert.append(form); 
+		alert.append(message);
+		alert.append(footer); 
+
+		form.ModualForm(json);	
+
+		var btlshow=false;
+		
+		if(options.buttons!==undefined){
+			for(var i=0;i<options.buttons.length;i++){
+				var obtn=options.buttons[i];
+				var btn = $('<button class="btn btn-primary" type="button"></button>');
+				if(obtn.title!==undefined){
+					btn.text(obtn.title);
+				}
+				if(obtn.click!==undefined){
+					btn.click(obtn.click);
+				}
+				btnToolbar.append(btn);
+				btlshow=true;
+			}
+		}
+
+		if(options.submit!==undefined){
+			var submitbtn = $('<button class="btn btn-primary pull-right" type="button">Submit</button>');	
+			if(options.submit.title!==undefined){
+				submitbtn.text(options.submit.title);	
+			}
+
+			btnToolbar.append(submitbtn);
+
+			submitbtn.click(function(){
+				var api = json.api;
+				var method  = json.method;
+		  	var postJson= {id:json.id,type:json.type,inputs:new Array()};
+
+		  		var allow=true;
+			  	alert.find("[name]").each(function(){
+			  		var name = $(this).attr("name");
+			  		var value= $(this).val();
+			  		console.log(""+name+":"+value);
+			  		if($(this).attr("important")!==undefined && value===""){
+			  			allow=false;
+			  		}
+
+			  		postJson.inputs[name]=value;
+			  	});	
+
+			  	if(allow==false){
+			  		message.AlertMessage("值不能為空");
+			  		return;
+			  	}
+
+			  	console.log(postJson);
+
+			  	var jqxhr = $.post( api,postJson)
+						  .done(function(rec) {
+						  	var jsonRc = JSON.parse(rec);	
+						  	console.log(jsonRc);
+							  if(parseInt(jsonRc.result)!=1){
+							  	console.log("return error");
+							  	message.AlertMessage("return error");
+							  	return;
+							  }	
+
+							  if(options.submit.callback!=undefined){
+							  	options.submit.callback(jsonRc);	
+							  }
+						  	
+						  	view.html("");
+						  })
+						  .fail(function() {
+					
+						  })
+						  .always(function() {
+					
+						});
+			});
+
+			btlshow=true;
+		}
+
+		if(!btlshow)
+			btnToolbar.hide();
+
+		view.append(alert);
+	}
+
+
+	$.fn.ModualForm = function(json,callbackF){
+		if(json.type!=="form"){
+			return;
+		}
+		var inputs=json.inputs;
+
+		var form = $($.sprintf("<div tid='%s' type='%s' class='form-horizontal' role='form'>",json.id,json.type));
+
+		form.appendInputs(inputs);
+
+		$(this).html("");
+		$(this).append(form);
+
+		form.find(".datepicker").each(function(index){
+			var idText="datepicker_"+index;
+
+			//$(this).attr("id",idText);
+
+			var dateFormat = { dateFormat: 'yy-mm-dd' };
+			if($(this).format!=undefined){
+				dateFormat.dateFormat=$(this).format;
+			}
+			//form.find("#"+idText).datepicker(dateFormat);
+			//$(this).datepicker();
+			$(this).datetimepicker();
+		});
+
+		form.find("[uiDependent]").each(function(){
+			var id = $(this).attr("tid");
+			$(this).change(function(){
+				var validate = $(this).attr("validate");
+
+				if(validate===undefined){
+					form.find("[uiDependentOn="+id+"]").hide();	
+				}else{
+					form.find("[uiDependentOn="+id+"]").show();	
+				}
+
+			}).change();
+			
+		})
+	}
+
+	$.fn.appendInputs = function(inputs){
+		var inTamp = $($.sprintf("<div class='%s'>","row"));
+		inTamp.append($($.sprintf("<div class='%s'>","form-group")));
+		inTamp.append($($.sprintf("<div class='control-label %s'>","col-sm-2")));
+		inTamp.append($($.sprintf("<div class='control-input %s'>","col-sm-10")));  
+	
+		for(var i=0;i<inputs.length;i++){
+			var item = inputs[i];
+			var row= inTamp.clone();
+
+			
+			var input=$("<input>");
+
+			var placeholder = (item.placeholder!==undefined)?item.placeholder:"";
+
+			if(item.type==="text"){
+				var inText = $.sprintf("<input type='text' class='form-control' tid='%s' name='%s' placeholder='%s'>",item.id,item.name,placeholder);
+				input=$(inText);	
+
+				if(item.important!=undefined){
+					input.attr("important",item.important);
+				}
+			}else if(item.type==="textarea"){
+
+			}else if(item.type==="datepicker"){
+				var inText = $.sprintf("<input class='form-control datepicker' type='datepicker' tid='%s' name='%s'>",item.id,item.name);
+				input=$(inText);	
+			}else if(item.type==="uigroup"){
+				
+				var inText = $.sprintf("<div type='%s'>",item.type);
+				row = $(inText);
+				if(item.uiDependentOn!==undefined){
+					row.attr("uiDependentOn",item.uiDependentOn);
+				}
+				row.appendInputs(item.inputs);
+
+				$(this).append(row);
+				continue;
+			}
+
+			if(item.uiDependent!=undefined){
+				input.attr("uiDependent",item.uiDependent);
+			}
+
+			if(item.format!=undefined){
+				input.attr("format",item.format);
+			}
+
+			if(item.value!=undefined){
+				input.val(item.value);
+			}
+
+			var label=$($.sprintf("<p for='%s'>%s</p>",item.id,item.title));
+			row.find(".control-label").append(label);
+			row.find(".control-input").append(input);
+			$(this).append(row);
+		}
+	}	
+
+}(window.jQuery || window.$));
+
+
+jQuery.ModualDialog = function(name,json,callbackF){
+
+	if(json.type=="form"){
+
+		var inputs = json.inputs;
+		var container = $("<div>");
+		var row = $("<div class=row>");
+
+		container.append(row);
+		var form = $('<div class="form-horizontal" role="form">');
+		row.append(form);
+
+		for(var i=0;i<inputs.length;i++){
+			var item = inputs[i];
+			var input = $("<div>");
+
+			if(item.type==="text"){
+				input = $("<input class='form-control' type='text'>");
+				input.attr("id",item.id);
+				input.attr("name",item.name);
+				if(item.value!=undefined){
+					input.val(item.value);
+				}
+			}
+			else if(item.type==="textarea"){
+				input = $("<textarea class='form-control' type='textarea'>");
+				input.attr("id",item.id);
+				input.attr("name",item.name);
+				if(item.value!=undefined){
+					input.val(item.value);
+				}
+				if(item.rows!=undefined){
+					input.attr("rows",item.rows);
+				}
+			}
+			else if(item.type==="datepicker"){
+				input = $("<input class='form-control datepicker' type='datepicker'>");
+				input.attr("id",item.id);
+				input.attr("name",item.name);
+				if(item.value!=undefined){
+					input.val(item.value);
+				}
+			}else if(item.type==="select"){
+				input = $("<select type='select'>");
+				input.css({margin:"5px 0px"});
+				input.attr("id",item.id);
+				input.attr("name",item.name);
+				for(var x=0 ; x<item.options.length;x++){
+					input.append($.sprintf("<option>%s</option>",item.options[x]));
+				}
+			}else if(item.type==="selectable"){
+				input = $("<div class=''>");
+				var inputText = $("<input class='form-control' type='text'>");
+				inputText.attr("id",item.id);
+				inputText.attr("list","list_"+item.id);
+				inputText.attr("name",item.name);
+			  input.append(inputText);
+
+	      var datalist=$($.sprintf("<datalist id='list_%d'>",item.id));
+				
+				for(var x=0 ; x<item.options.length;x++){
+					datalist.append($.sprintf("<option value='%s'></option>",item.options[x]));
+				}   
+				input.append(datalist);
+			}
+
+			var fg = $($.sprintf('<div class="form-group">'));
+			var label=$($.sprintf('<p for="%d" class="col-sm-2 control-label">%s</p>',item.id,item.title));
+			fg.append(label);
+			fg.append($("<div class='col-sm-10'>").append(input));
+			form.append(fg);
+		}	
+		$(name).find(".modal-title").text(json.title);
+		$(name).find(".modal-body").html("");
+		$(name).find(".modal-body").append(container);	
+		$(name).find(".datepicker").datepicker();
+
+		var footer = $(name).find(".modal-footer");
+		footer.html("");
+		var closebutton = $('<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>');
+		footer.append(closebutton);
+		var submitbutton = $('<button type="button" class="btn btn-primary">Submit</button>');
+		footer.append(submitbutton);
+
+		submitbutton.click(function(){
+
+			var postJson={type:"form",formid:0,data:null};
+			var mydata = new Array();
+			$(".modal-body").find("[name]").each(function(){
+
+				var inputName = $(this).attr("name");
+				var inputValue= $(this).val();
+				mydata.push({name:inputName,value:inputValue});
+
+				//填回值
+				for(var i=0;i<json.inputs.length;i++){
+					if(inputName === json.inputs[i].name){
+						json.inputs[i].value=inputValue;
+						break;
+					}
+				}
+
+
+			});
+
+			if(callbackF!=null||callbackF!=undefined){
+				callbackF(json);
+			}
+
+			$(name).modal('hide');	
+		});
+
+		$(name).modal();		
+	}
+
+
+}

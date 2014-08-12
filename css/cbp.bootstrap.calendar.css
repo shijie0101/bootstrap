@@ -1,0 +1,37 @@
+/* cbp Menu Widget */
+.cbp-calendar-menu{  
+  /*position: absolute;*/
+  list-style: none;
+  width:100%;
+  min-height:100%;
+  padding:0px;
+}
+
+.cbp-calendar-menu .cbp-menu-item{
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 15px 10px;  
+  margin: 0px; 
+  font-size: 100%;
+  font-weight:bold;
+}
+
+.cbp-calendar-menu .cbp-menu-item:hover  {
+  background-color:rgba(255,255,255,0.2);
+  cursor:pointer
+}
+
+.cbp-calendar-menu .cbp-menu-subitem {
+  display: block;
+  padding: 10px 20px; 
+  font-size: 100%;
+  cursor:pointer;
+}
+
+.cbp-calendar-menu .cbp-menu-subitem:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.cbp-calendar-menu .cbp-menu-subitem:active {
+
+}

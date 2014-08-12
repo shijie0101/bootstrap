@@ -1,0 +1,1661 @@
+
+<!-- saved from url=(0050)http://localhost:8080/UReachEERP/Form_Customer_Add -->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>U-Reach CRM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+<script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+<!-- Common Library  -->
+<script src="js/common-api.js"></script>
+<script src="js/common-string-map.js"></script>
+<script src="js/common-library.js"></script>
+
+
+<!-- Bootstrap -->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+
+
+
+<script>
+
+// 固定frame資訊
+var mFrame={
+	name:"",
+	language:"en",
+ 	user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"}   
+  //language:"<s:property value="#request.locale"/>",
+  //user:<s:text name="formdata.user_info" />
+};
+
+var mStringMap=GetStringMap(mFrame.language);
+
+var mWebApi="Action/action.php";
+
+//Define Select Options 
+var mSelectJson = {
+	state:[
+		{
+			name:"",
+			value:"0"
+		},
+		{
+			name:"成交",
+			value:"1"
+		},
+		{
+			name:"未成交",
+			value:"2"
+		}
+	],
+	industry:[
+		{
+			name:"資訊業",
+			value:"1"
+		}
+		,
+		{
+			name:"製造業",
+			value:"2"
+		}
+		,
+		{
+			name:"營造業",
+			value:"3"
+		}
+		,
+		{
+			name:"批發業",
+			value:"3"
+		}
+	],
+	level:[
+		{
+			name:"低",
+			value:"1"
+		}
+		,
+		{
+			name:"中",
+			value:"2"
+		}
+		,
+		{
+			name:"高",
+			value:"3"
+		}
+	]
+	,
+	regions:[
+		{
+			value:"1",
+			name:"亞洲"
+		},
+		  {
+			value:"2",
+			name:"歐洲"
+		},
+		{
+			value:"3",
+			name:"美洲"
+		},
+		{
+			value:"4",
+			name:"澳洲"
+		},
+		{
+			value:"5",
+			name:"其它"
+		}
+	],
+	countries:[
+		{
+			region_id:"1",
+			name:"台灣/Taiwan",
+			country_code:"886",
+			value:"1",			
+			cities:[
+				{
+					name:"台北",
+					value:"1"
+				},
+				{
+					name:"新竹",
+					value:"2"
+				}
+			]
+		},
+		{
+			region_id:"1",
+			name:"中國",
+			country_code:"86",
+			value:"2",
+			cities:[
+				{
+					name:"北京",
+					value:"1001",
+				},
+				{
+					name:"上海",
+					value:"1002",					
+				},
+				{
+					name:"深圳",
+					value:"1003",					
+				},
+				{
+					name:"香港",
+					country_code:"852",
+					value:"1004"
+				},
+				{
+					name:"澳門",
+					country_code:"853",
+					value:"1005"
+				}
+			]
+		},
+		{
+		  region_id:"1",	
+			name:"日本",
+			country_code:"81",
+			value:"3"
+		},
+		{
+			region_id:"1",
+			name:"南韓",
+			country_code:"82",
+			value:"4"
+		},
+		{
+			region_id:"3",
+			name:"美國",
+			country_code:"1",
+			value:"5"
+		},
+		{
+		  region_id:"3",
+			name:"加拿大",
+			country_code:"1",
+			value:"6"
+		},
+		{
+			region_id:"2",
+			name:"英國",
+			country_code:"44",
+			value:"7"
+		},
+		{
+		  region_id:"4",
+			name:"紐西蘭",
+			country_code:"100",
+			value:"12"
+		},
+		{
+		  region_id:"2",
+			name:"德國",
+			country_code:"101",
+			value:"13"
+		}
+	],
+	sellarea:[
+		{
+			name:"台灣區",
+			value:"1",
+			regions:[
+				{
+					name:"台灣總公司",
+					value:"1"
+				}
+			]
+		}
+		,
+		{
+			name:"中國區",
+			value:"2",
+			regions:[
+				{
+					name:"北京",
+					value:"2"
+				}
+				,
+				{
+					name:"上海",
+					value:"3"
+				}
+				,
+				{
+					name:"深圳",
+					value:"4"
+				}
+				,
+				{
+					name:"香港",
+					value:"5"
+				}
+			]
+		}
+		,		
+		{
+			name:"美洲區",
+			value:"3",
+			regions:[
+				{
+					name:"美國",
+					value:"6"
+				}
+			]
+		}
+		,
+		{
+			name:"亞太區",
+			value:"4",
+			regions:[
+				{	
+					name:"新加坡",
+					value:"7"
+				},
+				{
+					name:"日本",
+					value:"8"
+				},
+				{
+					name:"韓國",
+					value:"9"
+				}
+			]
+		}
+		,
+		{
+			name:"WW區",
+			value:"5",
+			regions:[
+				{	
+					name:"俄羅斯",
+					value:"10"
+				},
+				{
+					name:"歐洲",
+					value:"11"
+				},
+				{
+					name:"澳洲",
+					value:"12"
+				}
+				,
+				{
+					name:"非洲",
+					value:"13"
+				}
+			]
+		}
+	],
+	products:[
+		{
+			name:"Flash",
+			value:"1"
+		},
+		{
+			name:"HDD",
+			value:"2"
+		},
+		{
+			name:"DVD",
+			value:"3"
+		},
+		{
+			name:"Others",
+			value:"4"
+		}
+	],
+	// 地址類型
+	address_categories:[{
+			name:"公司地址",
+			value:"1"
+		},{
+			name:"送貨地址",
+			value:"2"	
+		},{
+			name:"發票地址",
+			value:"3"		
+		},{
+			name:"分公司地址",
+			value:"4"
+		}
+	],
+
+	// 電話類型，可業務由定義再新增連類型
+	phone_categories:[{
+			name:"",
+			value:"0",
+		},{
+			name:"公司地點",
+			value:"1"
+		},{
+			name:"送貨地點",
+			value:"2"	
+		},{
+			name:"發票地點",
+			value:"3"		
+		}
+	]
+}	
+
+// 通路選項
+var mUiJson={
+	channel:[
+		{
+			type:"checkbox",
+			title:"工廠",
+			name:"channel",
+			value:"1",
+
+		},{
+			type:"checkbox",
+			title:"店面",
+			name:"channel",
+			value:"2"
+		},{
+			type:"checkbox",
+			title:"貿易商",
+			name:"channel",
+			value:"3"
+		},{
+			type:"checkbox",
+			title:"機構(政府)",
+			name:"channel",
+			value:"4"
+		},{
+			type:"checkbox",
+			title:"一般企業",
+			name:"channel",
+			value:"5"
+		},{
+			type:"checkbox",
+			title:"國外買家",
+			name:"channel",
+			value:"6"
+		},{
+			type:"checkbox",
+			title:"國外買家中國代表",
+			name:"channel",
+			value:"7"
+		},{
+			type:"checkbox",
+			title:"其它",
+			name:"channel",
+			value:"8",
+			input:{
+				type:"text",
+				name:"channel_others"
+			}
+		}
+	],
+	contact_method:[
+		{
+			type:"radio",
+			title:"客戶介紹",
+			name:"contact_method",
+			value:"1"
+		},{
+			type:"radio",
+			title:"網路",
+			name:"contact_method",
+			value:"2"
+		},{
+			type:"radio",
+			title:"主動來電",
+			name:"contact_method",
+			value:"3"
+		},{
+			type:"radio",
+			title:"業務開發",
+			name:"contact_method",
+			value:"4"
+		},{
+			type:"radio",
+			title:"中間人",
+			name:"contact_method",
+			value:"5"
+		},{
+			type:"radio",
+			title:"參展",
+			name:"contact_method",
+			value:"6",
+			input:{
+				name:"contact_method_exhabition"
+			}
+		},{
+			type:"radio",
+			title:"其它",
+			name:"contact_method",
+			value:"7",
+			input:{
+				type:"text",
+				name:"contact_method_others"
+			}
+		}
+	],
+	transaction:[
+		{
+			type:"checkbox",
+			title:"PayInCash",
+			name:"transaction",
+			value:"1",
+
+		},{
+			type:"checkbox",
+			title:"PayOnDelivery",
+			name:"transaction",
+			value:"2"
+		},{
+			type:"checkbox",
+			title:"Open Account",
+			name:"transaction",
+			value:"3",
+			input:{
+				type:"number",
+				maxlength:"3",
+				cssClass:"input-number",
+				name:"transaction_open_account_days",
+				title:"days"
+			}
+		},{
+			type:"checkbox",
+			title:"After Account",
+			name:"transaction",
+			value:"4",
+			input:{
+				type:"number",
+				maxlength:"3",
+				cssClass:"input-number",
+				name:"transaction_after_out_days",
+				title:"days"
+			}
+		}
+	]
+}
+
+var mHeaderJson={
+	// 聯絡人
+	contactInfo:{
+	  id: "0",
+	  title: "",
+	  description: "",
+	  type:"form",
+	  api: "",
+	  inputs: [
+	    {
+	      sortable:"true",
+	      id: "1",
+	      name: "name",
+	      type: "text",
+	      title: "名稱",
+	      placeholder: ""
+	    },
+	    {
+	      id: "2",
+	      name: "position",
+	      type: "text",
+	      title: "部門/職稱",
+	      placeholder: "部門/職稱"
+	    },
+	    {
+	      id: "3",
+	      name: "phone",
+	      type: "text",
+	      title: "電話",
+	      placeholder: ""
+	    },
+	    {
+	      id: "4",
+	      name: "ext",
+	      type: "text",
+	      title: "分機",
+	      placeholder: ""
+	    },
+	    {
+	      id: "5",
+	      name: "cellphone",
+	      type: "text",
+	      title: "手機",
+	      placeholder: ""
+	    },
+	    {
+	      id: "6",
+	      name: "email",
+	      type: "text",
+	      title: "E-Mail",
+	      placeholder: "e-mail"
+	    },
+	    {
+	      id: "7",
+	      name: "skype",
+	      type: "text",
+	      title: "Skype",
+	      placeholder: "Skype"
+	    },
+	    {
+	      id: "8",
+	      name: "qq",
+	      type: "text",
+	      title: "QQ",
+	      placeholder: "QQ"
+	    },
+	    {
+	      id: "9",
+	      name: "note",
+	      type: "list", //textarea -> list
+	      title: "備註",
+	      placeholder: ""
+	    }
+	  ]
+	}
+}
+
+//title 需要由平台貼寫
+
+var mInitJson={
+	//-post時必要資訊和ui資訊-
+	initial:{
+		company_id:"1",
+		country_id:"2" //反應在地點select的初始值
+	},//-銷售資訊	-
+	basicInfo:{
+		//-基本資訊-
+		title:mStringMap.BasicInfo,
+		type:"form-group",
+		inputs:
+		{
+			cname:"JSon Studio",
+			ename:"JSon Studio",
+			//*簡稱
+			short_name:"JS",
+			//*ERP ID
+			erp_id:"123",
+			website:"www.yahoo.com",
+			address:{size:"2",items:[{country_id:"1",address:"新竹市浸水南街84巷78號",category:"1"},
+																{country_id:"1",address:"新竹市東區",category:"1"}]},
+			phone:{size:"1",items:[{country_id:"1",number:"02-55555555",category:"1"}]},
+			fax:{size:"1",items:[{country_id:"1",number:"02-55555555",category:"1"}]},
+			level:"2"
+		}
+	},
+	sellInfo:{
+		title:mStringMap.SellInfo,
+		type:"form-group",
+		inputs:
+		{
+			contact_method_exhabition:"2014台北資訊展",
+			contact_method_others:"SHIJIE",
+			contact_method:"1",	
+			state:"2",
+			channel:{size:"3",items:[{value:"1"},{value:"2"},{value:"3"}]},
+			channel_others:"Shijie",
+			sell_area:{region:"1",country:"2",city:"1005"},
+			sell_region:"3",
+			industry:"4",		
+
+			transaction:{size:"3",items:[{value:"1"},{value:"2"},{value:"3"}]},
+			transaction_open_account_days:"3", 
+			transaction_after_out_days:"4",
+			vatnumber:"89809879",
+			soldproduct:{size:"2",items:[{product_type:"Flash",product_type_id:"1",product_name:"123456EDV"},{product_type:"HDD",product_type_id:"2",product_name:"43411FFG"}]}
+		}
+	},//-備註-
+	noteInfo:{
+		title:mStringMap.NoteInfo,
+		type:"form-group",		
+		readonly:true,
+		inputs:
+		{
+			note:{size:"2",items:[{value:"WWWW jAKJLF"},{value:"ASDKLJDLASKL KKLASDLK"}]}
+		}
+	},//-特別備註-
+	commissionInfo:{
+		title:mStringMap.CommissionInfo,
+		type:"form-group",
+		inputs:
+		{
+			commission_contact_name:"Shijie",
+			commission_contact_phone:"0933261519",
+			commission:{size:"1",items:[{product_type:"Flash",product_type_id:"1",product_name:"A",percent:"1"}]}
+		}
+	},//-設定具擁有者權限-
+	memberInfo:{
+		title:mStringMap.MemberInfo,
+		type:"form-group",
+		inputs:
+		{
+			member:{size:"2",items:[{id:"1",name:"HTC"},{id:"2",name:"APPLE"}]}
+		}
+	},
+	contactInfo:{
+		title:mStringMap.ContactInfo,
+		type:"form-table",
+		table:{
+			size:"2",
+			items:[
+				{
+					id:"1",
+					inputs:{position:"",ext:"1",name:"Shijie Wu",email:"ggj0101@hotmail.com",phone:"",cellphone:"",qq:"",skype:"",
+						note:{size:"2",items:[{value:"WWWW jAKJLF"},{value:"ASDKLJDLASKL KKLASDLK"}]}}
+				},
+				{
+					id:"2",
+					inputs:{position:"",ext:"1",name:"Tony",email:"Tony@hotmail.com",phone:"",cellphone:"",qq:"",skype:"",
+						note:{size:"2",items:[{value:"WWWW jAKJLF"},{value:"ASDKLJDLASKL KKLASDLK"}]}}
+				}
+			]
+		}
+	}
+}
+
+// 取得字串表
+function GetStringMap(language){
+
+	var stringTable = {
+	  en:{
+	  	Establish:"Create",
+	  	CompanyName:"Company Name",
+	  	Region:"Region",
+	  	NewCustomer:"New",
+	    BasicInfo:"Basic Info",
+	    CompanyInfo:"Company Info",
+	   	SellInfo:"Sell Info",
+	   	NoteInfo:"Notes",
+	   	CommissionInfo:"Commission Info",
+	   	MemberInfo:"Member Info",
+	   	ContactInfo:"Contact Info",
+	  },
+	  tw:{
+			Establish:"建立客戶",
+			CompanyName:"公司名稱",
+			Region:"區域",
+			NewCustomer:"新增客戶",
+			BasicInfo:"基本資訊",
+			CompanyInfo:"公司資訊",
+			SellInfo:"銷售資訊",
+			NoteInfo:"備註",
+			CommissionInfo:"特別備註",
+			MemberInfo:"成員資訊",
+			ContactInfo:"聯絡人資訊",
+	  },
+	  cn:{
+			Establish:"建立客户",
+			CompanyName:"公司名称",
+			Region:"区域",
+			NewCustomer:"新增客户",
+			BasicInfo:"基本资讯",
+			CompanyInfo:"公司资讯",
+			SellInfo:"销售资讯",
+			NoteInfo:"备注",
+			CommissionInfo:"特别备注",
+			MemberInfo:"成员资讯",
+			ContactInfo:"联络人资讯",
+	  }
+	}
+
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+// 建立frame menu
+function ProcedureFrameMenu(opts){
+
+  var param={act:"GetParent",parent:[]};
+
+  onCallParent(param);
+
+  $("#ReturnBn").addClass("hidden"); 
+  $("#FrameMenu").addClass("hidden"); 
+
+  if(param.parent.length>1 && param.parent[0].name!=="root"){
+    if(opts.Pinfocus){
+      $("#FrameMenu").removeClass("hidden"); 
+      $("#FrameMenu #BackBn").click(function(){
+        onToggleReturnBn();
+      });
+
+      $("#FrameMenu #PinBn").click(function(){
+        var frame = {title:"Pinfocus",name:mFrame.name,url:location.href};
+        onCallParent({act:"Pinfocus",frame:frame});
+      });
+    }else{
+      $("#ReturnBn").removeClass("hidden"); 
+      $("#ReturnBn").click(function(){
+        onToggleReturnBn();
+      });
+    }
+  }
+}
+
+//進入點
+function ProcedureEntry(){
+
+  if(mInitJson){
+    var rcJson = $.JSInitJsonParse(mInitJson);
+    ProcedureBasicInfo(rcJson);
+    ProcedureViewControl(rcJson);
+    ProcedureFrameMenu({Pinfocus:true});
+    return;
+  }
+
+  ProcedureFrameMenu({Pinfocus:false});
+
+	$("#EntryView #inputCompanyRegion").html("");
+	for(var i = 0 ;i < mSelectJson.regions.length ;i++){
+		var area = mSelectJson.regions[i];
+		var option = $("<option>");
+		option.attr("value",area.value);
+		option.html(area.name);
+		//locationCache[area.value]=area;	
+		$("#EntryView #inputCompanyRegion").append(option);
+	}
+
+	var AutoCompleteJson={
+		id:"InputCompany",
+		name:"InputCompany",
+		placeholder:"",//stringMap.InputCompanyCN,
+    novalidate:"",
+		StateCallback:function(rc){
+			if(rc.state==="NONE"){
+				$("#SelectCompanyToolbar #NextBn").addClass("disabled");
+			}else if(rc.state==="OK"){
+				$("#SelectCompanyToolbar #NextBn").removeClass("disabled");
+			}else if(rc.state==="ERROR"){
+				$("#SelectCompanyToolbar #NextBn").removeClass("disabled");
+			}else if(rc.state==="LOADING"){
+				$("#SelectCompanyToolbar #NextBn").addClass("disabled");
+			}else if(rc.state==="ENTER"){
+				$("#SelectCompanyToolbar #NextBn").removeClass("disabled").click();
+			}
+		},
+		autocomplete:{
+			minLength:0,
+			api:"json/meeting/company_list_sample.txt",//AutoComplete
+			method:"Post",
+			postData:{
+				name:"Customer",
+				term:"",
+				region:$("#inputCompanyCountry").val(),
+				city:$("#inputCompanyCity").val()
+			}
+		}				
+	}
+
+	ToolbarJson={
+		buttons:[
+			{
+				id:"NextBn",
+				title:mStringMap.Establish,
+				iconCssClass:"glyphicon glyphicon-ok-sign",
+				cssClass:"btn-primary pull-right",
+				group:"",
+				pullRight:"",
+				click:function(){
+					var input = $("#SelectCompany #InputCompany");
+					var companyName = input.val();
+					var companyId   = input.attr("select_id");
+					var region = $("#EntryView #inputCompanyCountry").val();
+					var city = $("#EntryView #inputCompanyCity").val();
+
+					var postData={
+						type:"New",
+						name:"Company",
+						input_name:companyName,
+						input_region:region
+					};
+
+					if(city!=null&&city!=="0"){
+						postData["city"]=city;
+					}
+
+					PostDataWithBlocking(postData,function(act,rcJson){
+			      if(act==="success"){
+			        rcJson=mInitJson;
+			        $("#EntryView").hide("blind",{},400,null);
+			        ProcedureBasicInfo(rcJson);
+			        ProcedureViewControl(rcJson); 
+			      }else if(act==="fail"||act==="error"){
+			      	ShowMessage(rcJson.message);
+			      }
+			      else if(act==="end"){
+
+			      }
+			    });
+				}
+			}
+		]
+	}
+
+	$("#EntryView #inputCompanyCountry").closest(".form-group").find(".control-label").html(mStringMap.Region);
+
+	$("#EntryView #SelectCompany").closest(".form-group").find(".control-label").html(mStringMap.CompanyName);
+
+	$("#EntryView #SelectCompanyToolbar").JSToolbar(ToolbarJson);
+	
+	$("#EntryView #inputCompanyCity").change(function(){
+		AutoCompleteJson.autocomplete.postData["city"]=$(this).val();
+		$("#SelectCompany").AutoCompleteInput(AutoCompleteJson);
+	});
+
+	var CountryCache=[];
+	$("#EntryView  #inputCompanyRegion").change(function() {
+		var optionSelected = $(this).find("option:selected");
+		var valueSelected  = optionSelected.val();
+		var textSelected   = optionSelected.text();
+
+		$("#EntryView #inputCompanyCountry").html("");
+
+		for(var i=0;i<mSelectJson.countries.length;i++){
+			var country = mSelectJson.countries[i];
+
+			if(country.cities!==undefined){
+				CountryCache[country.value]=country;
+			}
+
+			if(country.region_id===valueSelected){
+				var option = $("<option>");
+				option.attr("value",country.value);
+				option.html(country.name);
+				$("#EntryView #inputCompanyCountry").append(option)
+			}
+		}
+
+		$("#EntryView #inputCompanyCountry").change(function(){
+			var optionSelected = $(this).find("option:selected");
+			var valueSelected  = optionSelected.val();
+			var textSelected   = optionSelected.text();
+
+			var country = CountryCache[valueSelected];
+			var cityValue="0";
+			if(country!==undefined&&country.cities){
+				$("#inputCompanyCity").html("");
+				for(var i=0;i<country.cities.length;i++){
+					var city = country.cities[i];
+					var option = $("<option>");
+					option.attr("value",city.value);
+					option.html(city.name);
+					$("#EntryView #inputCompanyCity").append(option);
+				}
+				$("#EntryView #inputCompanyCity").show();
+				cityValue = $("#EntryView #inputCompanyCity").val();
+		 	}else{
+		 		$("#EntryView #inputCompanyCity").html("");
+		 		$("#EntryView #inputCompanyCity").val(0);
+		 		$("#EntryView #inputCompanyCity").hide();	
+		 	}
+
+			AutoCompleteJson.autocomplete.postData.region=valueSelected;
+			if(cityValue==="0")
+				AutoCompleteJson.autocomplete.postData.city=undefined;
+			else
+				AutoCompleteJson.autocomplete.postData["city"]=cityValue;
+
+			$("#SelectCompany").AutoCompleteInput(AutoCompleteJson);
+
+		}).change();
+
+	}).change();
+
+	
+	function ShowMessage(text){
+		var div = $("<div>");
+		div.addClass("alert alert-list alert-note alert-dismissable");
+
+		var closeBn = $('<button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>');
+		div.append(closeBn);	
+		
+		var strong = $("<strong>");
+		strong.html(text);
+		div.append(strong);
+		$("#EntryView #SelectCompanyMessage").html(div);
+	}
+
+	// 關閉UI
+	$("#EntryView").show("blind",{},400,null);
+}
+
+function ProcedureBasicInfo(paramJson){
+
+	// 定義動態 ui 介面其名稱與post參數名相同
+	// 其ui介面由bootstrap-custom-form-factory中定義
+	var options={
+		language:mFrame.language,
+		initial:paramJson.initial,
+		webApi:mWebApi,
+		select:{
+			address:{
+				countries:mSelectJson.countries,
+				categories:mSelectJson.address_categories
+			},
+			phone:{
+				countries:mSelectJson.countries,
+				categories:mSelectJson.phone_categories
+			},
+			fax:{
+				countries:mSelectJson.countries,
+				categories:mSelectJson.phone_categories
+			},
+			regions:mSelectJson.regions,
+			countries:mSelectJson.countries,
+			state:mSelectJson.state,
+			sell_area:mSelectJson.sellarea,
+			level:mSelectJson.level,
+			industry:mSelectJson.industry,
+			soldproduct:mSelectJson.products,
+			commission:mSelectJson.products
+		},
+		autocomplete:{
+			member:{
+				minLength:0,
+				api:"json/meeting/employee_list_sample.txt",//AutoComplete
+				method:"Post",
+				postData:{
+					name:"member",
+					term:""
+				}	
+			}
+		},
+		ui:mUiJson,
+		header:mHeaderJson,
+		api:{
+			basicInfo:{
+				name:"Company"
+			},
+			memberInfo:{
+				name:"Company"
+			},
+			commissionInfo:{
+				name:"Company"
+			},
+			noteInfo:{
+				name:"Company"
+			},
+			sellInfo:{
+				name:"Company"
+			},
+			contactInfo:{
+				id:paramJson.initial.company_id,
+				name:"Company/Contact/Item"
+			}
+		},
+    onEvent:function(act,data){
+      // form data change
+      if(act==="dataChange"){
+        var formH    = data.ui.closest(".form-horizontal");
+        var formName = formH.attr("name");
+        var fieldset = formH.find("fieldset[gname="+formName+"]");
+        var formData = fieldset.data("formData");
+        var formType = formData.type;
+        var formInputs=formData.inputs;
+        
+        if(formType==="form-group-submit"||formType==="form-group-list"||fieldset.prop("disabled")){
+          return;
+        }
+
+        var initData = fieldset.data("initial");
+        var webApi   = fieldset.data("webApi");
+        var formApi  = fieldset.data("api");
+        
+        var postData={type:"Update"};
+        
+        for(var iname in initData){
+          postData[iname]=initData[iname];
+        }
+        
+        for(var iname in formApi){
+          postData[iname]=formApi[iname];
+        }    
+
+        for(var iname in data.data){
+          postData[iname]=data.data[iname];
+        }
+
+        PostFormData(formName,postData,function(state,rcJson){
+          if(state==="success"){
+            //標記已變動內容
+            mFrame["modified"]=true;
+          }
+        });   
+
+      }else if(act==="selectChange"){
+
+      }else if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        console.log(act+":"+name);
+        if(name==="EditBn"){
+          var formH = data.ui.closest(".form-horizontal");
+          ChangeViewMode(formH,"EditMode");
+        }else if(name==="SaveBn"){
+          var formH    = data.ui.closest(".form-horizontal");
+          var formName = formH.attr("name");
+          var fieldset = formH.find("fieldset[gname="+formName+"]");
+          var formData = fieldset.data("formData");
+      
+          var formType = formData.type;
+          var formInputs=formData.inputs;
+      
+          var initData = fieldset.data("initial");
+          var formApi  = fieldset.data("api");
+
+          console.log(initData);
+          console.log(formApi);
+          
+          var postData={type:"Update"};
+          
+          for(var iname in initData){
+            postData[iname]=initData[iname];
+          }
+          
+          for(var iname in formApi){
+            postData[iname]=formApi[iname];
+          }    
+
+          for(var iname in formInputs){
+            postData[iname]=formInputs[iname];
+          }
+
+          PostDataWithBlocking(postData,function(state,rcJson){
+            if(state==="success"){
+              //標記已變動內容
+              Notification({title:mStringMap.Message,description:mStringMap.UpdateSuccess});
+              mFrame["modified"]=true;
+              ChangeViewMode(formH,"ViewMode");
+            }
+          }); 
+        }
+      }else if(act==="state"){
+        UpdateViewControlState(data.name,data.state);
+      }else if(act==="notification"){
+        Notification(data);
+      }else if(act==="link"){
+        if(data.ui.closest("fieldset").prop("disabled")){
+          Link(data.link);
+        }  
+      }
+      
+    },
+    onTableEvent:function(act,data){
+      // form data change
+      if(act==="rowChange"){
+        var row = data.ui;
+        var formT = row.closest(".form-table");
+        var formName = formT.attr("name");
+        var fieldset = formT.find("fieldset");
+        var tableName = fieldset.attr("gname");
+
+        var initData = fieldset.data("initial");
+        var formApi  = fieldset.data("api");
+
+        console.log(initData);
+        console.log(formApi);
+
+        var tid=row.attr("tid");
+
+        var postData={};
+
+        postData["type"]="Update";
+        
+        for(var iname in initData){
+          postData[iname]=initData[iname];
+        }
+        
+        for(var iname in formApi){
+          postData[iname]=formApi[iname];
+        }    
+        
+        postData["items"]=[];
+          
+        var items = formT.ModuleTable_GetDataById(tid);
+
+        postData.items = items;
+
+        PostFormData(formName,postData,function(state,rcJson){
+          if(state==="success"){
+            //標記已變動內容
+            mFrame["modified"]=true;
+          }
+        }); 
+      }else if(act==="buttonClick"){
+        var name = data.ui.attr("name");
+        console.log(act+":"+name);
+        if(name==="EditBn"){
+          var formH = data.ui.closest(".form-table");
+          ChangeViewMode(formH,"EditMode");
+        }else if(name==="SaveBn"){
+          var formH = data.ui.closest(".form-table");
+          ChangeViewMode(formH,"ViewMode");
+        }
+      }else if(act==="state"){
+        UpdateViewControlState(data.name,data.state);
+      }else if(act==="notification"){
+        Notification(data);
+      }else if(act==="link"){
+        if(data.ui.closest("fieldset").prop("disabled")){
+          Link(data.link);
+        }  
+      }
+    }
+  };
+
+	function ChangeViewMode(ui,mode){
+    if(mode==="EditMode"){
+      //console.log(ui);     
+      ui.find(".toolbar [group=ViewMode]").addClass("disabled");  
+      ui.find(".toolbar [group=EditMode]").removeClass('disabled');
+			ui.find("fieldset").removeAttr("disabled"); 
+      ui.find("fieldset [group=EditMode]").show();
+      ui.find("fieldset [group=ViewMode]").hide();
+      ui.find("fieldset .sortable").sortable('enable').find(".draggable").show();
+      ui.find("tbody tr [type=checkbox]").prop("checked",false);
+    }else{
+      ui.find(".toolbar [group=EditMode]").addClass("disabled");  
+      ui.find(".toolbar [group=ViewMode]").removeClass('disabled');
+			ui.find("fieldset").attr("disabled",true);  
+      ui.find("fieldset [group=EditMode]").hide();
+      ui.find("fieldset [group=ViewMode]").show();
+      ui.find("fieldset .sortable").sortable('disable').find(".draggable").hide();
+      ui.find("tbody tr [type=checkbox]").prop("checked",false);
+      ui.ModuleTable_RefreshOrder();
+    }
+    UpdateViewControlState(ui.attr("name"),"none");
+  }
+
+	// table 新增時傳入的預設值，目前使用電話
+	var tableDefaultValue={
+		phone:function(){
+			//編輯時設定電話。
+			var country = $(".form-group[gname=phone] .form-message > .alert strong > span:first-child").html();
+			var number = $(".form-group[gname=phone] .form-message > .alert strong > span:last-child").html();
+				
+			if(country||number){
+				return country+" "+number;
+			}
+			return "";
+		}
+	};
+
+  for(name in paramJson){
+    var formData = paramJson[name];
+    
+    if(name==="initial"||name==="type"||name==="result"||name==="message"||formData.disabled){
+      continue;
+    }
+
+    var formType= formData.type;
+
+    if( formType==="form-group"){
+      var formH = $('<div class="form-horizontal">');
+      $("#FormContainer").append(formH);
+      formH.attr("name",name);
+
+      var formHeader =$('<div class="page-header"></div>');
+      formH.append(formHeader);
+
+
+      var toolbarOps = {
+        title:formData.title,
+        language:mFrame.language,
+        formName:name,
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onEvent
+      }
+
+      var formToolbar = $.JSToolbarFactory("basic-edit-toolbar",toolbarOps);  
+
+      if(formData.readonly){
+        formToolbar.find("button").remove();
+      }
+
+      formHeader.append(formToolbar);
+
+      var fieldset = $("<fieldset>");
+      fieldset.attr("gname",name);
+      formH.append(fieldset);
+      
+      $.JSFormFactory(fieldset,formData,options);
+
+      ChangeViewMode(formH,"ViewMode");
+
+    }else if(formType==="form-table"){
+      
+      var formT = $('<div class="form-table">');
+      $("#TableContainer").append(formT);
+      formT.attr("name",name); 
+
+      var formHeader =$('<div class="page-header"></div>');
+
+      var toolbarOps = {
+        title:formData.title,
+        language:mFrame.language,
+        formName:name,
+        formOptions:options,
+        formData:formData,
+        onEvent:options.onTableEvent,
+        defaultValue:tableDefaultValue
+      }
+
+      var formToolbar = $.JSToolbarFactory("table-edit-toolbar",toolbarOps);  
+
+      formHeader.append(formToolbar);
+
+      if(formData.readonly){
+        formToolbar.find("[group=EditMode]").remove();
+        formToolbar.find("[group=ViewMode]").remove();
+      }
+
+      //FireFox 修正-->begin 
+      var panel =$('<div class="table-select-panel"></div>');
+      formHeader.append(panel);
+      formT.append(formHeader);
+
+      //解決scroll問題
+      var cdiv=$('<div style="overflow-x:auto">');
+      cdiv.bind('DOMMouseScroll mousewheel', function (e) {
+        if(e.ctrlKey||e.shiftKey||e.altKey){
+          if(e.originalEvent.wheelDeltaX===e.originalEvent.wheelDelta){
+            return true;
+          }
+          else{
+            $(this).scrollLeft($(this).scrollLeft()-e.originalEvent.wheelDelta);
+            return false;
+          }
+        }
+        return true;
+      });
+
+      var fieldset = $("<fieldset>");
+      cdiv.append(fieldset);
+      formT.append(cdiv);
+      fieldset.attr("gname",name);
+      fieldset.data("initial",options.initial);
+      fieldset.data("api",options.api[name]);
+
+      fieldset.ModuleTable(options.header[name],{});
+   
+      // 設定初始值  
+      var items = formData.table.items;
+      for(var i=0;i<items.length;i++){
+        var item=items[i];
+        if(formData.readonly){
+          fieldset.ModuleTable_New(item,{});  
+        }else{
+          fieldset.ModuleTable_New(item,toolbarOps); 
+        }
+      }
+     
+      ChangeViewMode(formT,"ViewMode");
+    }
+  }
+
+ 	$("#BasicInfoView").show("blind",{},400,null);
+}
+
+
+//更新page控制狀態
+function UpdateViewControlState(formName,state){
+	if(state==="loading"){
+		$("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-refresh effect-rotate">');
+	}else if(state==="ok"){
+		$("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-check">');
+	}else if(state==="error"){
+		$("#ViewControl .navigation").find("[data-target="+formName+"] .state").html('<span class="fa fa-times">');
+	}else{
+		$("#ViewControl .navigation").find("[data-target="+formName+"] .state").html("");
+	}
+}
+
+function ProcedureViewControl(paramJson){
+  $("#ViewControl").show("blind",{},400,null);
+  $("#ViewControl .navigation ul").html("");
+  for(name in paramJson){
+  	if(name==="initial"||name==="result"||name==="type"||name==="message"){
+  		continue;
+  	}
+  	var uiName= name;
+  	var title = paramJson[name].title;
+  	var li=$('<li><a href="#"><span class="title"></span>&nbsp;<span class="state"></span></a></li>');
+  	li.find(".title").html(title);
+  	li.find("a").attr("data-target",uiName).click(function(){
+      if($(this).closest("li").hasClass("selected")===true)
+        return;
+      $("#ViewControl").find("li").removeClass("selected");
+  
+       var targetName = $(this).attr("data-target");
+       var target = $("[name="+targetName+"]");
+       if(target.length){
+         var t = target.scrollTop();
+         var tb = target.offset().top;
+       
+         $("#PrimaryView .inner-vertical").animate({
+          scrollTop: $("#PrimaryView .inner-vertical").scrollTop()+tb
+        },400); 
+     	}
+    })
+    $("#ViewControl .navigation ul").append(li);
+  };
+
+ 	$("#PrimaryView .inner-vertical").scroll(function(){
+		var h = $(this).outerHeight();
+	  for(name in paramJson){
+	  	if(name==="initial"||name==="result"||name==="type"||name==="message"){
+	  		continue;
+	  	}
+	  	var target = $("#PrimaryView [name="+name+"]");
+
+	  	var t = target.offset().top;
+	  	var b = (target.offset().top+target.outerHeight() ) ;
+
+	  	if( b<0 || t > h){
+	  		target.css("visibility","hidden");
+	  	}else{
+	  		target.css("visibility","visiblity");
+	  	}
+	  }
+	});
+}
+
+//重要! Callback
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+  if(data.act==="Return"){
+    $("#PrimaryView").removeClass("cbp-close");
+    $("#SecondaryView").addClass("cbp-close");   
+  }else if(data.act==="FrameLoaded"){
+    //設定link後等IFrame載入成功回復
+    $("#SecondaryView").attr("frame-name",data.frame.name);
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    $.JSUiShowLoadingView(false);
+  }else if(data.act==="FrameError"){
+    $.JSUiShowLoadingView(false);
+    onCallParent(data);
+  }else if(data.act==="GetParent"){
+    data.parent.push(mFrame);
+    onCallParent(data);
+  }else{
+    onCallParent(data); 
+  }
+};
+window.Callback.FromParent = function (data) {
+  //console.log(data);
+};
+
+function onCallParent(data){
+  if(window!==window.parent&&window.parent.Callback){
+    window.parent.Callback.FromChild(data);
+  }
+}
+
+function onCallChild(date){
+  var f = document.getElementById('ContainIFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+//END Callback
+
+// Post 
+// state:"success","fail","error","end","begin"
+function PostFormData(formName,postData,callback){
+  $.JSApiPost.direct(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        UpdateViewControlState(formName,"loading");
+        break;
+      }
+      case "success":{
+        UpdateViewControlState(formName,"ok"); 
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        UpdateViewControlState(formName,"error");
+        onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+// Post 使用loading view
+function PostDataWithBlocking(postData,callback){
+
+  $.JSApiPost.block(mWebApi,postData,function(act,rcJson){
+    switch(act){
+      case "begin":{
+        break;
+      }
+      case "success":{
+        break;                  
+      }
+      case "fail":
+      case "error":{
+        onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:rcJson});
+        break; 
+      }
+      case "end":
+      default:{
+        break;
+      }
+    }
+    callback(act,rcJson);
+  });
+}
+
+// 通知事件定
+function Notification(postData){
+  onCallParent({act:"Notification",data:postData});
+}
+
+function onToggleReturnBn(){
+  onCallParent({act:"Return",frame:mFrame});
+}
+// Iframe Link
+function Link(src,options){
+  var opt = (options)?options:{direct:false};
+
+  if($('#SecondaryView #ContainIFrame').length===0){
+   $('#SecondaryView').append('<iframe id="ContainIFrame" frameborder="0" class="frame">'); 
+  }
+  
+  if(opt.direct){
+    $("#PrimaryView").addClass("cbp-close");
+    $("#SecondaryView").removeClass("cbp-close");
+    $('#SecondaryView #ContainIFrame').attr("src",src); 
+  }else if(opt.newPage){
+    onCallParent({act:"Link",data:{src:src,newPage:true}});
+  }else{
+    $.JSUiShowLoadingView(true); 
+    $('#SecondaryView #ContainIFrame').attr("src",src); 
+  }
+}
+
+function initial() {
+
+	$("#EntryView").hide();
+	$("#BasicInfoView").hide();
+	$("#ViewControl").hide();
+	
+	$("#EntryView").find(".page-title").html(mStringMap.NewCustomer);
+	$("#BasicInfoView").find(".page-title").html(mStringMap.CompanyInfo);
+
+	ProcedureEntry();
+  
+  onCallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+$(window).load(function() {
+	try{
+		initial();
+	}catch(e){
+    console.log("****FrameError****");
+    console.log(e);
+    onCallParent({act:"FrameError",frame:mFrame,data:e});
+	}
+});
+
+</script>
+
+</head>
+<body>
+<div class="cbp-box background">
+	<div id="PrimaryView" class="cbp cbp-box disable-effect">
+		<div class="inner-vertical">
+			<div class="container" style="padding-bottom:100px">
+				<!--程式-->
+				<div id="EntryView" class="row">
+					<h2 class="page-title">@NewCompany@</h2>
+					<div class="col-md-10 col-md-offset-1">
+						<div class="row">	
+							<div class="alert alert-warning alert-dismissable">
+					  		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+					  		<strong>Hint:</strong>....
+							</div>				
+							<div class="form-horizontal">	
+								<div class="form-group">
+									<div class="col-sm-2 control-label">@Region@:</div>
+									<div class="col-sm-10">
+										<div class="row">
+											<div class="col-xs-3">
+												<select id="inputCompanyRegion" class="form-control">
+											</select>
+											</div>
+											<div class="col-xs-3">
+												<select id="inputCompanyCountry" class="form-control">
+												</select>
+											</div>
+											<div class="col-xs-3">
+												<select id="inputCompanyCity" class="form-control">
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>	
+								<div class="form-group">
+							    <div class="col-sm-2 control-label">@Company Name@:</div>
+							    <div class="col-sm-10">		    	
+						    		<div class="row">
+								    	<div id="SelectCompany" class="col-xs-6">
+								      </div>
+								      <div id="SelectCompanyToolbar" class="col-xs-6">
+								      </div>
+								      <div id="SelectCompanyMessage" class="col-xs-6">
+								      </div>
+							      </div>       
+							    </div>
+							  </div>
+				      </div>
+				    </div>
+					</div>
+				</div>  
+				<!--END EntryView-->
+
+				<div id="BasicInfoView" class="row">
+					<div class="col-lg-12">
+						<h2 class="page-title">@Company Information@</h2>
+					</div>
+					<div class="col-md-10 col-md-offset-1">
+						<div class="row">		
+							<div class="alert alert-warning alert-dismissable">
+							  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
+							  <strong>Hint:</strong>請先按[編輯]，項目新增修改都將會自動更新，完成編輯後請按[儲存]。
+							</div>	
+			        <div id="FormContainer"></div>	
+						</div>
+					</div>
+				</div>
+
+				
+				<div id="TableInfoView" class="row"> <!-- Begin EventEditView-->
+					<div class="col-lg-12">
+						<h2 class="page-title"></h2>
+					</div>
+					<div class="col-md-10 col-md-offset-1">		
+						<div class="row">
+							<div id="TableContainer">	
+								
+				      </div>		   
+			      </div>
+				  </div> 
+				</div> <!-- End EventEditView-->		
+			</div>
+		</div>
+    <div id="ViewControl" class="navbar-fixed-bottom">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="navigation">
+            <ul>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="frame-menu">          
+      <div id="ReturnBn" class="block-btn hidden">
+        <span class="fa fa-arrow-left"></span>
+      </div>
+      <dropdown id="FrameMenu" class="hidden">
+        <input id="toggleFrameMenu" type="checkbox">
+        <label for="toggleFrameMenu" class="animate"><i class="fa fa-list"></i></label>
+        <ul>
+          <li id="BackBn" class="animate"><i class="fa fa-arrow-left"></i><span>Back</span></li>
+          <li id="PinBn" class="animate"><i class="fa fa-thumb-tack"></i><span>Pin To Home Page</span></li>
+        </ul>
+      </dropdown>
+    </div>		
+	</div> <!-- END PrimaryView-->
+  <div id="SecondaryView" class="cbp cbp-box disable-effect cbp-close">
+  </div>
+</div>
+</body>
+</html>

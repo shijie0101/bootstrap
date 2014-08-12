@@ -1,0 +1,411 @@
+<!--
+Designed by shijie
+Date:20140207
+My Bootstrap Sample Code
+-->
+<html>
+<head>
+<title>Bootstrap Sample Code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+<script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- WYSIWYG Editor -->
+<script src="js/jquery/jquery.hotkeys.js"></script>
+<script src="js/bootstrap-wysiwyg.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+<script src="js/bootstrap-custom-pagecontroller.js"></script>
+
+<!-- Image List -->
+<link href="css/cbp.images.css" rel="stylesheet">
+<link href="assets/blueimp-file-upload/css/jquery.fileupload.css" rel="stylesheet">
+<link href="assets/blueimp-file-upload/css/jquery.fileupload-ui.css" rel="stylesheet">
+
+<!--<script src="assets/blueimp-file-upload/js/jquery.iframe-transport.js"></script>-->
+<script src="assets/blueimp-file-upload/js/jquery.fileupload.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-process.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-image.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-audio.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-video.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-validate.js"></script>
+<script src="assets/blueimp-file-upload/js/jquery.fileupload-ui.js"></script>
+
+
+
+<script>
+
+  var stringTable = {
+    en:{
+      BasicInfo:"Basic Info",
+      Edit:"Edit", 
+      Save:"Save", 
+      Add: "Add", 
+      Delete: "Delete" ,
+      Display: "Display" ,
+      Publish:"Create Topic",
+      UpdateSuccess: "Update successful",
+      UpdateFailed: "Update Failed",
+      Message: "Message",
+      Error: "Error", 
+      Ok: "OK",
+      Cancel: "Cancel",
+      NoResult: "No search results."
+    },
+    tw:{
+      BasicInfo:"Basic Info",
+      Edit:"編輯",
+      Save:"儲存",
+      Add:"新增",
+      Delete:"刪除",
+      Display:"顯示",
+      Publish:"發表新文章",
+      UpdateSuccess:"更新成功",
+      UpdateFailed:"更新失敗",
+      Message:"訊息",
+      Error:"錯誤",
+      Ok:"確定",
+      Cancel:"取消",
+      NoResult:"無搜尋結果"
+    },
+    cn:{
+      BasicInfo:"Basic Info",
+      Edit:"编辑",
+      Save:"储存",
+      Add:"新增",
+      Delete:"删除",
+      Display:"显示",
+      Publish:"發表新文章",
+      UpdateSuccess:"更新成功",
+      UpdateFailed:"更新失败",
+      Message:"讯息",
+      Error:"错误",
+      Ok:"确定",
+      Cancel:"取消",
+      NoResult:"无搜寻结果"
+    }
+  }
+
+  var stringMap=stringTable.en;
+function InitialLanguage(language){
+  if(language==="en"){
+    stringMap=stringTable.en;
+  }else if(language==="zh_TW"){
+    stringMap=stringTable.tw;
+  }else if(language==="zh_CN"){
+    stringMap=stringTable.cn;
+  }
+}
+
+  var mFrame={
+    name:"",
+    language:"en"
+  }
+  
+  var mWebApi="Action/action.php"; //Action
+
+  var mInitJson={   
+    initial:{
+      forum:"0",
+    },
+    basicInfo:{
+      title:stringMap.BasicInfo,
+      type:"form-group-submit",
+      inputs:
+      {
+        subject:"U-Reach",
+        description:"ACKDKAL ALJKSD",
+        attachment:{size:"0",inputs:[]}
+      }
+    }
+  }  
+
+
+  function ProcedureEntry(){
+
+
+  }
+
+  //介面table header
+  function ProcedureList(paramJson){ 
+
+    var options={
+      language:"en",
+      initial:paramJson.initial,
+      select:{     
+      },
+      autocomplete:{
+      },
+      ui:{        
+      },
+      header:{
+       
+      },
+      tableApi:{
+      },
+      inputChange:function(ui,data){
+      },
+      listChange:function(ui,name,value){
+      },
+      tableInputChange:function(){
+      }
+    };
+
+
+    function RefreshTableItemOrder(ui){
+      var index=1;
+      ui.find("tbody th .order").each(function(){
+        $(this).html(index++);
+      });
+    } 
+    var LabelbarJson={
+      title:"TOPIC",
+      buttons:[]
+    } 
+
+    var ToolbarJson={
+      buttons:[
+        {
+          name:"OkBn",
+          title:stringMap.Ok,
+          iconCssClass:"fa fa-check",
+          cssClass:"btn-primary",
+          group:"",
+          pullRight:true,
+          click:function(){
+            onCallParent({act:"ok"});
+          }
+        },
+        {
+          name:"CancelBn",
+          title:stringMap.Cancel,
+          iconCssClass:"fa fa-times",
+          cssClass:"btn-danger",
+          group:"",
+          pullRight:true,
+          click:function(){
+            onCallParent({act:"cancel"});
+          }
+        }
+      ]
+    }
+
+    for(name in paramJson){
+      var formOpt = paramJson[name];
+      var formType= formOpt.type;
+
+      if( formType==="form-group-submit"){
+        var formH = $('<div class="form-horizontal">');
+        $("#FormContainer").append(formH);
+        formH.attr("name",name);
+
+        var formHeader =$('<div class="page-header"></div>');
+        formH.append(formHeader);
+
+        LabelbarJson.title=formOpt.title;
+
+        var formToolbar =$('<div class="toolbar"></div>');
+        formToolbar.JSToolbar(LabelbarJson);
+        formHeader.append(formToolbar);
+
+        var fieldset = $("<fieldset>");
+        formH.append(fieldset);
+        
+        $.JSFormFactory(fieldset,formOpt.inputs,options);
+
+        
+        var bottomToolbar =$('<div class="toolbar"></div>');
+        bottomToolbar.JSToolbar(ToolbarJson);
+        formH.append(bottomToolbar);
+
+        if(formOpt.readonly){
+          formToolbar.find("[group=EditMode]").remove();
+          formToolbar.find("[group=ViewMode]").remove();
+        }
+
+      }else if(formType==="form-table"){
+        
+        var formT = $('<div class="form-table">');
+        $("#TableContainer").append(formT);
+        formT.attr("name",name);        
+
+        for(tableName in formOpt.table){
+
+          var data = formOpt.table[tableName];
+
+          var formHeader =$('<div class=""></div>');
+
+          TableToolbarJson.title=formOpt.title;
+          var formToolbar =$('<div class="toolbar"></div>');
+          formToolbar.JSToolbar(TableToolbarJson);
+          formHeader.append(formToolbar);
+
+          if(formOpt.readonly){
+            formToolbar.find("[group=EditMode]").remove();
+            formToolbar.find("[group=ViewMode]").remove();
+          }
+
+          var panel =$('<div class="table-select-panel"></div>');
+          formHeader.append(panel);
+          formT.append(formHeader);
+          var cdiv=$("<div style='overflow:auto;'>")
+          var fieldset = $("<fieldset disabled>");
+          cdiv.append(fieldset);
+          formT.append(cdiv);
+          fieldset.attr("gname",tableName);
+          fieldset.ModuleTable(options.header[tableName],{});
+
+          // 設定初始值  
+          for(var i=0;i<data.length;i++){
+            var item=data[i];
+            if(formOpt.readonly){
+              fieldset.ModuleTable_New(item,{});  
+            }else{
+              fieldset.ModuleTable_New(item,{change:options.tableInputChange}); 
+            }
+          }
+        }
+      }
+    }
+    $("#BasicInfoView").show("blind",{},400,null);
+ 
+    $("#ReturnBn").click(function(){
+      onToggleReturnBn();
+    });
+
+  }
+
+  function initial() {
+    onResize();
+
+    console.log("initial");
+    var param={act:"GetParent",parent:[]};
+
+    onCallParent(param);
+    console.log(param);
+    if(param.parent.length>1){
+      $("#ReturnBn").removeClass("hidden"); 
+    }else{
+      $("#ReturnBn").addClass("hidden"); 
+    }    
+
+    ProcedureList(mInitJson);
+  }
+
+  //重要! Callback
+  window.Callback = {};
+  window.Callback.FromChild = function (data) {
+    //console.log(data);
+    if(data.act==="Notification"){
+      onCallParent(data); 
+    }else if(data.act==="Return"){
+      $("#PrimaryView").removeClass("pull-xs-12");
+      $("#SecondaryView").addClass("pull-xs-12");   
+    }else if(data.act==="GetParent"){
+      data.parent.push(mFrame);
+      onCallParent(data);
+    }else{
+      onCallParent(data); 
+    }
+  };
+  window.Callback.FromParent = function (data) {
+    console.log(data);
+  };
+
+  function onCallParent(data){
+    if(window.parent.Callback)
+      window.parent.Callback.FromChild(data);
+  }
+
+  function onCallChild(date){
+    var f = document.getElementById('containFrame');
+    if(f){
+      var fContent = f.contentWindow || f.contentDocument;
+      fContent.Callback.FromParent(date);
+    } 
+  }
+  //END Callback
+
+  // 通知事件定
+  function Notification(postData){
+    onCallParent({act:"Notification",data:postData});
+  }
+
+  function onToggleReturnBn(){
+    onCallParent({act:"Return",frame:mFrame});
+  }
+
+
+  $(window).load(function() {
+    initial();
+  });
+
+  $(window).resize(function() {
+    onResize();
+  });
+
+  function onResize() {
+  }
+</script>
+
+</head>
+<body>
+<div class="cbp cbp-box" style="background:#F8F8F8 url(images/noisebg.png);">
+  <div id="BasicInfoView" class="cbp cbp-box cbp-left vertical-xs-12">
+    <div class="inner-vertical">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">   
+            <div id="FormContainer"></div>  
+              
+            </div>     
+          </div>
+
+        </div>
+      </div>
+    </div>  
+  </div>
+  <div id="ContentView" class="cbp cbp-box cbp-right pull-xs-12 vertical-xs-12">
+    <div class="inner-vertical">
+      <iframe id="containFrame" frameborder="0" class="bg-transparent"
+        src="" style="width: 100%; height: 100%"></iframe>
+    </div>
+  </div>
+  <div id="ReturnBn" class="block-btn cbp-on-top hidden"
+    style="position: absolute; top: 0px; right: 0px;">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </div>
+</div> <!--END CBP-->
+</body> 
+</html>

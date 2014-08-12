@@ -1,0 +1,1561 @@
+/*
+	Author:Shijie
+  Date:20140312
+  Version:1.0
+  Description:To Do List
+  Require: 
+    1.jquery-ui-datetimepicker.js
+    2.custom.gritter.js
+
+  Task-Item Sample:
+  <div class="cbp-task-item" task_id="" task_owner="">
+    <div class="task-symbol"></div>
+    <div class="task-checkbox">
+      <div class="squared-checkbox">
+        <input type="checkbox" id="">
+        <label for=""></label>
+      </div>
+    </div>
+    <div class="task-title" data-toggle="collapse" data-parent="">
+      <div class="task-state-bar">
+      </div>
+      <span name="title">
+      </span>
+    </div>
+    <div class="panel-collapse collapse" style="height: auto;">
+      <div class="task-body">
+        <p name="description"></p>
+        <br>
+        <p name="comment"></p>
+        <br>
+        <p name="reply">
+        </p>
+      </div>
+    </div>
+    <div class="cbp-pull task-collapse">
+      <div class="task-collapse-bar">
+        <div class="pull-right">
+          <button class="icon-btn task-collapse-item fa fa-times" name="rejectbn">&nbsp;@Reject</button>
+          <button class="icon-btn task-collapse-item fa fa-check" name="acceptbn">&nbsp;@Accept</button>
+          <button class="icon-btn task-collapse-item fa fa-trash-o" name="removebn">&nbsp;@Remove</button>
+          <button class="icon-btn task-collapse-item fa fa-file-text" name="editbn">&nbsp;@Edit</button></div>
+      </div>
+    </div>
+  </div>
+
+  //Header
+  <div class="box-header">
+  <p class="box-header-title">@ToDoList </p>
+  <div class="box-header-toolbar">
+    <span> <button id="TaskAssignBn" class="icon-btn"><i class="fa fa-hand-o-up"></i>&nbsp;<label>@Assign</label></button><button id="TaskNewBn" class="icon-btn"><i class="fa fa-plus"></i>&nbsp;<label>@New</label></button> <span> 
+    <span >
+      <button id="TaskShowBn" class="icon-btn" role="button" data-toggle="dropdown"><i class="fa fa-eye"></i>&nbsp;<label>@Show</label></button> 
+      <ul id="TaskDisplayPriority" class="dropdown-menu" role="menu" aria-labelledby="TaskShowBn">
+        <li class="group">@TaskPriority</li>
+        <li><a value="high" href="#"><label>@High</label></a></li>
+        <li><a value="medium" href="#"><label>@Medium</label></a></li>
+        <li><a value="low" href="#"><label>@Low</label></a></li>
+        <li class="group">@TaskState</li>
+        <li><a value="finished" href="#"><label>@Finished</label></a></li>
+        <li><a value="unfinish" href="#"><label>@Unfinish</label></a></li>
+        <li role="presentation" class="divider"></li>
+        <li><a value="all" href="#"><label>@All</label></a></li>
+      </ul>
+    </span>
+    <span >
+      <button id="TaskSettingBn" class="icon-btn" data-toggle="dropdown" href="#"><i class="fa fa-cog"></i>&nbsp;<label>@Setting</label></button> 
+      <ul class="dropdown-menu" role="menu" role="menu" aria-labelledby="TaskShowBn">
+        <li><a id="TaskRefresh" href="#"><i class="fa fa-refresh"></i>&nbsp;<label>@Refresh</label></a></li>
+        <li role="presentation" class="divider"></li>
+        <li><a id="TaskClear" class="hidden" href="#"><i class="fa fa-times"></i>&nbsp;<label>@Clear</label></a></li>
+      </ul>
+    </span>
+  </div>
+</div>
+
+
+*/
+
+(function($) { 
+	'use strict';
+
+  var stringTable = {
+    en:{
+      ToDoList:"To Do List",
+      TaskSubmit:"Submit",
+      TaskCancel:"Cancel",
+      New:"New",
+      Show:"Show",
+      Setting:"Setting",
+      All:"All",
+      Refresh:"Refresh",
+      Clear:"Clear",
+      TaskTitle:"Title",
+      TaskDescription:"Description",
+      TaskPriority:"Priority",
+      TaskState:"State",
+      TaskDueDate:"Due Date",
+      TaskEdit:"Edit",
+      TaskRemove:"Remove",
+      TaskRemind:"Remind",
+      TaskRemindMe:"Remind me",
+      TaskRemindDate:"Remind date",
+      TaskAssignmentEmployee:"Assignment",
+      TaskProcessDescription:"Comment",
+      High:"High",
+      Medium:"Medium",
+      Low:"Low",
+      Done:"Done",
+      Processing:"Processing",
+      Pending:"Pending",
+      Cancel:"Cancel",
+      OK:"OK",
+      Notification:"Notification",
+      Error:"Error",
+      Assign:"Assign",
+      Accept:"Accept",
+      Reject:"Reject",
+      Tracing:"Tracing",
+      Finished:"Finished",
+      Unfinish:"Unfinish",
+      Accepted:"Accepted",
+      Rejected:"Rejected",
+      Canceled:"Canceled",
+      Pended:"Pended"
+    },
+    tw:{
+      ToDoList:"工作項目",
+      TaskSubmit:"確定",
+      TaskCancel:"取消",
+      New:"新增",
+      Show:"顯示",
+      Setting:"設定",
+      All:"全部",
+      Refresh:"更新",
+      Clear:"清除已完成",
+      TaskTitle:"標題",
+      TaskDescription:"內容",
+      TaskPriority:"優先權",
+      TaskState:"狀態",
+      TaskDueDate:"預定日",
+      TaskEdit:"編輯",
+      TaskRemove:"刪除",
+      TaskRemind:"提醒",
+      TaskRemindMe:"提醒我",
+      TaskRemindDate:"提醒日期",
+      TaskAssignmentEmployee:"指派",
+      TaskProcessDescription:"工作註釋",
+      High:"高",
+      Medium:"中",
+      Low:"低",
+      Done:"完成",
+      Processing:"處理中",
+      Pending:"暫停",
+      Cancel:"取消",
+      OK:"確定",
+      Notification:"通知",
+      Error:"錯誤訊息",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒絕",
+      Tracing:"追綜中",
+      Finished:"已完成",
+      Unfinish:"未完成",
+      Accepted:"已接受",
+      Rejected:"已拒絕",
+      Canceled:"已取消",
+      Pended:"已暫停"
+    },
+    cn:{
+      ToDoList:"工作项目",
+      TaskSubmit:"确定",
+      TaskCancel:"取消",
+      New:"新增",
+      Show:"显示",
+      Setting:"设定",
+      All:"全部",
+      Refresh:"更新",
+      Clear:"清除已完成",
+      TaskTitle:"标题",
+      TaskDescription:"内容",
+      TaskPriority:"优先权",
+      TaskState:"状态",
+      TaskDueDate:"预定日",
+      TaskEdit:"编辑",
+      TaskRemove:"删除",
+      TaskRemind:"提醒",
+      TaskRemindMe:"提醒我",
+      TaskRemindDate:"提醒日期",
+      TaskAssignmentEmployee:"指派",
+      TaskProcessDescription:"工作注释",
+      High:"高",
+      Medium:"中",
+      Low:"低",
+      Done:"完成",
+      Processing:"处理中",
+      Pending:"暂停",
+      Cancel:"取消",
+      OK:"确定",
+      Notification:"通知",
+      Error:"错误",
+      Assign:"指挀",
+      Accept:"接受",
+      Reject:"拒绝",
+      Tracing:"追综中",
+      Finished:"已完成",
+      Unfinish:"未完成",
+      Accepted:"已接受",
+      Rejected:"已拒绝",
+      Canceled:"已取消",
+      Pended:"已暂停"
+    }
+  }
+
+  var stringMap=stringTable.en;
+
+  var notification={position:"bottom-right",cssClass:"gritter-light",sticky:false,time:3000};
+  var taskHash="";
+  var userHash="";
+  var taskReceiverTickCount=60000;
+  var taskReceiverTimer=undefined;
+  var taskViewStyle="light";
+  var taskMap={};
+
+  var TaskApi={
+    //callback={begin:,done:,fail:,always:,notification}
+    ActionPost:function(postData,callback){
+      if(callback.begin!==undefined){
+        callback.begin();  
+      } 
+
+      //$.post("Action",postData)
+      $.post("Action/action.php",postData)
+      .done(function(rc) {
+        var rcJson = JSON.parse(rc); 
+        //console.log(rcJson); 
+        if(callback.done!==undefined){
+          callback.done(rcJson);  
+        }           
+      })
+      .fail(function(e) {
+        if(callback.fail!==undefined){
+          callback.fail(e);  
+        }        
+      })
+      .always(function() {
+        if(callback.always!==undefined){
+          callback.always();  
+        }
+      }); 
+    },
+    
+    New:function(postData,callback){
+      //Refresh All
+      postData["name"]="Task";
+      postData["type"]="New";
+      //console.log(postData);
+      TaskApi.ActionPost(postData,callback);
+      //user_hash
+    },
+    Update:function(postData,callback){
+      postData["name"]="Task";
+      postData["type"]="Update";
+      //console.log(postData);
+      TaskApi.ActionPost(postData,callback);
+      //user_hash
+    },
+    Refresh:function(postData,callback){
+      postData["name"]="Task";
+      postData["type"]="List";
+      //console.log(postData);
+      TaskApi.ActionPost(postData,callback);  
+      //task_hash
+      //user_hash
+    },
+    Delete:function(postData,callback){
+      postData["name"]="Task";
+      postData["type"]="Delete";
+      //console.log(postData);
+      TaskApi.ActionPost(postData,callback); 
+      //user_hash 
+    },
+    Select:function(postData,callback){
+      postData["name"]="Task/Hash";
+      postData["type"]="Select";
+      //task_hash
+      //user_hash
+      //console.log(postData);
+      TaskApi.ActionPost(postData,callback); 
+    },
+    Notification:function(postData){
+      
+      var data={
+        title:postData.title,
+        text: postData.description,
+        position:notification.position,
+        class_name:notification.cssClass,
+        sticky:notification.sticky,
+        time:notification.time,
+        before_open:function(){
+          if($('.gritter-item-wrapper').length == 5)
+          {
+            return false;
+          }
+        }
+      }
+      //console.log(data);
+      $.gritter.add(data);
+    }
+  }
+
+	$.fn.JSTaskView = function(options){
+		$(this).html("");
+
+    var header='<div class="box-header"> <p class="box-header-title">@ToDoList@ </p> <div class="box-header-toolbar"> <span> <button id="TaskAssignBn" class="icon-btn"><i class="fa fa-hand-o-up"></i>&nbsp;<label>@Assign@</label></button><button id="TaskNewBn" class="icon-btn"><i class="fa fa-plus"></i>&nbsp;<label>@New@</label></button> <span> <span > <button id="TaskShowBn" class="icon-btn" role="button" data-toggle="dropdown"><i class="fa fa-eye"></i>&nbsp;<label>@Show@</label></button> <ul id="TaskDisplayPriority" class="dropdown-menu" role="menu" aria-labelledby="TaskShowBn"> <li class="group">@TaskPriority@</li> <li><a value="high" href="#"><label>@High@</label></a></li> <li><a value="medium" href="#"><label>@Medium@</label></a></li> <li><a value="low" href="#"><label>@Low@</label></a></li> <li class="group">@TaskState@</li> <li><a value="finished" href="#"><label>@Finished@</label></a></li> <li><a value="unfinish" href="#"><label>@Unfinish@</label></a></li> <li role="presentation" class="divider"></li> <li><a value="all" href="#"><label>@All@</label></a></li> </ul> </span> <span > <button id="TaskSettingBn" class="icon-btn" data-toggle="dropdown" href="#"><i class="fa fa-cog"></i>&nbsp;<label>@Setting@</label></button> <ul class="dropdown-menu" role="menu" role="menu" aria-labelledby="TaskShowBn"> <li><a id="TaskRefresh" href="#"><i class="fa fa-refresh"></i>&nbsp;<label>@Refresh@</label></a></li> <li role="presentation" class="divider"></li> <li><a id="TaskClear" class="hidden" href="#"><i class="fa fa-times"></i>&nbsp;<label>@Clear@</label></a></li> </ul> </span> </div></div>';
+    var footer='<div class="box-footer"> <div id="TaskNetworkProgress" class="progress progress-striped active"> <div class="progress-bar bg-gray" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"> </div> </div> </div>'; 
+
+    var listV= '<div id="TaskListView" class="inner-vertical cbp-main cbp-pull cbp-task-list-view"></div> '
+    var editV= '<div id="TaskEditView" class="inner-vertical cbp-secondary cbp-pull cbp-task-edit-view cbp-close"> <input type="text" class="form-control hidden" name="task_id"> <div class="col-xs-12"> <div class="row"> <div class="form-horizontal"> <div class="form-group"> <label for="inputTitle" class="col-sm-3 control-label">@TaskTitle@:</label> <div class="col-sm-8"> <input type="text" class="form-control" name="task_title" placeholder=""> </div> </div> </div> </div> <div class="row" need="task_title" style=""> <div class="form-horizontal"> <div class="form-group"> <label for="inputDescription" class="col-sm-3 control-label">@TaskDescription@:</label> <div class="col-sm-8"> <textarea type="text" class="form-control" name="task_description" placeholder="" rows="5"></textarea> </div> </div> </div> <div class="form-horizontal" group="system"> <div class="form-group"> <label for="inputProcessDescription" class="col-sm-3 control-label">@TaskProcessDescription@:</label> <div class="col-sm-8"> <textarea type="text" class="form-control" name="task_comment" placeholder="" rows="5"></textarea> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputTaskAssignment" class="col-sm-3 control-label">@TaskAssignmentEmployee@:</label> <div id="inputEmployee" class="col-sm-8"> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputPriority" class="col-sm-3 control-label">@TaskPriority@:</label> <div class="col-sm-8"> <select class="form-control" name="task_priority"> <option value="none"></option> <option value="high">@High@</option> <option value="medium">@Medium@</option> <option value="low">@Low@</option> </select> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputState" class="col-sm-3 control-label">@TaskState@:</label> <div class="col-sm-8"> <select class="form-control" name="task_state"> <option value="none"></option> <option value="done" >@Done@</option> <option value="processing" >@Processing@</option> <option value="pending" >@Pending@</option> <option value="cancel" >@Cancel@</option> <option value="accept" >@Accept@</option> <option value="reject" >@Reject@</option> <option value="tracing" >@Tracing@</option> </select> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputDueDate" class="col-sm-3 control-label">@TaskDueDate@:</label> <div class="col-sm-8"> <input type="text" class="form-control datepicker" name="task_due_date"> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label class="col-sm-3 control-label">@TaskRemind@:</label> <div class="col-sm-1"> <div class="control"> <input type="checkbox" name="task_remind"></div> </div> <div class="col-sm-7"><input type="text" class="form-control datepicker" name="task_remind_date"> </div> </div> </div> </div> <div class="row"> <div class="form-horizontal"> <div class="form-group"> <label class="col-sm-3 control-label"></label> <div class="col-sm-8"> <div class="pull-right"> <button id="TaskSubmit" class="btn btn-default">@TaskSubmit@</button>&nbsp; <button id="TaskCancel" class="btn btn-default">@TaskCancel@</button> </div> </div> </div> </div> </div> </div></div>';
+       //'<div id="TaskEditView" class="inner-vertical cbp-secondary cbp-pull cbp-task-edit-view cbp-close"> <input type="text" class="form-control hidden" name="task_id"> <div class="col-xs-12"> <div class="row"> <div class="form-horizontal"> <div class="form-group"> <label for="inputTitle" class="col-sm-3 control-label">@TaskTitle@:</label> <div class="col-sm-8"> <input type="text" class="form-control" name="task_title" placeholder=""> </div> </div> </div> </div> <div class="row" need="task_title" style=""> <div class="form-horizontal"> <div class="form-group"> <label for="inputDescription" class="col-sm-3 control-label">@TaskDescription@:</label> <div class="col-sm-8"> <textarea type="text" class="form-control" name="task_description" placeholder="" rows="5"></textarea> </div> </div> </div> <div class="form-horizontal" group="system"> <div class="form-group"> <label for="inputProcessDescription" class="col-sm-3 control-label">@TaskProcessDescription@:</label> <div class="col-sm-8"> <textarea type="text" class="form-control" name="task_comment" placeholder="" rows="5"></textarea> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputTaskAssignment" class="col-sm-3 control-label">@TaskAssignmentEmployee@:</label> <div id="inputEmployee" class="col-sm-6"> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputPriority" class="col-sm-3 control-label">@TaskPriority@:</label> <div class="col-sm-6"> <select class="form-control" name="task_priority"> <option value="none"></option> <option value="high">@High@</option> <option value="medium">@Medium@</option> <option value="low">@Low@</option> </select> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputState" class="col-sm-3 control-label">@TaskState@:</label> <div class="col-sm-6"> <select class="form-control" name="task_state"> <option value="none"></option> <option value="done" >@Done@</option> <option value="processing" >@Processing@</option> <option value="pending" >@Pending@</option> <option value="cancel" >@Cancel@</option> <option value="accept" >@Accept@</option> <option value="reject" >@Reject@</option> <option value="tracing" >@Tracing@</option> </select> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label for="inputDueDate" class="col-sm-3 control-label">@TaskDueDate@:</label> <div class="col-sm-6"> <input type="text" class="form-control datepicker" name="task_due_date"> </div> </div> </div> <div class="form-horizontal"> <div class="form-group"> <label class="col-sm-3 control-label">@TaskRemind@:</label> <div class="col-sm-6"> <div class="control"> <input type="checkbox" name="task_remind" value="1">&nbsp;<span>@TaskRemindMe@</span>&nbsp; </div> </div> </div> </div> <div class="form-horizontal" need="task_remind"> <div class="form-group"> <label class="col-sm-3 control-label">@TaskRemindDate@:</label> <div class="col-sm-6"><input type="text" class="form-control datepicker" name="task_remind_date"> </div> </div> </div> </div> <div class="row"> <div class="form-horizontal"> <div class="form-group"> <label class="col-sm-3 control-label"></label> <div class="col-sm-8"> <div class="pull-right"> <button id="TaskSubmit" class="btn btn-default">@TaskSubmit@</button>&nbsp; <button id="TaskCancel" class="btn btn-default">@TaskCancel@</button> </div> </div> </div> </div> </div> </div> </div>'
+    
+    var bbody= '<div class="box-body">'+listV+editV+'</div>'
+    var html = '<div class="cbp-task">'+ header+bbody+footer +'</div>';
+
+    if(options && options.language){
+      if(options.language==="tw"){
+        console.log("tw");
+        stringMap=stringTable.tw;  
+      }else if(options.language==="cn"){
+        console.log("cn");
+        stringMap=stringTable.cn;  
+      }else if(options.language==="none"){
+        for(var name in stringMap) {
+          stringMap[name]="@"+name;
+        }       
+      }
+    }
+
+    if(options && options.notification){
+      if(options.notification.position)
+        notification.position=options.notification.position;
+
+      if(options.notification.cssClass)
+        notification.cssClass=options.notification.cssClass;
+
+      if(options.notification.time)
+        notification.time=options.notification.time;
+    }
+
+    if(options && options.viewStyle){
+      taskViewStyle=options.viewStyle;
+    }
+
+    html = $.JSReplaceStrings(html,stringMap);
+
+    var taskView = $(this);
+  	taskView.append($(html));
+
+    //taskView.find(".box-header").addClass("bg-light");
+    //taskView.find(".box-body").addClass("bg-light");
+    //taskView.find(".box-footer").addClass("bg-light");    
+    //taskView.find("#TaskEditView").addClass("bg-light");
+
+    if(options&&options.cssClass){
+      taskView.find(".box-header").addClass(options.cssClass);
+      taskView.find(".box-body").addClass(options.cssClass);
+      taskView.find(".box-footer").addClass(options.cssClass);    
+      taskView.find("#TaskEditView").addClass(options.cssClass);    
+    }
+
+    if(options&&options.refreshTimer){
+      taskReceiverTickCount = options.timer;   
+    }
+    // Startup Sort
+    //$("#TaskListView").sortable().disableSelection();
+
+    $("#TaskAssignBn").click(function(){
+      ToggleTaskEditView();
+
+      $("#TaskEditView").animate({scrollTop:0},200);
+
+      $("#TaskEditView [name]").removeAttr("disabled");
+
+      $("#TaskEditView [name=task_id]").val("");
+      $("#TaskEditView [name=task_title]").val("").change();
+      $("#TaskEditView [name=task_description]").val("");
+      $("#TaskEditView [name=task_comment]").val("").closest(".form-horizontal").hide();
+      $("#TaskEditView [name=task_due_date]").val("");
+      
+      $("#TaskEditView [name=task_priority]").val("medium"); 
+      
+      var ui_t_state = $("#TaskEditView [name=task_state]");
+      ui_t_state.find("option").each(function(){$(this).changeElementType("span")});  
+      ui_t_state.find("[value=none]").changeElementType("option");  
+      ui_t_state.find("[value=processing]").changeElementType("option"); 
+      ui_t_state.find("[value=tracing]").changeElementType("option"); 
+      ui_t_state.val("tracing");
+      $("#TaskEditView [name=task_remind]").attr("checked",false);
+      
+      $("#TaskEditView [name=task_remind_date]").val("").hide();
+
+      $("#TaskEditView [name=task_assignment_employee]").val("").removeAttr("select_id").closest(".form-horizontal").show();
+
+    });
+  
+    $("#TaskNewBn").click(function(){
+      ToggleTaskEditView();
+
+      $("#TaskEditView").animate({scrollTop:0},200);
+      $("#TaskEditView [name]").removeAttr("disabled");
+      $("#TaskEditView [name=task_id]").val("");
+      $("#TaskEditView [name=task_title]").val("").change();
+      $("#TaskEditView [name=task_description]").val("");
+      $("#TaskEditView [name=task_comment]").val("").closest(".form-horizontal").hide();
+      $("#TaskEditView [name=task_due_date]").val("");
+      $("#TaskEditView [name=task_priority]").val("medium"); 
+
+      var ui_t_state = $("#TaskEditView [name=task_state]");
+      ui_t_state.find("option").each(function(){$(this).changeElementType("span")});  
+      ui_t_state.find("[value=none]").changeElementType("option");  
+      ui_t_state.find("[value=processing]").changeElementType("option");  
+      ui_t_state.val("processing");
+
+      $("#TaskEditView [name=task_remind]").attr("checked",false);
+      $("#TaskEditView [name=task_remind_date]").val("").hide();
+
+      $("#TaskEditView [name=task_assignment_employee]").val("").removeAttr("select_id").closest(".form-horizontal").hide();
+
+    });
+
+    $("#TaskEditView [name=task_title]").change(function(){
+      if($(this).val()===""){
+        $("#TaskEditView [need=task_title]").hide("blind", {}, 400, null); 
+        $("#TaskSubmit").addClass("disabled");
+      }else{
+        $("#TaskEditView [need=task_title]").show("blind", {}, 400, null); 
+        $("#TaskSubmit").removeClass("disabled");
+      }
+    });
+
+    $("#TaskCancel").click(function(){
+      ToggleTaskEditView();   
+    });
+
+    $("#TaskSubmit").click(function(){
+      
+      var title = $("#TaskEditView [name=task_title]").val();
+
+      if(title===""){
+        $("#TaskEditView [name=task_title]");
+        return;
+      }
+
+      var otx_priority = QueryTaskSelectOptionByTag("task_priority",$("#TaskEditView [name=task_priority]").val());
+      var otx_state = QueryTaskSelectOptionByTag("task_state",$("#TaskEditView [name=task_state]").val());
+
+      var taskId = $("#TaskEditView [name=task_id]").val();
+      var taskJson={};
+
+      if(taskId===""){
+        taskJson={
+          id:"",
+          owner:"me"
+        }  
+        taskJson["worker_id"]="";
+        taskJson["worker_name"]="";   
+        taskJson["worker_state"]="";
+        taskJson["worker_comment"]="";
+        taskJson["worker_remind_date"]="";
+
+      }else{
+        var taskName = "task_"+taskId;
+        taskJson=taskMap[taskName];
+      }
+
+      taskJson["title"] = title;
+      taskJson["description"] = $("#TaskEditView [name=task_description]").val().replace(/\n/g,"<br/>");
+      taskJson["priority"] = otx_priority.value ;
+      taskJson["due_date"] = $("#TaskEditView [name=task_due_date]").val();
+
+      if(taskJson.owner==="me"){
+        taskJson["state"]    = otx_state.value ;  
+        taskJson["comment"] = $("#TaskEditView [name=task_comment]").val().replace(/\n/g,"<br/>");    
+        
+        if($("#TaskEditView [name=task_remind]").prop("checked")===true){
+          taskJson["remind_date"] = $("#TaskEditView [name=task_remind_date]").val();
+        }else{
+          taskJson["remind_date"] = "";
+        }
+
+        var assignment = $("#TaskEditView [name=task_assignment_employee]");
+        var employee_name = assignment.val();
+        var employee_id   = assignment.attr("select_id");
+        if(employee_name!==""){
+          taskJson["worker_id"]=employee_id;
+          taskJson["worker_name"]=employee_name;
+        }
+
+      }else if(taskJson.owner==="user" || taskJson.owner==="system"){
+        taskJson["worker_state"]=otx_state.value ; 
+        taskJson["worker_comment"]=$("#TaskEditView [name=task_comment]").val().replace(/\n/g,"<br/>");
+
+        if($("#TaskEditView [name=task_remind]").prop("checked")===true){
+          taskJson["worker_remind_date"] = $("#TaskEditView [name=task_remind_date]").val();
+        }else{
+          taskJson["worker_remind_date"] = "";
+        }
+      }else{
+        return;
+      }
+    
+      var btn=$(this);
+
+      if(taskJson.id===""){
+        console.log("New:");
+        console.log(taskJson);
+
+        var postData={};
+        $.extend(postData,taskJson);
+
+        TaskApi.New(postData,{
+          begin:function(){
+            btn.addClass("disabled");
+            $("#TaskNetworkProgress").show();
+          },
+          done:function(rcJson){
+            if(rcJson.result!=="1"){
+              return;
+            }
+            userHash = rcJson.user_hash;
+            
+            taskJson.id=rcJson.id;
+            var taskName = "task_"+taskJson.id;
+            taskMap[taskName]=taskJson;
+
+            $("#TaskListView").JSTaskView.Add(taskJson);
+            
+            ToggleTaskEditView();
+
+            RunNotification(stringMap.Notification,taskJson.id);
+       
+            RunCountEffect($("#TaskListView").find("[task_id]").length);
+
+          },
+          fail:function(e){
+            TaskApi.Notification({title:stringMap.Error,description:e});  
+          },
+          always:function(){
+            btn.removeClass("disabled");
+            $("#TaskNetworkProgress").hide();
+          }
+        });  
+      }else{
+
+        var postData={};
+        $.extend(postData,taskJson);
+
+        TaskApi.Update(postData,{
+          begin:function(){
+            $("#TaskNetworkProgress").show();           
+            btn.addClass("disabled");
+          },
+          done:function(rcJson){
+            if(rcJson.result!=="1"){
+              return;
+            }
+            userHash = rcJson.user_hash;
+            var taskName = "task_"+taskJson.id;
+            taskMap[taskName]=taskJson;
+
+            $("#TaskListView").JSTaskView.Add(taskJson);
+            ToggleTaskEditView();
+
+            RunNotification(stringMap.Notification,taskJson.id);
+          },
+          fail:function(e){
+            TaskApi.Notification({title:stringMap.Error,description:e});  
+          },
+          always:function(){
+            btn.removeClass("disabled");
+            $("#TaskNetworkProgress").hide();
+          }
+        });  
+      }
+    });  
+
+    //Top Menu Settings
+    $("#TaskRefresh").click(function(){
+
+      if(taskReceiverTimer)
+        window.clearInterval(taskReceiverTimer);
+
+      taskView.JSTaskView.Refresh({clear:true,notify:false});
+    });
+
+    $("#TaskClear").click(function(){
+      $("#TaskListView").find(".task-state").each(function(){
+        //var value = $(this).attr("value");
+        //if(value==="1"){
+        //  $(this).closest(".cbp-task-item").hide("fast",function(){$(this).remove()});
+        //}
+      });
+    });
+
+    $("#TaskDisplayPriority").find("a").click(function(){
+      var value = $(this).attr("value");
+
+      if(value==="all"){
+        $("#TaskListView").find("[task_priority]").each(function(){
+          $(this).closest(".cbp-task-item").show("task-hidden");
+        });
+      }else if(value==="high"||value==="medium"||value==="low"){
+        $("#TaskListView").find("[task_priority]").each(function(){
+          var tv = $(this).attr("task_priority");
+          if(value==="none" || tv===value){
+            $(this).closest(".cbp-task-item").show("task-hidden");
+          }else{       
+            $(this).closest(".cbp-task-item").hide("task-hidden");
+          }
+        });
+      }else if(value==="finished"){
+        $("#TaskListView").find("[task_state]").each(function(){
+          var tv = $(this).attr("task_state");
+          if(tv==="done"){
+            $(this).closest(".cbp-task-item").show("task-hidden");
+          }else{       
+            $(this).closest(".cbp-task-item").hide("task-hidden");
+          }
+        });      
+      }else if(value==="unfinish"){
+        $("#TaskListView").find("[task_state]").each(function(){
+          var tv = $(this).attr("task_state");
+          if(tv!=="done"){
+            $(this).closest(".cbp-task-item").show("task-hidden");
+          }else{       
+            $(this).closest(".cbp-task-item").hide("task-hidden");
+          }
+        }); 
+      }
+    }); 
+
+    var ui_t_remind      = $("#TaskEditView [name=task_remind]");
+    var ui_t_remind_date = $("#TaskEditView [name=task_remind_date]");
+    
+    ui_t_remind.click(function(){
+      if($(this).prop("checked")===true ){
+        ui_t_remind_date.show();
+      }else{
+        ui_t_remind_date.hide();
+      }  
+    });
+
+
+    var URAutoCompleteJson = {
+      id:"UREmployeeInput",
+      name:"task_assignment_employee",
+      placeholder:"name",
+      enableEnter:"",
+      stateSpan:{
+        okCssClass:"glyphicon glyphicon-eye-open",
+        loadingCssClass:"loading glyphicon glyphicon-repeat",
+        errorCssClass:"glyphicon glyphicon-eye-close"
+      },
+      StateCallback:function(rc){
+        if(rc.state==="OK"){
+
+        }else if(rc.state==="ERROR"){
+
+        }else if(rc.state==="LOADING"||rc.state==="NONE"){
+
+        }
+      },
+      autocomplete:{
+        minLength:0,
+        api:"json/meeting/employee_list_sample.txt",//AutoComplete
+        method:"Post",
+        postData:{
+          name:"member",
+          term:""
+        }
+      }
+    };
+
+    $("#TaskEditView #inputEmployee").AutoCompleteInput(URAutoCompleteJson);
+
+    $("#TaskEditView").find("[name=task_due_date]").datetimepicker({scrollMonth:false,format:'Y/m/d',timepicker:false});
+    $("#TaskEditView").find("[name=task_remind_date]").datetimepicker({scrollMonth:false});
+
+    //Get tasks from server
+    taskView.JSTaskView.Refresh({clear:true,notify:false});
+	}
+
+  $.fn.JSTaskView.RefreshTaskTimer = function(){
+
+    if(taskReceiverTimer){
+      window.clearInterval(taskReceiverTimer);
+    }
+
+    taskReceiverTimer=setInterval(function(){
+      
+      if($(".cbp-task-edit-view").hasClass("cbp-close")===false){
+        //TaskApi.Notification({title:stringMap.Notification,description:"EditMode"}); 
+        return;
+      }
+
+      var postData={user_hash:userHash,task_hash:taskHash};
+
+      TaskApi.Select(postData,{
+        begin:function(){
+          //$("#TaskNetworkProgress").show();
+        },
+        done:function(rcJson){
+          if(rcJson.result!=="1"){
+            return;
+          }
+
+          if(rcJson.user_hash!==userHash||rcJson.task_hash!==taskHash){
+            $("#TaskListView").JSTaskView.Refresh({clear:false,notify:true});
+          }
+        },
+        fail:function(e){
+          TaskApi.Notification({title:stringMap.Error,description:e});  
+        },
+        always:function(){
+          //$("#TaskNetworkProgress").hide();
+        }
+      }); 
+
+    },taskReceiverTickCount);    
+  }
+
+  $.fn.JSTaskView.Refresh = function(options){
+
+    $("#TaskListView").JSTaskView.RefreshTaskTimer();
+    
+    var showNotification=false;
+
+    if(options){
+      if(options.clear===true){
+        $("#TaskListView").JSTaskView.Clear();  
+      }
+      if(options.notify===true){
+        showNotification=true;
+      }
+    }
+
+    TaskApi.Refresh({id:""},{
+      begin:function(){
+        $("#TaskNetworkProgress").show();    
+      },
+      done:function(rcJson){
+        if(rcJson.result!=="1"){
+          return;
+        }
+        RunCountEffect(rcJson.list.length);
+
+        userHash = rcJson.user_hash;
+        taskHash = rcJson.task_hash;
+
+        taskMap={};
+
+        var updateItems={};
+        $("#TaskListView").find(".cbp-task-item").each(function(){
+          var id=$(this).attr("task_id");
+          updateItems["task_"+id]={id:id,value:false,notification:false};
+        });
+
+        for(var i=0;i<rcJson.list.length;i++){
+          var id = rcJson.list[i].id;
+          var selector = "task_"+id;
+          taskMap["task_"+id]=rcJson.list[i];
+
+          if(updateItems[selector]===undefined){
+            updateItems[selector]={id:id,value:true,notification:true};
+          }else{
+            updateItems[selector]={id:id,value:true,notification:false};
+          }
+        }
+
+        for(var name in updateItems){
+          var item = updateItems[name];
+          if(item.value==false){
+            $("#TaskListView").find("[task_id="+item.id+"]").remove();  
+          }else if(item.notification==true){
+
+            if(showNotification)
+              RunNotification(stringMap.Notification,item.id);
+          }
+        }
+
+        for(var name in taskMap) {
+          var item = taskMap[name];
+          $("#TaskListView").JSTaskView.Add(item);
+        }
+      },
+      fail:function(e){
+        TaskApi.Notification({title:stringMap.Error,description:e});  
+      },
+      always:function(){
+        $("#TaskNetworkProgress").hide(); 
+      }
+    }); 
+  }
+
+  // Execute Notification Form
+  function RunNotification(title,id){
+
+    var taskName = "task_"+id;
+    var taskJson = taskMap[taskName];
+
+    if(taskJson===undefined){
+      return;
+    }
+
+    var priority = QueryTaskSelectOptionByValue("task_priority",taskJson.priority);
+    var state = QueryTaskSelectOptionByValue("task_state",taskJson.state);
+
+    if(taskJson.owner!=="me"){
+      state=QueryTaskSelectOptionByValue("task_state",taskJson.worker_state);
+    }
+
+    var message=taskJson.title+"<br/>"+
+    "<span class='badge'>"+priority.text +"</span>&nbsp;"+
+    "<span class='badge task-state'>"+state.text+"</span>&nbsp;"+
+    "<span class='badge task-due-date'>"+taskJson.due_date+"</span>";
+
+    TaskApi.Notification({title:title,description:message}); 
+  }
+
+  // Execute Task Counting Effect 
+  function RunCountEffect(count){
+    console.log("count:"+count);
+    var div_by = 10,
+      speed = Math.round(count / div_by),
+      $display = $('.cbp-task-count'),
+      run_count = 1,
+      int_speed = 24;
+
+    $display.text("0");
+
+    var int = setInterval(function() {
+      if(run_count < div_by && run_count < count){
+        $display.text(speed * run_count);
+        run_count++;
+      } else if(parseInt($display.text()) < count) {
+        var curr_count = parseInt($display.text()) + 1;
+        $display.text(curr_count);
+      } else {
+        clearInterval(int);
+      }
+    }, int_speed);
+  }
+
+  // Execute Task Processing Progress Effect
+  function RunPieChartEffect(id){
+    var ui_item = $("#TaskListView").find("[task_id="+id+"]");
+
+    if(ui_item.find(".pie-percent").length===0 ) {
+      var proc = $('<div class="pie-percent"><span class="percent"></span></div>');
+      ui_item.append(proc);
+
+      var barColor= 'rgba(200,200,200,0.8)';
+      var scaleColor= 'rgba(128,128,128,0.2)';
+      var trackColor= 'rgba(128,128,128,0.2)';
+
+      if(taskViewStyle==="dark"){
+        var barColor= 'rgba(55,55,55,0.8)';
+        var scaleColor= 'rgba(128,128,128,0.2)';
+        var trackColor= 'rgba(128,128,128,0.2)';
+
+        proc.find(".percent").css({"text-shadow":"0px 0px 3px rgba(230,230,230,1)"});
+      }else{
+        proc.find(".percent").css({"text-shadow":"0px 0px 3px rgba(20,20,20,1)"});
+      }
+
+      proc.easyPieChart({
+          animate: 1000,
+          lineWidth:4,
+          barColor:barColor,
+          scaleColor:scaleColor,
+          trackColor:trackColor,
+          lineCap:'square', // butt, round and square.
+          size:48,
+          onStart: function(from, to){
+            ui_item.find(".pie-percent").show();
+            if(to===100){
+         
+            } 
+          },
+          onStep: function(from, to, percent) {
+            var round = Math.round(percent);
+            proc.find('.percent').text(round);
+            proc.attr('data-percent',round);
+          },
+          onStop: function(from, to){
+            if(to===0){
+              ui_item.find(".pie-percent").hide();
+            }
+          }
+        });
+      ui_item.append(proc);
+    }
+
+    var chart =ui_item.find(".pie-percent").data('easyPieChart');
+
+    if(ui_item.find("input[type=checkbox]").prop( 'checked' )===true){
+      chart.update(100);
+    }else{
+      chart.update(0);
+    }
+  }
+
+  function RunUpdateTaskItemButtons(id){
+    var ui_item = $("#TaskListView").find("[task_id="+id+"]");
+    
+    var taskName = "task_"+id;
+    var taskJson = taskMap[taskName];
+    if(taskJson===undefined){
+      console.log("UpdateTaskItemButton:"+taskName+" is not found.");
+      return;
+    }
+    var state = QueryTaskSelectOptionByValue("task_state",taskJson.state).tag;
+    
+    if(taskJson.owner==="system" || taskJson.owner==="user"){
+      
+      if(state==="pending" || state==="cancel"){
+        ui_item.find("[name=rejectbn]").hide();
+        ui_item.find("[name=acceptbn]").hide();
+        ui_item.find("[name=removebn]").hide();
+        ui_item.find("[name=editbn]").hide();
+      }
+      else{
+        state = QueryTaskSelectOptionByValue("task_state",taskJson.worker_state).tag;        
+      
+        if(state==="none"){
+          ui_item.find("[name=rejectbn]").show();
+          ui_item.find("[name=acceptbn]").show();
+          ui_item.find("[name=removebn]").hide();
+          ui_item.find("[name=editbn]").hide();
+        }else{
+          //ui_item.find("[name=title]").JSRemoveClass("text-shine-*");  
+          ui_item.find("[name=rejectbn]").hide();
+          ui_item.find("[name=acceptbn]").hide();
+          ui_item.find("[name=removebn]").hide();
+          ui_item.find("[name=editbn]").show();
+        }
+      }
+    }else if(taskJson.owner==="me"){
+      ui_item.find("[name=rejectbn]").hide();
+      ui_item.find("[name=acceptbn]").hide();
+      ui_item.find("[name=removebn]").show();
+      ui_item.find("[name=editbn]").show();
+      //ui_item.find("[name=title]").JSRemoveClass("text-shine-*"); 
+    }else{
+      //ui_item.find("[name=title]").JSRemoveClass("text-shine-*");  
+    } 
+
+    if(state==="done"){
+      ui_item.find("[name=task_title] input[type=checkbox]").attr( 'checked' ,true); 
+    }     
+  }
+
+  function QueryTaskSelectOptionByValue(type,value){
+    if(type==="task_state"){
+      if(value==="1"){
+        return {text:stringMap.Done,tag:"done",value:"1"};
+      }else if(value==="2"){ 
+        return {text:stringMap.Processing,tag:"processing",value:"2"};       
+      }else if(value==="3"){ 
+        return {text:stringMap.Pending,tag:"pending",value:"3"};
+      }else if(value==="4"){
+        return {text:stringMap.Cancel,tag:"cancel",value:"4"};
+      }else if(value==="5"){ 
+        return {text:stringMap.Accept,tag:"accept",value:"5"};
+      }else if(value==="6"){ 
+        return {text:stringMap.Reject,tag:"reject",value:"6"};
+      }else if(value==="7"){ 
+        return {text:stringMap.Tracing,tag:"tracing",value:"7"};
+      }else{
+        return {text:"",tag:"none",value:"0"};
+      }
+    }else if(type==="task_priority"){
+      if(value==="1"){
+        return {text:stringMap.High,tag:"high",value:"1"};
+      }else if(value==="2"){ 
+        return {text:stringMap.Medium,tag:"medium",value:"2"};
+      }else if(value==="3"){
+        return {text:stringMap.Low,tag:"low",value:"3"};
+      }else{
+        return {text:"",tag:"none",value:"0"};
+      }
+    }
+    return "";
+  }
+
+  function QueryTaskSelectOptionByTag(type,value){
+    if(type==="task_state"){
+      if(value==="done"){
+        return {text:stringMap.Done,tag:"done",value:"1"};
+      }else if(value==="processing"){ 
+        return {text:stringMap.Processing,tag:"processing",value:"2"};       
+      }else if(value==="pending"){ 
+        return {text:stringMap.Pending,tag:"pending",value:"3"};
+      }else if(value==="cancel"){
+        return {text:stringMap.Cancel,tag:"cancel",value:"4"};
+      }else if(value==="accept"){ 
+        return {text:stringMap.Accept,tag:"accept",value:"5"};
+      }else if(value==="reject"){ 
+        return {text:stringMap.Reject,tag:"reject",value:"6"};
+      }else if(value==="tracing"){ 
+        return {text:stringMap.Tracing,tag:"tracing",value:"7"};
+      }else{
+        return {text:"",tag:"none",value:"0"};
+      }
+    }else if(type==="task_priority"){
+      if(value==="high"){
+        return {text:stringMap.High,tag:"high",value:"1"};
+      }else if(value==="medium"){ 
+        return {text:stringMap.Medium,tag:"medium",value:"2"};
+      }else if(value==="low"){
+        return {text:stringMap.Low,tag:"low",value:"3"};
+      }else{
+        return {text:"",tag:"none",value:"0"};
+      }
+    }
+    return "";
+  }
+
+  function ToggleTaskEditView(){
+    $("#TaskListView").JSToggleClass("cbp-close");
+    $("#TaskEditView").JSToggleClass("cbp-close");
+  }
+
+  function OpenTaskEditView(taskJson){
+
+    console.log(taskJson);
+    $("#TaskListView").addClass("cbp-close");
+    $("#TaskEditView").removeClass("cbp-close");
+    $("#TaskEditView").animate({scrollTop:0},200);
+
+    $("#TaskEditView [name=task_id]").val(taskJson.id);
+    $("#TaskEditView [name=task_owner]").val(taskJson.owner);
+
+    //basic info ui
+    var ui_t_title       = $("#TaskEditView [name=task_title]");
+    var ui_t_description = $("#TaskEditView [name=task_description]");
+    var ui_t_priority    = $("#TaskEditView [name=task_priority]");
+    var ui_t_state       = $("#TaskEditView [name=task_state]");
+    var ui_t_due_date    = $("#TaskEditView [name=task_due_date]");
+
+    var ui_t_remind      = $("#TaskEditView [name=task_remind]");
+    var ui_t_remind_date = $("#TaskEditView [name=task_remind_date]");
+    var ui_t_comment     = $("#TaskEditView [name=task_comment]");
+    ui_t_comment.closest(".form-horizontal").show();
+
+    //about assignment ui
+    var ui_t_a_employee  = $("#TaskEditView [name=task_assignment_employee]");  
+    ui_t_a_employee.val("");
+    ui_t_a_employee.removeAttr("select_id");
+    ui_t_a_employee.closest(".form-horizontal").hide();
+
+    ui_t_title.val(taskJson.title).change();
+    ui_t_description.val(taskJson.description.replace(/<br?\/?>/g, "\n"));
+    ui_t_due_date.val(taskJson.due_date);
+    ui_t_priority.val(QueryTaskSelectOptionByValue("task_priority",taskJson.priority).tag);  
+
+    if(taskJson.owner==="me"){
+      //有指派人
+      if(taskJson.worker_id!==""){
+        // 由ui鎖定不可再進行修改項目
+        ui_t_title.attr("disabled",true); 
+        ui_t_description.attr("disabled",true);
+        ui_t_a_employee.attr("disabled",true);
+
+        // 取消鎖定項目
+        ui_t_due_date.removeAttr("disabled"); 
+
+        ui_t_a_employee.val(taskJson.worker_name);
+        ui_t_a_employee.attr("select_id",taskJson.worker_id);
+        ui_t_a_employee.closest(".form-horizontal").show();
+
+        ui_t_state.find("option").each(function(){$(this).changeElementType("span")});
+        ui_t_state.find("[value=none]").changeElementType("option");  
+        ui_t_state.find("[value=done]").changeElementType("option");
+        ui_t_state.find("[value=processing]").changeElementType("option"); 
+        ui_t_state.find("[value=pending]").changeElementType("option");   
+        ui_t_state.find("[value=cancel]").changeElementType("option"); 
+        ui_t_state.find("[value=tracing]").changeElementType("option");
+
+      }else{
+        ui_t_title.removeAttr("disabled");  
+        ui_t_description.removeAttr("disabled");
+        ui_t_due_date.removeAttr("disabled"); 
+
+        ui_t_state.find("option").each(function(){$(this).changeElementType("span")});  
+        ui_t_state.find("[value=none]").changeElementType("option");  
+        ui_t_state.find("[value=done]").changeElementType("option"); 
+        ui_t_state.find("[value=processing]").changeElementType("option"); 
+        ui_t_state.find("[value=pending]").changeElementType("option");   
+        ui_t_state.find("[value=cancel]").changeElementType("option");  
+      }
+
+      ui_t_comment.val(taskJson.comment.replace(/<br ?\/?>/g, "\n"));
+
+      ui_t_state.val(QueryTaskSelectOptionByValue("task_state",taskJson.state).tag);  
+      
+      ui_t_remind_date.val(taskJson.remind_date); 
+
+      if(taskJson.remind_date!==""){
+        ui_t_remind.prop("checked",true);
+        ui_t_remind_date.show();
+      }else{
+        ui_t_remind.prop("checked",false);
+        ui_t_remind_date.hide(); 
+      }
+
+      
+    }
+    else if(taskJson.owner==="system" || taskJson.owner==="user"){    
+      ui_t_title.attr("disabled",true);
+      ui_t_description.attr("disabled",true);
+      ui_t_due_date.attr("disabled",true);
+      ui_t_priority.attr("disabled",true);
+
+      ui_t_state.find("option").each(function(){$(this).changeElementType("span")}); 
+      ui_t_state.find("[value=none]").changeElementType("option");  
+      ui_t_state.find("[value=done]").changeElementType("option"); 
+      ui_t_state.find("[value=processing]").changeElementType("option"); 
+      ui_t_state.find("[value=accept]").changeElementType("option");   
+      ui_t_state.find("[value=reject]").changeElementType("option"); 
+
+      ui_t_state.val(QueryTaskSelectOptionByValue("task_state",taskJson.worker_state).tag);  
+      ui_t_remind_date.val(taskJson.worker_remind_date); 
+
+      if(taskJson.worker_remind_date!==""){
+        ui_t_remind.prop("checked",true);
+        ui_t_remind_date.show();
+      }else{
+        ui_t_remind.prop("checked",false); 
+        ui_t_remind_date.hide();
+      }
+      
+      if(taskJson.worker_comment)
+        ui_t_comment.val(taskJson.worker_comment.replace(/<br ?\/?>/g, "\n") );
+      else
+        ui_t_comment.val(""); 
+    }
+  }
+
+  $.fn.JSTaskView.Clear = function(){
+    $("#TaskListView").html("");
+  }
+
+  $.fn.JSTaskView.Update = function(item){
+
+    var ui_item = $("#TaskListView").find("[task_id="+item.id+"]");  
+
+    var ui_symbol    = ui_item.find(".task-symbol");
+    var ui_checkbox  = ui_item.find(".task-checkbox");
+    var ui_title     = ui_item.find(".task-title");
+    var ui_body_outer= ui_item.find(".panel-collapse");
+    var ui_body_inner= ui_item.find(".task-body");
+    var ui_state_bar = ui_item.find(".task-state-bar");   
+    var ui_collapse  = ui_item.find(".task-collapse");
+    var ui_collapse_bar=ui_item.find(".task-collapse-bar");
+      
+    // Set property
+    ui_item.attr("task_id",item.id);
+    ui_item.attr("task_owner",item.owner);
+    ui_item.attr("task_priority",QueryTaskSelectOptionByValue("task_priority",item.priority).tag);
+    
+    var state = QueryTaskSelectOptionByValue("task_state",item.state).tag;
+    ui_item.attr("task_state",state);
+
+    ui_title.find("[name=title]").html(item.title);
+    
+    if(item.description){
+      ui_item.find("[name=description]").html(item.description);
+    }
+
+    if(item.owner==="me"){
+
+      if(item.comment){
+        ui_item.find("[name=comment]").html(item.comment);
+      }      
+      //
+      var ui_assignment=ui_item.find("[name=reply]");
+      ui_assignment.html("");
+
+      ui_assignment.append("<span class='assignment-state-bar'>");
+      ui_assignment.append("<br/>");
+      ui_assignment.append("<span class='assignment-description'>");
+
+
+      if(item.worker_name!==""){
+        ui_assignment.find(".assignment-state-bar").append("<span class='badge'>"+item.worker_name+"</span>&nbsp;");
+      }
+
+      if(item.worker_state!==""){
+        var oTx = QueryTaskSelectOptionByValue("task_state",item.worker_state);
+        if(oTx.tag!=="none"){
+          ui_assignment.find(".assignment-state-bar").append("<span class='badge'>"+oTx.text+"</span>&nbsp;");    
+          ui_item.attr("task_assignment_state",oTx.tag);
+        }
+      }
+
+      if(item.worker_comment!==""){
+        ui_assignment.find(".assignment-description").append(item.worker_comment);
+      }
+
+    }else if(item.owner==="user"||item.owner==="system"){
+      //
+      if(state==="pending"||state==="cancel"){
+
+      }else{
+        state = QueryTaskSelectOptionByValue("task_state",item.worker_state).tag;  
+        ui_item.attr("task_state",state);
+      }
+
+      if(item.worker_comment!==""){
+        ui_item.find("[name=comment]").html(item.worker_comment);
+      }
+    } 
+
+    // Setting State Bar
+    ui_state_bar.html(""); 
+
+    var oTx = QueryTaskSelectOptionByValue("task_priority",item.priority);
+    
+    /* Disable all string shine effect 
+    if(oTx.tag!=="none"){
+  
+    }
+    if(oTx.tag==='none'){
+      ui_item.find("[name=title]").addClass("text-shine-default");
+    }else if(oTx.tag==='high'){
+      ui_item.find("[name=title]").addClass("text-shine-red");
+    }else if(oTx.tag==='medium'){
+      ui_item.find("[name=title]").addClass("text-shine-yellow");
+    }else if(oTx.tag==='low'){
+      ui_item.find("[name=title]").addClass("text-shine-blue");
+    }*/
+    
+    oTx = QueryTaskSelectOptionByValue("task_state",item.state);
+    
+    if(item.owner==="user"||item.owner==="system"){
+      if(oTx.tag!=="pending"&&oTx.tag!=="cancel"){
+        oTx = QueryTaskSelectOptionByValue("task_state",item.worker_state);
+      }      
+    }
+ 
+    if(oTx.tag==="done"){
+      ui_checkbox.find("input[type=checkbox]").prop( 'checked' ,true);
+      var span =$("<span class='badge task-state'>");
+      span.html(stringMap.Finished);
+      ui_state_bar.append(span).append("&nbsp;");
+    }else{
+      ui_checkbox.find("input[type=checkbox]").prop( 'checked' ,false);
+      var span =$("<span class='badge task-state'>");
+      span.html(oTx.text);
+
+      if(oTx.tag==="pending"){
+        span.html(stringMap.Pended);
+      }else if(oTx.tag==="cancel"){
+        span.html(stringMap.Canceled);
+      }else if(oTx.tag==="reject"){
+        span.html(stringMap.Rejected);
+      }else if(oTx.tag==="accept"){
+        span.html(stringMap.Accepted);
+      }
+
+      ui_state_bar.append(span).append("&nbsp;");
+    }
+
+    if(item.due_date){
+      var span =$("<span class='badge task-due-date'>");
+      span.html(item.due_date);
+      ui_state_bar.append(span).append("&nbsp;");
+    }
+
+    ui_item.show("fast", function(){
+      RunPieChartEffect(item.id);
+      RunUpdateTaskItemButtons(item.id);
+    }); 
+  }
+
+	$.fn.JSTaskView.Add = function(item){
+
+    var TaskListView = $("#TaskListView");
+
+    var taskName = "task_"+item.id;
+
+    var html='<div class="cbp-task-item" task_id="" task_owner=""> <div class="task-symbol"></div> <div class="task-checkbox"> <div class="squared-checkbox"> <input type="checkbox" id=""> <label for=""></label> </div> </div> <div class="task-title" data-toggle="collapse" data-parent=""> <div class="task-state-bar"> </div> <span name="title"> </span> </div> <div class="panel-collapse collapse" style="height: auto;"> <div class="task-body"> <p name="description"></p> <p name="comment"></p> <p name="reply"> </p> </div> </div> <div class="cbp-pull task-collapse"> <div class="task-collapse-bar"> <div class="pull-right"> <button class="icon-btn task-collapse-item fa fa-times" name="rejectbn">&nbsp;@Reject@</button> <button class="icon-btn task-collapse-item fa fa-check" name="acceptbn">&nbsp;@Accept@</button> <button class="icon-btn task-collapse-item fa fa-trash-o" name="removebn" style="">&nbsp;@TaskRemove@</button> <button class="icon-btn task-collapse-item fa fa-file-text" name="editbn" style="">&nbsp;@TaskEdit@</button></div> </div> </div></div>';
+
+    var ui_item = null;
+    
+    if(TaskListView.find("[task_id="+item.id+"]").length===0){
+      ui_item = $(html);
+      $("#TaskListView").append(ui_item); 
+    }else{
+      ui_item = TaskListView.find("[task_id="+item.id+"]");  
+      TaskListView.JSTaskView.Update(item);
+      return;
+    }
+
+    var ui_symbol    = ui_item.find(".task-symbol");
+    var ui_checkbox  = ui_item.find(".task-checkbox");
+    var ui_title     = ui_item.find(".task-title");
+    var ui_body_outer= ui_item.find(".panel-collapse");
+    var ui_body_inner= ui_item.find(".task-body");
+    var ui_state_bar = ui_item.find(".task-state-bar");   
+    var ui_collapse  = ui_item.find(".task-collapse");
+    var ui_collapse_bar=ui_item.find(".task-collapse-bar");
+      
+    ui_checkbox.find("[type=checkbox]").attr("id","task_checkbox_"+item.id);
+    ui_checkbox.find("label").attr("for","task_checkbox_"+item.id);
+    ui_title.attr("data-target","#"+"task_item_"+item.id); 
+    ui_title.attr("href","task_item_"+item.id);   
+    ui_body_outer.attr("id","task_item_"+item.id);  
+
+    // Set property
+    ui_item.attr("task_id",item.id);
+    ui_item.attr("task_owner",item.owner);
+ 
+    // Initial Item Buttons
+    var ui_button=ui_item.find("[name=rejectbn]");
+    ui_button.text(stringMap.Reject);
+
+    // reject
+    ui_button.click(function(){ 
+      var taskJson = taskMap[taskName];
+      var postData={};
+      $.extend(postData,taskJson);
+      postData.worker_state = QueryTaskSelectOptionByTag("task_state","reject").value;
+      OpenTaskEditView(postData);
+    });
+
+
+    ui_button=ui_item.find("[name=acceptbn]");
+    ui_button.text(stringMap.Accept);
+
+    //Task Accept Button
+    ui_button.click(function(){
+
+      var btn = $(this);
+      var taskJson = taskMap[taskName];
+      var postData = {};
+      if(taskJson===undefined){
+        console.log("Update:"+taskName+" is not found!");
+        return;
+      }
+
+      $.extend(postData,taskJson);
+      postData.worker_state = QueryTaskSelectOptionByTag("task_state","accept").value;
+
+      console.log("Update:");
+      console.log(postData);
+
+      TaskApi.Update(postData,{
+        begin:function(){
+          btn.addClass("disabled");
+          $("#TaskNetworkProgress").show();
+        },
+        done:function(rcJson){
+          if(rcJson.result!=="1"){
+            return;
+          }
+          userHash = rcJson.user_hash;
+
+          taskJson.worker_state=postData.worker_state;
+
+          ui_item.attr("task_state","accept");
+
+          RunNotification(btn.html(),taskJson.id); 
+
+          RunUpdateTaskItemButtons(taskJson.id);        
+        },
+        fail:function(e){
+          TaskApi.Notification({title:stringMap.Error,description:e});  
+        },
+        always:function(){
+          btn.removeClass("disabled");
+          $("#TaskNetworkProgress").hide();
+        }
+      }); 
+    });
+
+    ui_button=ui_item.find("[name=removebn]");
+    ui_button.text(stringMap.TaskRemove);
+
+    // Delete User Task
+    ui_button.click(function(){
+      var btn = $(this);
+
+      var taskJson = taskMap[taskName];
+      var postData = {};
+      if(taskJson===undefined){
+        console.log("Delete:"+taskName+" is not found!");
+        return;
+      }
+
+      $.extend(postData,taskJson);
+ 
+      TaskApi.Delete(postData,{
+        begin:function(){
+          btn.addClass("disabled");
+          $("#TaskNetworkProgress").show();
+        },
+        done:function(rcJson){
+          if(rcJson.result!=="1"){
+            return;
+          }
+
+          userHash = rcJson.user_hash;
+
+          RunNotification(btn.html(),taskJson.id); 
+
+          btn.closest(".cbp-task-item").hide("fast", function(){
+            $(this).remove();
+            taskMap[taskName]=undefined;
+
+            RunCountEffect($("#TaskListView").find("[task_id]").length);
+          }); 
+        },
+        fail:function(e){
+          TaskApi.Notification({title:stringMap.Error,description:e});  
+        },
+        always:function(){
+          btn.removeClass("disabled");
+          $("#TaskNetworkProgress").hide();
+        }
+      });  
+    });   
+
+    var ui_button=ui_item.find("[name=editbn]");
+    ui_button.text(stringMap.TaskEdit);
+
+    // Edit Button
+    ui_button.click(function(){
+      
+      var taskJson = taskMap[taskName];
+      OpenTaskEditView(taskJson);
+
+    }); 
+    
+    // CheckBox 
+    ui_checkbox.find("input[type=checkbox]").click(function(){
+      
+      var taskJson = taskMap[taskName];
+      var postData = {};
+      if(taskJson===undefined){
+        console.log("Update:"+taskName+" is not found!");
+        return;
+      }
+
+      $.extend(postData,taskJson);
+
+      var btn = $(this);
+
+      if($(this).prop( 'checked' )===true){
+        
+        if(postData.owner==="me")
+          postData.state=QueryTaskSelectOptionByTag("task_state","done").value;
+        else if(postData.owner==="user"||postData.owner==="system")
+          postData.worker_state=QueryTaskSelectOptionByTag("task_state","done").value;
+
+        TaskApi.Update(postData,{
+          begin:function(){
+            $("#TaskNetworkProgress").show();          
+            btn.addClass("disabled");
+          },
+          done:function(rcJson){
+            if(rcJson.result!=="1"){
+              ui_checkbox.find("input[type=checkbox]").attr( 'checked' ,false);
+              return;
+            }
+            userHash = rcJson.user_hash;
+            taskJson.state = postData.state;
+            taskJson.worker_state = postData.worker_state;
+
+            RunNotification(stringMap.Notification,taskJson.id);
+            
+            $("#TaskListView").JSTaskView.Update(taskJson);
+            //RunPieChartEffect(taskJson.id);
+            //RunUpdateTaskItemButtons(taskJson.id);
+          },
+          fail:function(e){
+            ui_checkbox.find("input[type=checkbox]").attr( 'checked' ,false);
+            TaskApi.Notification({title:stringMap.Error,description:e});  
+          },
+          always:function(){
+            btn.removeClass("disabled");
+            $("#TaskNetworkProgress").hide();
+          }
+        });
+      }else{
+        
+
+        if(postData.owner==="me")
+          postData.state=QueryTaskSelectOptionByTag("task_state","processing").value;
+        else if(postData.owner==="user"||postData.owner==="system")
+          postData.worker_state=QueryTaskSelectOptionByTag("task_state","processing").value;
+
+
+        TaskApi.Update(postData,{
+          begin:function(){
+            $("#TaskNetworkProgress").show();          
+            btn.addClass("disabled");
+          },
+          done:function(rcJson){
+            if(rcJson.result!=="1"){
+              ui_checkbox.find("input[type=checkbox]").attr( 'checked' ,true);
+              return;
+            }
+            userHash = rcJson.user_hash;
+  
+            taskJson.state = postData.state;
+            taskJson.worker_state = postData.worker_state;
+
+            RunNotification(stringMap.Notification,taskJson.id);
+
+            $("#TaskListView").JSTaskView.Update(taskJson);
+            //RunPieChartEffect(taskJson.id);
+            //RunUpdateTaskItemButtons(taskJson.id);
+          },
+          fail:function(e){
+            ui_checkbox.find("input[type=checkbox]").attr( 'checked' ,true);
+            TaskApi.Notification({title:stringMap.Error,description:e});   
+          },
+          always:function(){
+            btn.removeClass("disabled");
+            $("#TaskNetworkProgress").hide();
+          }
+        });         
+      }
+    });
+
+    ui_title.collapse({toggle:false});  
+
+    ui_item.on('show.bs.collapse', function () {
+      var offset = $(this).offset();
+      var tb = offset.top;
+      var th = $(this).height();
+
+      // why 50 ? because margin 50 px
+      var h = $('#TaskListView').parent().height()+50;
+      var t = $('#TaskListView').scrollTop();
+      console.log(""+(tb+th)+"/"+(h));
+      if((tb+th+25)>(h)){
+        //console.log("Top:"+t+th);
+        $('#TaskListView').animate({
+          scrollTop: t+th+30
+        },200); 
+      }
+    });
+
+    ui_item.hide();
+
+    $("#TaskListView").JSTaskView.Update(item);
+  }
+
+}(window.jQuery || window.$));

@@ -1,0 +1,247 @@
+
+/***********************
+li
+cbp-tmtime cbp-tmlabel
+           cbp-tmtoolbar
+*********************/
+
+/**/
+.cbp-tmline {
+  margin: 20px 0 0 0;
+  padding: 0px 0px;
+  list-style: none;
+  position: relative;
+  color:#333;
+} 
+
+.cbp-tmline.disabled{
+  opacity:0.5;
+  cursor:default;
+}
+
+/* The date/time */
+.cbp-tmline > li{
+  margin-bottom:25px;
+}
+
+/* The icons */
+.cbp-tmline > li .cbp-tmicon {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+}
+
+.cbp-tmline > li .cbp-tmperson{
+  position: absolute;
+  width: 20%;
+  padding:8px;
+  margin:0px -10px;
+  text-align:right;  
+  margin-top:-10px;
+}
+
+.cbp-tmline > li .cbp-tmtime{
+  position: absolute;
+  left:80%;
+  margin:0px 10px;
+  padding:0px 8px;
+  text-align:right;
+  top:0px;
+}
+
+.cbp-tmtime .date{
+  font-size:11px;
+  color:#3594CB;
+}
+
+.cbp-tmtime .time{
+  font-size:11px;
+  color:#BDD0DB;
+}
+
+
+/* Right content */
+.cbp-tmline > li .cbp-tmcontainer {
+  position: relative;
+  padding-top:8px;
+  margin-left:20%;
+  margin-right:20%;  
+  background-color: rgba(35,94,200,0.1);
+  padding: 8px;
+  border-radius: 6px ;
+  min-height:34px;
+}
+
+.cbp-tmline > li .cbp-tmcontainer .description {
+
+}
+
+/* The triangle */
+
+.cbp-tmline > li .cbp-tmcontainer:after {
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-width: 8px;
+  top: 10px;
+}
+
+.cbp-tmline > li.left .cbp-tmcontainer:after {
+  right: 100%;
+  border-right-color: rgba(35,94,200,0.1);
+}
+
+.cbp-tmline > li.right .cbp-tmcontainer {
+  background: rgba(94,200,35,0.1);
+}
+.cbp-tmline > li.right .cbp-tmcontainer:after {
+  left: 100%;
+  border-left-color: rgba(94,200,35,0.1);
+}
+
+
+.cbp-tmline > li.right .cbp-tmtime{
+  position: absolute;
+  width: 20%;
+  margin:0px -10px;
+  text-align:right;
+  left:0px;
+  top:0px;
+}
+
+.cbp-tmline > li.right .cbp-tmperson{
+  position: absolute;
+  left:80%;
+  margin:0px 10px;
+  text-align:left;
+  margin-top:-10px;
+  
+}
+
+.cbp-tmline > li.left .cbp-tmperson .name{
+  background:rgba(35, 94, 200, 0.5) 
+}
+
+.cbp-tmline > li.right .cbp-tmperson .name{
+  background:rgba(94,200,35,0.5);  
+}
+
+.cbp-tmline > li.left .cbp-tmperson .icon{
+  width:42px; 
+  height:42px;
+}
+
+.cbp-tmline > li.right .cbp-tmperson .icon{
+  width:42px; 
+  height:42px;
+}
+
+
+.cbp-tmline > li.left .cbp-tmperson .icon img{
+  width:42px; 
+  height:42px;
+}
+
+.cbp-tmline > li.right .cbp-tmperson .icon img{
+  width:42px; 
+  height:42px; 
+}
+
+/*******************************************/
+/* messag-item                               */
+/*******************************************/
+
+.cbp-tmline li{
+  -webkit-transition: all 0.6s ease-in-out;
+  -moz-transition: all 0.6s ease-in-out;
+  -o-transition: all 0.6s ease-in-out;
+  -ms-transition: all 0.6s ease-in-out;
+  transition: all 0.6s ease-in-out;
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -o-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0); 
+}
+
+.cbp-tmline li.in{
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -o-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+
+
+
+.cbp-tmline .dynamic-menu{
+  list-style: none; 
+  z-index:1001; 
+  position:absolute;
+  top:0;
+  left:0;
+  padding:4px;
+  -webkit-transition: all 0.6s ease-in-out;
+  -moz-transition: all 0.6s ease-in-out;
+  -o-transition: all 0.6s ease-in-out;
+  -ms-transition: all 0.6s ease-in-out;
+  transition: all 0.6s ease-in-out;
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -o-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0); 
+}
+
+.cbp-tmline .dynamic-menu.in{
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -o-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+
+.cbp-tmline .dynamic-menu .item{
+  float:left;
+  margin:10px 5px;
+  min-width: 26px;
+  width:auto;
+  height: 26px;
+  font-size: 11px;
+  line-height: 26px;  
+  color: #fff;
+  background: #46a4da;
+  border-radius: 13px;
+  box-shadow: 0 0 0 4px #afdcf8,1px 1px 4px 3px #000;
+  padding:0px 2px;
+  text-shadow: 0px 0px 3px rgba(0, 0, 0, .3);
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -webkit-transition: all 0.6s ease-in-out;
+  -moz-transition: all 0.6s ease-in-out;
+  -o-transition: all 0.6s ease-in-out;
+  -ms-transition: all 0.6s ease-in-out;
+  transition: all 0.6s ease-in-out;
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -o-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0); 
+}
+
+.cbp-tmline .dynamic-menu.in .item{
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -o-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+
+
+.cbp-tmline .dynamic-menu .item:hover{
+  background: #2684ba;
+  cursor:hand;
+}

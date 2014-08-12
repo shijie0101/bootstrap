@@ -1,0 +1,343 @@
+<html>
+<head>
+<title>UReach eERP System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"
+	charset="utf-8">
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<script src='./js/jquery/jquery.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/md5.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+
+
+<script src="js/bootstrap-custom-dialog.js"></script>
+
+
+<script>
+
+
+//Frame資訊
+var mFrame={
+  name:"UserProfile",
+  language:"en",//"<s:property value="formdata.lang" />",
+  user:{id:"1",name:"Shijie Wu",icon:"images/jobs.jpeg"},//user:<s:text name="formdata.user_info" />
+}
+
+//var userName = "<s:property value="formdata.cname" />";
+//var icon = "<s:property value="formdata.thumb" />";
+
+
+var mStringMap=GetStringMap(mFrame.language);
+
+// 取得字串表
+function GetStringMap(language){
+	var stringTable = {
+	  en:{
+	  	//  
+	  	Setting:"Settings",
+	  	PersonalSetting:"Personal Settings",
+	    Icon:"Personal Icon",
+	   	UserName:"User Name",
+	   	Password:"Password",
+	   	Confirm:"Confirm Password",
+	   	EMail:"Email",
+	   	TimeOut:"Timeout",
+	   	Language:"Language",
+	   	Submit:"Submit",
+	   	TimeOutMessage:"Auto logout time. (Unit:Minutes)",
+	   	PasswordError:"Password Error"
+      //
+	  },
+	  tw:{
+	  	//  
+			Setting:"設定",
+			PersonalSetting:"個人化設定",
+			Icon:"頭像",
+			UserName:"使用者名稱",
+			Password:"密碼",
+			Confirm:"確認密碼",
+			EMail:"電話信箱",
+			TimeOut:"自動登出",
+			Language:"語系",
+			Submit:"提交",
+			TimeOutMessage:"自動登出時間. (單位:分鐘)",
+			PasswordError:"密碼錯誤"
+    },
+    cn:{
+			Setting:"设定",
+			PersonalSetting:"个人化设定",
+			Icon:"头像",
+			UserName:"使用者名称",
+			Password:"密码",
+			Confirm:"确认密码",
+			EMail:"电话信箱",
+			TimeOut:"自动登出",
+			Language:"语系",
+			Submit:"提交",
+			TimeOutMessage:"自动登出时间. (单位:分钟)",
+			PasswordError:"密码错误"
+    }
+	}
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+	
+function initial() {
+	
+	$("#SettingsView .page-header .title").html(mStringMap.Setting);
+	$("#PersonalSettingsView .page-header .title").html(mStringMap.PersonalSetting);
+
+	$("[gname=CName] .control-label").html(mStringMap.UserName);
+	$("[gname=pass] .control-label").html(mStringMap.Password);
+	$("[gname=repass] .control-label").html(mStringMap.Confirm);
+	$("[gname=EMail] .control-label").html(mStringMap.EMail);
+	$("[gname=TimeOut] .control-label").html(mStringMap.TimeOut);
+	$("[gname=uploadFile] .control-label").html(mStringMap.Icon);
+	$("[gname=TimeOut] .form-message .message").html(mStringMap.TimeOutMessage);
+	$("[gname=Language] .control-label").html(mStringMap.Language);
+	$("[name=submit] .title").html(mStringMap.Submit);
+	
+  //$("#CName").attr("placeholder",<s:property value="formdata.cname" />);
+  //$("#EMail").attr("placeholder",<s:property value="formdata.email" />);
+  //$("#timeout").attr("placeholder",<s:property value="formdata.timeout" />);
+
+	//初始值，有變更時通知parent
+	onCallParent({act:"Update",frame:mFrame});
+	
+	onCallParent({act:"FrameLoaded",frame:mFrame});
+}
+
+
+function reload() {
+	//window.parent.location.reload();
+	//window.top.onCall();
+	console.log("reload");
+}
+
+
+function ComfirmPassword(){
+	if($("#pass").val()!==$("#repass").val()){
+		return false;
+	}
+	return true;
+}
+
+function submit_profile(){
+	console.log("submit");
+
+	if(ComfirmPassword()){
+		//alert($('form [name="profile"]'));
+		if($("[name=pass]").val() !== ""){
+			var hash = hex_md5($("[name=pass]").val());
+			$("[name=pass]").val(hash);
+		}
+		$('#profile').submit();
+	}else{
+
+    $("<div>").JSModalDialogOk({
+      title:mStringMap.Message,
+      message:mStringMap.PasswordError,
+      ok:{
+        title:mStringMap.Ok,
+        click:function(){
+        }
+      }
+    });
+	}
+}
+
+// callback
+//重要! Callback
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+  console.log(data);
+};
+window.Callback.FromParent = function (data) {
+  if(data.act==="GetChild"){
+    data["child"].push(mFrame);
+    onCallChild(data);
+  }else{
+    onCallChild(data);
+  }
+};
+
+function onCallParent(data){
+  if(window.parent.Callback)
+    window.parent.Callback.FromChild(data);
+}
+
+function onCallChild(date){
+  var f = document.getElementById('containFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+//END Callback
+
+
+$(window).load(function() {
+  //try{
+	  initial();
+  //}catch(e){
+  //  console.log("****FrameError****");
+  //  console.log(e);
+  //  onCallParent({act:"FrameError",frame:mFrame,data:e});
+  //}
+});
+
+
+</script>
+
+</head>
+<body>
+<div class="cbp cbp-box" style="background:url(images/noisebg.png);">
+	<div class="inner-vertical">
+		<!-- Modal -->
+	  <div class="container" style="padding-bottom:100px">
+			<div id="SettingsView" class="row">
+				<h2 class="page-title"><span class="title" style="font-size:140%"></span></h2>
+				<div class="col-md-10 col-md-offset-1">
+					<div class="row">					
+						<form class="form-horizontal" id="profile" role="form" action="complete" method="post">
+							<div class="page-header">
+								<div class="toolbar">
+									<span class="title" style="font-size:140%">@User Information@</span>
+								</div>
+							</div>
+							<div class="form-group" gname="CName">
+								<div class="col-xs-2 control-label">顯示名稱</div>
+								<div class="col-xs-10">	
+			            <div class="row">
+			              <div class="col-xs-10 form-input">
+			                <input type="text" class="form-control" id="CName" name="CName">
+			              </div> 
+			            </div>
+								</div>
+							</div>
+							<div class="form-group" gname="pass">
+								<div class="col-xs-2 control-label">使用者密碼</div>
+								<div class="col-xs-10">
+									<div class="row">
+			              <div class="col-xs-10 form-input">
+			                <input type="password" class="form-control" id="pass" name="pass">
+			              </div>
+			            </div>
+		            </div>
+		          </div>
+		        	<div class="form-group" gname="repass">
+								<div class="col-xs-2 control-label">再次輸入使用者密碼</div>
+								<div class="col-xs-10">
+									<div class="row">
+			              <div class="col-xs-10 form-input">
+				              <input type="password" class="form-control" id="repass" name="repass">
+				            </div>
+		            	</div>
+								</div>
+							</div>					
+							<div class="form-group" gname="EMail">
+								<div class="col-xs-2 control-label">電子郵件</div>
+								<div class="col-xs-10">
+									<div class="row">
+		              	<div class="col-xs-10 form-input">
+			               	<input type="text" class="form-control" id="EMail" name="EMail">
+			              </div>
+			            </div>
+								</div>
+							</div>
+							<div class="form-group" gname="TimeOut">
+								<div class="col-xs-2 control-label">自動登出</div>
+								<div class="col-xs-10">
+									<div class="row">
+		              	<div class="col-xs-10 form-input">
+											<input type="number" class="form-control" id="timeout" name="TimeOut">
+			              </div>
+			              <div class="col-xs-10 form-message">
+											<span class="message" style="color:red;">*自動登出時間(單位:分鐘)*</span>
+			              </div>
+			            </div>
+								</div>
+							</div>
+							<div class="form-group" gname="Language">
+								<div class="col-xs-2 control-label">語系</div>
+								<div class="col-xs-10">
+									<div class="row">
+		              	<div class="col-xs-10 form-input">
+											<select type="select" class="form-control" id="language" name="Language">
+												<option value="en">English</option>
+												<option value="tw">繁體中文</option>
+												<option value="cn">简体中文</option>
+											</select>
+			              </div>
+			              <div class="col-xs-10 form-message">
+			              </div>
+			            </div>
+								</div>
+							</div>
+							<div class="toolbar" gname="submit">
+									<button type="submit" class="btn btn-success pull-right" name="submit" onclick="submit_profile();"><span class="title">Submit</span></button>
+							</div>	
+			      </form>
+			    </div>
+				</div>
+			</div>  
+
+			<!--END BasicInfoView-->
+			<div id="PersonalSettingsView" class="row">
+				<h2 class="page-title"></h2>
+				<div class="col-md-10 col-md-offset-1">
+					<div class="row">					
+						<form class="form-horizontal" action="complete" enctype="multipart/form-data" method="post">
+							<div class="page-header">
+								<div class="toolbar">
+									<span class="title" style="font-size:140%">Personal Information</span>
+								</div>
+							</div>
+							<div class="form-group" gname="uploadFile">
+								<div class="col-xs-2 control-label">頭像</div>
+								<div class="col-xs-10">
+									<div class="row">
+		              	<div class="col-xs-10  form-input">
+		              		<div style="padding:6px">
+			               		<input style="font-size:16px" class="" type="file" name="uploadFile" />
+											</div>
+			              </div>
+			            </div>
+								</div>
+							</div>	
+							<div class="toolbar" gname="submit">
+								<button type="submit" class="btn btn-success pull-right" name="submit" onclick="reload();"><span class="title">Submit</span></button>
+							</div>		
+						</form>
+					</div>
+				</div>
+			</div>
+			<!--END PersonalInfoView-->
+
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

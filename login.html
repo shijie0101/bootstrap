@@ -1,0 +1,250 @@
+<html lang="en">
+<head>
+  <title>UReach EERP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+  <!-- Bootstrap -->
+  <link href="css/custom.bootstrap.css" rel="stylesheet">
+  <link href="css/cbp.bootstrap.css" rel="stylesheet">
+  <link href="css/jquery-ui.min.css" rel="stylesheet" >
+  <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+  <link href="css/cbp.login.css" rel="stylesheet" >
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="js/jquery/jquery.min.js"></script>
+  <script src="js/jquery/jquery-ui.min.js"></script>
+  <script src="js/jquery/jquery-sprintf.js"></script>
+  <script src="js/jquery/jquery.cookie.js"></script>
+  <script src="js/bootstrap-custom-ui-factory.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+
+  <script src="js/bootstrap.min.js"></script>
+
+  <script src="js/md5.js"></script>
+  
+  <!-- Common Library  -->
+  <script src="js/common-library.js"></script>
+  
+
+  <script>
+    $(window).load(function() {
+      
+      var lang="en"; //en zh_tw zh_cn
+
+      SetLanguage(lang);
+
+      $("#Left").removeClass("cbp-close");
+      $("#Right").removeClass("cbp-close");
+
+      $("select").val(lang);
+
+      $("select").change(function(){
+        //document.getElementById("request_locale").value = name;
+        //document.getElementById("lang_form").submit();  
+        SetLanguage($(this).val());
+      }); 
+
+      $(".login").find("input").change(function(event){
+        if($("[name=inputPassword]").val().length && $("[name=inputId]").val().length){
+          $(".login-button").removeAttr("disabled");
+        }else{
+          $(".login-button").attr("disabled",true);
+        }
+
+        if($("[name=inputId]").val().length){
+          $(".remember-me").show();  
+          $(".forgot-password").show();
+        }else{
+          $(".remember-me").hide();  
+          $(".forgot-password").hide();           
+        }
+
+      });
+
+
+      $(".login").find("input").keyup(function(event){
+        if($("[name=inputPassword]").val().length && $("[name=inputId]").val().length){
+          $(".login-button").removeAttr("disabled");
+
+          if(event.keyCode===13){
+            $(".login-button").click();   
+          }
+
+        }else{
+          $(".login-button").attr("disabled",true);
+
+          if(event.keyCode===13){
+            if($(this).attr("name")==="inputId"&&$("[name=inputPassword]").val().length ===0){
+              $("[name=inputPassword]").focus();
+            }
+            else if($(this).attr("name")==="inputPassword"&&$("[name=inputId]").val().length ===0){
+              $("[name=inputId]").focus();
+            }
+          }    
+        }
+
+        if($("[name=inputId]").val().length){
+          $(".remember-me").show();  
+          $(".forgot-password").show();
+        }else{
+          $(".remember-me").hide();  
+          $(".forgot-password").hide();           
+        }
+
+      });
+
+      $(".login-button").click(function(){
+        console.log("click"); 
+        if($("[name=inputPassword]").val().length && $("[name=inputId]").val().length){
+
+          var accountData=
+          {
+            name:$("[name=inputId]").val(),
+            password:$("[name=inputPassword]").val()
+          }
+
+          var hash = hex_md5($("[name=inputPassword]").val());
+          $("[name=inputPassword]").val(hash);
+          $(".login").attr("method","post");
+          $(".login").attr("action","index.html");
+          $(".login").JSChangeTagName("form");
+
+          if($(".remember-me input[type=checkbox]").prop("checked")===true){
+            var local = localStorage.getItem("Account");            
+            localStorage.setItem("Account",JSON.stringify(accountData));
+            //$.cookie("Account",$("[name=inputId]").val()); 
+          }
+
+          $(this).submit();
+        }else{
+          $(".login").removeAttr("method","post");
+        } 
+      });
+
+      //var account = $.cookie("Account");
+      //console.log(account);
+
+      var account = localStorage.getItem("Account");
+     
+      if(account){
+
+        var user = JSON.parse(account);
+        $("[name=inputId]").val(user.name);
+        $("[name=inputPassword]").val(user.password);
+        $(".remember-me input[type=checkbox]").prop({checked: true});
+      }
+
+      $("[name=inputId]").change();
+
+      $(".forgot-password").click(function(){
+
+        var loader = $.JSUiFactory("circular3d-loader");
+        $("body").append(loader);
+
+        loader.fadeIn( 1000 ,function(){
+
+          var postData={login:$("[name=inputId]").val(),repass:"repass"};
+          console.log(postData);
+          $.post("login",postData)
+          .done(function(rc) {
+            var rcJson = JSON.parse(rc); 
+            if(rcJson.result==="1"){
+              if(lang==="zh_tw")
+                alert("新密碼連結已寄送至您的電子信箱.");
+              else if(lang==="zh_cn")
+                alert("新密码连结已寄送至您的电子邮件信箱.");
+              else
+                alert("A new password link has been sent to your e-mail address.");
+            }else{
+              alert("Error"); 
+            }      
+          })
+          .fail(function(e) {
+            alert("Error");  
+          })
+          .always(function() {
+            loader.fadeOut(1000,function(){
+              $(this).remove();
+            }); 
+          });
+        });
+      });
+
+      $(".remember-me input[type=checkbox]").click(function(){
+        if($(this).prop("checked")==false){
+          //$.removeCookie("Account"); 
+          localStorage.removeItem("Account");
+        }
+        else{
+  
+        }
+      });
+    });
+
+    function SetLanguage(lang){
+      if(lang==="en"){
+        $("label[for=login]").html("Id:");
+        $("label[for=password]").html("Password:");
+        $(".forgot-password").html("Forgot your password?");
+        $(".remember-me .text").text("Remember me");
+      }else if(lang==="zh_tw"){
+        $("label[for=login]").html("帳號:");
+        $("label[for=password]").html("密碼:");
+        $(".forgot-password").html("忘記密碼？");
+        $(".remember-me .text").text("記住我");
+      }else if(lang==="zh_cn"){
+        $("label[for=login]").html("伥号:");
+        $("label[for=password]").html("密码:");
+        $(".forgot-password").html("忘记密码?");
+        $(".remember-me .text").text("记住我");
+      }
+
+      $("#request_locale").val(lang);
+    }
+
+  </script>
+</head>
+<body>
+  <div id="contain-viewport" class="container cbp-push" style="overflow:hidden;">      
+    <div id="Left" class="cbp cbp-box cbp-left cbp-close vertical-xs-6">
+      <div class="brand">
+        U-Reach
+      </div>
+    </div>
+    <div id="Right" class="cbp cbp-box cbp-right cbp-close vertical-xs-6">
+      <div class="login" method="" action="index_test.html">
+        <input type="hidden" id="request_locale" name="request_locale">
+        <p>
+          <label for="login">ID:</label>
+          <input type="text" name="inputId" value="" placeholder="">
+        </p>
+        <p>
+          <label for="password">Password:</label>
+          <input type="password" name="inputPassword" value="" placeholder="">
+        </p>
+        <p class="login-submit">
+          <button class="login-button" disabled></button>
+        </p>
+        <p>
+          <span class="forgot-password">Forgot your password?</span>
+          <span class="remember-me"><input type="checkbox"><span class="text">Remember me<span></span>
+        </p>
+      </div>
+    </div>          
+  </div>      
+  <div class="about">
+    <p class="about-company">
+      &copy; 2014&nbsp;<a href="http://www.ureach-inc.com/" target="_blank">U-Reach Inc.</a> - All Rights Reserved.
+      <br>
+      Designed by <a href="http://www.ureach-inc.com/" target="_blank">U-Reach Inc. </a>&nbsp;In Taipei.</p>
+    <div class="language">
+      <label>
+        <select>
+          <option value="en">Engilsh</option>
+          <option value="zh_tw">繁體中文</option>
+          <option value="zh_cn">简体中文</option>
+        </select>
+      </label>
+    </div>    
+  </div>
+</body>
+</html>

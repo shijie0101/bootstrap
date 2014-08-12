@@ -1,0 +1,49 @@
+//jquery  常用語法
+
+1.取得tbody 中第一個 td
+$("tbody td:first-child").prepend("<input type=checkbox></input>");
+
+2.取得tbody中tr無readonly屬性
+$("tbody tr").not("[readonly]").prepend("<th><input type=checkbox></input></th>");
+          
+3.取得tbody找到有readonly屬性
+$("tbody").find("[readonly]").prepend("<th></th>");
+
+4.屬性的取法
+.attr( 'checked' ): checked
+.prop( 'checked' ): true
+.is( ':checked' ): true
+
+5.移除屬性
+.removeProp()
+
+6.取得最近parent by selector
+.closest( selector )
+
+7.select inputbox by type and set prop.
+$("#ContentView").find("input[type=checkbox]").prop({checked: true});
+
+8.動態變更hover樣式  
+$(this).hover(function(){
+	$(this).css({cursor:"pointer"});
+});
+
+9.javascript 動態給值
+structure["name"]=value  / structure.name = value
+
+10.Merge the contents of two or more objects together into the first object. 
+a = {k1:1, k2:2, k3:3};
+b = {};
+$.extend(b,a);
+
+
+
+11.設定屬性無值的方法
+$("#MeetingInfoForm").attr("disabled",true);	
+
+12.Select 取值
+var CountryNumber = $("#PhoneCountryNumber").val();
+var CountryName   = $("#PhoneCountryNumber option:selected").text();
+
+13.
+Manipulating data using JSON parse/stringify

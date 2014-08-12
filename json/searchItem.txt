@@ -1,0 +1,32 @@
+{  
+  "description":"此為搜尋例範列"                                         
+  "type":"table",                           
+  "ths":[                              
+      "#",                                  
+      "Company Name",         
+      "Contact",              
+      "Cellphone",            
+      "Location"               
+  ],                        
+  "trs":[                                   
+    [                                       
+      "1",                      
+      "UReach",        
+      "Shijie",
+      "0933261519",
+      "Taiwan"                         
+    ],
+    [
+      "2",                      
+      "UReach",        
+      "Shijie",
+      "0933261519",
+      "Taiwan"    
+    ]                                       
+  ],   
+  "hrefs":[                                   
+    "buttons.html",
+    "icons.html"                                        
+  ],                                      
+  "readonly": "true"                    
+}

@@ -1,0 +1,105 @@
+<html>
+<head>
+<title>UReach eERP System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-string-map.js"></script>
+<script src="js/common-api.js"></script>
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<script>
+
+//Frame資訊
+var mFrame={
+  name:"ErrorFrame",
+  language:"en"
+}
+
+var mStringMap=GetStringMap(mFrame.language);
+
+// 取得字串表
+function GetStringMap(language){
+
+  var stringTable = {
+    en:{
+      //  
+      Timeout:"Session Timeout!"
+    },
+    tw:{
+      //  
+      Timeout:"閒置時間過長，請重新登入"
+      },
+    cn:{
+      //  
+      Timeout:"闲置时间过长，请重新登入"
+    }
+  }
+  var stringMap=stringTable.en;
+
+  if(mFrame.language==="zh_TW"){
+    stringMap=stringTable.tw;
+    $.extend(stringMap,$.JSStringMap.tw);
+  }else if(mFrame.language==="zh_CN"){
+    stringMap=stringTable.cn;
+    $.extend(stringMap,$.JSStringMap.cn);
+  }else{
+    $.extend(stringMap,$.JSStringMap.en);
+  }
+
+  return stringMap;
+}
+
+//重要! Callback
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+
+};
+
+window.Callback.FromParent = function (data) {
+  //console.log(data);
+  if(data.act==="GetChild"){
+    data["child"].push(mFrame);
+    onCallChild(data);
+  }
+};
+
+function onCallParent(data){
+  if(window!==window.parent&&window.parent.Callback){
+    window.parent.Callback.FromChild(data);
+  }
+}
+
+function onCallChild(date){
+  var f = document.getElementById('ContainIFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+
+function initial(){	
+  onCallParent({act:"PostApiResult",target:"root",frame:mFrame,data:{result:"-1",message:mStringMap.Timeout}});  
+}
+
+$(window).load(function() {
+  initial();  
+});
+    
+</script>		
+</head>
+
+<body>
+<div>
+</div>
+</body>
+</html>

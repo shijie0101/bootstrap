@@ -1,0 +1,436 @@
+<!--
+說明:暫時客戶轉正式客戶介面
+日期:20140616
+-->
+<html>
+<head>
+<title>Bootstrap Sample Code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" charset="utf-8">
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="css/custom.bootstrap.css" rel="stylesheet">
+<link href="css/cbp.bootstrap.css" rel="stylesheet">
+
+<!-- Bootstrap fa graphic Css-->
+<link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+
+<!-- jQuery CSS -->
+<link href="css/jquery-ui.min.css" rel="stylesheet" >
+<link href="css/jquery-ui-datetimepicker.css" rel="stylesheet" >
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery-ui.min.js"></script>
+<script src="js/jquery/jquery-sprintf.js"></script>
+<script src="js/jquery/jquery-ui-autosize.js"></script>
+<script src="js/jquery/jquery-ui-datetimepicker.js"></script>
+
+
+<!-- Common Library  -->
+<script src="js/common-library.js"></script>
+
+<!-- Bootstrap Js-->
+<script src="js/bootstrap.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed --> 
+<script src="js/bootstrap-custom-input.js"></script>
+<script src="js/bootstrap-custom-button.js"></script>
+<script src="js/bootstrap-custom-dialog.js"></script>
+<script src="js/bootstrap-custom-table.js"></script>
+<script src="js/bootstrap-custom-ui-factory.js"></script>
+<script src="js/bootstrap-custom-form-factory.js"></script>
+<script src="js/bootstrap-custom-toolbar-factory.js"></script>
+
+<script>
+
+var stringTable = {
+  en:{
+    //字串
+    name:"name",
+    address:"address",
+    phone:"phone",
+    note:"note",
+
+    BasicInfo:"Basic Info",
+    Edit:"Edit", 
+    Save:"Save", 
+    Add: "Add", 
+    Delete: "Delete" ,
+    Display: "Display" ,
+    UpdateSuccess: "Update successful",
+    UpdateFailed: "Update Failed",
+    Message: "Message",
+    Error: "Error", 
+    Ok: "OK",
+    Return:"Back",
+    Cancel: "Cancel",
+    NoResult: "No search results."
+  },
+  tw:{
+    //字串
+    name:"名稱",
+    address:"地址",
+    phone:"電話",
+    note:"備註",
+
+    BasicInfo:"Basic Info",
+    Edit:"編輯",
+    Save:"儲存",
+    Add:"新增",
+    Delete:"刪除",
+    Display:"顯示",
+    Publish:"發表新文章",
+    UpdateSuccess:"更新成功",
+    UpdateFailed:"更新失敗",
+    Message:"訊息",
+    Error:"錯誤",
+    Ok:"確定",
+    Cancel:"取消",
+    Return:"返回",
+    NoResult:"無搜尋結果"
+  },
+  cn:{
+    name:"名称",
+    address:"地址",
+    phone:"电话",
+    note:"备注",
+
+    BasicInfo:"Basic Info",
+    Edit:"编辑",
+      Save:"储存",
+      Add:"新增",
+      Delete:"删除",
+      Display:"显示",
+    Publish:"發表新文章",
+      UpdateSuccess:"更新成功",
+      UpdateFailed:"更新失败",
+      Message:"讯息",
+      Error:"错误",
+      Ok:"确定",
+      Cancel:"取消",
+    Return:"返回",
+      NoResult:"无搜寻结果"
+  }
+}
+
+var stringMap=stringTable.en;
+function InitialLanguage(language){
+  if(language==="en"){
+    stringMap=stringTable.en;
+  }else if(language==="zh_TW"){
+    stringMap=stringTable.tw;
+  }else if(language==="zh_CN"){
+    stringMap=stringTable.cn;
+  }
+}
+
+//Frame資訊
+var mFrame={
+  name:"",
+  language:"en"
+};
+
+var mWebApi="Action/action.php"; //Action
+
+var mInitJson={   
+  initial:{
+    company_id:"0",
+  },
+  basicInfo:{
+    title:stringMap.BasicInfo,
+    type:"form-list",
+    //標題的字串，介面找不到titles值時才會使用內定，如再找不到則空字串顯示
+    titles:{   
+      name:"公司名稱",
+      address:"地址",
+      phone:"電話",
+      note:"備註"
+    },
+    //內容值
+    inputs:{
+      name:"U-Reach",
+      address:"新竹市浸水里",
+      phone:"09xx12356",
+      note:"ACKDKAL ALJKSD <br/> LKASLK  fdkljsajflk  <br/> lKASJKL AKSJLDJKL"
+    }
+  }
+} 
+
+
+function ProcedureEntry(){
+
+  if(mInitJson){
+    ProcedureList(mInitJson);
+    return;
+  }
+}
+
+//介面table header
+function ProcedureList(paramJson){ 
+
+  var options={
+    language:"en",
+    initial:paramJson.initial,
+    select:{     
+    },
+    autocomplete:{
+    },
+    ui:{        
+    },
+    header:{
+     
+    },
+    tableApi:{
+    },
+    inputChange:function(ui,data){
+    },
+    listChange:function(ui,name,value){
+    },
+    tableInputChange:function(){
+    }
+  };
+
+  var BottomToolbarJson={
+    buttons:[
+    {
+      name:"OkBn",
+      title:stringMap.Ok,           //需要修改，按鍵名稱
+      iconCssClass:"fa fa-check",
+      cssClass:"btn-primary",
+      pullRight:true,
+      group:"",
+      click:function(){
+        var formH = $(this).closest(".form-horizontal");
+        var formName=formH.attr("name");
+        var postData={};
+
+        postData["type"]="Unknown"; //需要修改
+        postData["name"]="Unknown"; //需要修改
+    
+        for(iname in paramJson.initial){
+          postData[iname]=paramJson.initial[iname]; 
+        }
+
+        console.log(postData);
+
+        $("<div>").ModalDialogOkCancel({
+          title:"Message",          //需要修改，對話框訊息
+          message:"是否確定要XXX?",  //需要修改，對話框內容
+          ok:{
+            title:stringMap.Ok,
+            click:function(){
+              var loader = $.JSUiFactory("circular3d-loader");                
+              $("body").append(loader);
+                  
+              loader.fadeIn( 1000 ,function(){
+                $.post(mWebApi,postData)
+                  .done(function(rc) {
+                    console.log("RETURN");
+                    console.log(rc);
+                    var rcJson = $.JSApiJSonParse(rc);
+                    if(rcJson.result==="1"){
+                      Notification({title:stringMap.Message,description:stringMap.UpdateSuccess});
+                      
+                      //回覆parent執行結果
+                      onCallParent({act:"ok"});
+                    }else{
+                      Notification({title:stringMap.Message,description:rcJson.message});
+                    }
+                  })
+                  .fail(function() {
+                    Notification({title:stringMap.Message,description:stringMap.UpdateFailed});
+                  })
+                  .always(function() {
+                    loader.fadeOut(1000,function(){
+                      $(this).remove();
+                    }); 
+                  }); 
+              });
+            }
+          },
+          cancel:{
+            title:stringMap.Cancel
+          }
+        });  
+      }
+    }
+    ]
+  }
+
+  var TopToolbarJson={
+    title:"",
+    buttons:[]
+  } 
+
+  for(name in paramJson){
+    var formOpt = paramJson[name];
+    var formType= formOpt.type;
+
+    if( formType==="form-list"){
+      var formH = $('<div class="form-horizontal">');
+      $("#FormContainer").append(formH);
+      formH.attr("name",name);
+
+      var formHeader =$('<div class="page-header"></div>');
+      formH.append(formHeader);
+
+      TopToolbarJson.title=formOpt.title;
+
+      var formToolbar =$('<div class="toolbar"></div>');
+      formToolbar.JSToolbar(TopToolbarJson);
+      formHeader.append(formToolbar);
+
+      var dl = $('<dl class="dl-horizontal">');
+
+      for(name in formOpt.inputs){
+
+        var title = (formOpt.titles[name])?formOpt.titles[name]:"";
+        if(title==="")
+          title = (stringMap[name])?stringMap[name]:"";
+
+        var value = formOpt.inputs[name];
+
+        var dt = $("<dt style='margin-bottom:5px'>");
+        dt.html(title);
+        var dd = $("<dd style='margin-bottom:5px'>");
+        dd.html(value);
+
+        dl.append(dt);
+        dl.append(dd);
+      }
+
+      formH.append(dl);
+
+      var bottomToolbar =$('<div class="toolbar"></div>');
+      bottomToolbar.JSToolbar(BottomToolbarJson);
+      formH.append(bottomToolbar);
+
+    }
+  }
+  $("#BasicInfoView").show("blind",{},400,null);
+}
+
+function initial() {
+  var param={act:"GetParent",parent:[]};
+
+  onCallParent(param);
+
+  if(param.parent.length>1){
+    $("#ReturnBn").removeClass("hidden"); 
+    $("#ReturnBn").click(function(){
+      onToggleReturnBn();
+    });
+  }else{
+    $("#ReturnBn").addClass("hidden"); 
+  }
+
+  InitialLanguage(mFrame.language);
+
+  ProcedureEntry();
+}
+
+//重要! Callback
+window.Callback = {};
+window.Callback.FromChild = function (data) {
+  if(data.act==="Notification"){
+    onCallParent(data); 
+  }else if(data.act==="Return"){
+    $("#PrimaryView").removeClass("pull-xs-12");
+    $("#SecondaryView").addClass("pull-xs-12");   
+  }else if(data.act==="GetParent"){
+    data.parent.push(mFrame);
+    onCallParent(data);
+  }else{
+    onCallParent(data); 
+  }
+};
+
+window.Callback.FromParent = function (data) {
+  //console.log(data);
+};
+
+function onCallParent(data){
+  if(window!==window.parent&&window.parent.Callback){
+    window.parent.Callback.FromChild(data);
+  }
+}
+
+function onCallChild(date){
+  var f = document.getElementById('ContainIFrame');
+  if(f){
+    var fContent = f.contentWindow || f.contentDocument;
+    fContent.Callback.FromParent(date);
+  } 
+}
+//END Callback
+
+// 通知事件定
+function Notification(postData){
+  onCallParent({act:"Notification",data:postData});
+}
+
+function onToggleReturnBn(){
+  onCallParent({act:"Return",frame:mFrame});
+}
+
+// Iframe Link
+function Link(src){
+  $('#SecondaryView #ContainIFrame').attr("src",src); 
+  $("#PrimaryView").addClass("pull-xs-12");
+  $("#SecondaryView").removeClass("pull-xs-12");
+}
+
+//END Notification
+
+$(window).load(function() {
+  initial();
+});
+
+
+</script>
+
+</head>
+<body>
+<div class="cbp cbp-box" style="background:#F8F8F8 url(images/noisebg.png);">
+  <div id="PirmaryView" class="cbp cbp-box cbp-left vertical-xs-12">
+    <div class="inner-vertical">
+      <div class="container">
+        <div id="EntryView" class="row">
+          <div class="col-lg-12">
+            <h2 class="page-title"></h2>
+          </div>
+          <div class="col-lg-12">   
+            <div>  
+              
+            </div>     
+          </div> 
+        </div>
+        <div id="BasicInfoView" class="row">
+          <div class="col-lg-12">
+            <h2 class="page-title"></h2>
+          </div>
+          <div class="col-lg-12">   
+            <div id="FormContainer"></div>  
+              
+            </div>     
+          </div> 
+        </div>
+      </div>
+    </div>  
+  </div>
+  <div id="SecondaryView" class="cbp cbp-box cbp-right pull-xs-12 vertical-xs-12">
+    <div class="inner-vertical">
+      <iframe id="ContainIFrame" frameborder="0" class="bg-transparent"
+        src="" style="width: 100%; height: 100%"></iframe>
+    </div>
+  </div>
+  <div id="ReturnBn" class="block-btn cbp-on-top hidden"
+    style="position: absolute; top: 0px; right: 0px;">
+    <span class="fa fa-arrow-left"></span>
+  </div>
+</div>
+</div> <!--END CBP-->
+</body> 
+</html>

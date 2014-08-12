@@ -1,0 +1,467 @@
+/*
+	Author:Shijie
+  Date:20140427
+  Version:1.0
+  Description:Check List
+  Require: 
+    1.jquery-ui-datetimepicker.js
+    2.custom.gritter.js
+*/
+
+(function($) { 
+	'use strict';
+
+  var stringTable = {
+    en:{
+      Edit:"Edit",
+      New:"New",
+      Save:"Save",
+      Clear:"Clear",
+      Add:"Add"
+    },
+    tw:{
+      Edit:"Edit",
+      New:"New",
+      Save:"Save"      
+    },
+    cn:{
+      Edit:"Edit",
+      New:"New",
+      Save:"Save"
+    }
+  }
+
+  var stringMap=stringTable.en;
+
+	$.fn.JSCheckListView = function(opt){
+
+    var uname = "u_"+Math.random().toString(36).substr(2, 9);
+
+    var Api={
+      PostName:"CheckList",
+      //callback={begin:,done:,fail:,always:,notification}
+      ActionPost:function(postData,callback){
+        if(callback.begin!==undefined){
+          callback.begin();  
+        } 
+        //$.post("Action",postData)
+        $.post("Action/action.php",postData)
+        .done(function(rc) {
+          var rcJson = JSON.parse(rc); 
+          console.log(rcJson); 
+          if(callback.done!==undefined){
+            callback.done(rcJson);  
+          }           
+        })
+        .fail(function(e) {
+          if(callback.fail!==undefined){
+            callback.fail(e);  
+          }        
+        })
+        .always(function() {
+          if(callback.always!==undefined){
+            callback.always();  
+          }
+        }); 
+      },
+      
+      New:function(postData,callback){
+        //Refresh All
+        postData["name"]=Api.PostName;
+        postData["type"]="New";
+        console.log(postData);
+        CheckListApi.ActionPost(postData,callback);
+        //user_hash
+      },
+      Update:function(postData,callback){
+        postData["name"]=Api.PostName;
+        postData["type"]="Update";
+        console.log(postData);
+        CheckListApi.ActionPost(postData,callback);
+        //user_hash
+      },
+      Refresh:function(postData,callback){
+        postData["name"]=Api.PostName;
+        postData["type"]="List";
+        console.log(postData);
+        CheckListApi.ActionPost(postData,callback);  
+        //task_hash
+        //user_hash
+      },
+      Delete:function(postData,callback){
+        postData["name"]=Api.PostName;
+        postData["type"]="Delete";
+        console.log(postData);
+        CheckListApi.ActionPost(postData,callback); 
+        //user_hash 
+      },
+      Notification:function(postData){
+        
+        var data={
+          title:postData.title,
+          text: postData.description,
+          position:notification.position,
+          class_name:notification.cssClass,
+          sticky:notification.sticky,
+          time:notification.time,
+          before_open:function(){
+            if($('.gritter-item-wrapper').length == 5)
+            {
+              return false;
+            }
+          }
+        }
+        console.log(data);
+        $.gritter.add(data);
+      }
+    }
+
+   
+    var checklistText='<div> <div name="toolbar" class="toolbar"> </div><div name="viewbody"></div><div class="cbp-checklist"></div></div>';
+    var editItemText='<fieldset name="editview" class="form-horizontal"> <div class="form-group"> <p class="col-sm-2 control-label">@Title@:</p> <div class="col-sm-10"> <input type="text" name="title" class="form-control" placeholder="Title"> </div> </div> <div class="form-group" group="details"> <p class="col-sm-2 control-label">@Description@:</p> <div class="col-sm-10"> <textarea class="form-control" name="description" type="textarea"></textarea> </div> </div> <div class="form-group" group="details"> <p class="col-sm-2 control-label">@Attendee@:</p> <div class="col-sm-10"> <div class="row"> <div class="attendee-input-outer col-xs-6"> </div> <div class="attendee-toolbar col-xs-6"> </div> </div> <div class="row"> <div class="attendee" style="padding:4px 12px"> </div> </div> </div> </div> <div class="form-group" group="details"> <p for="" class="col-sm-2 control-label">@RemindDate@:</p> <div class="col-sm-10"> <div class="row"> <div class="col-xs-6"> <input name="remind_date" class="form-control" type="text"> </div> </div> </div> </div> <div class="form-group" group="details"> <p for="" class="col-sm-2 control-label">@Deadline@:</p> <div class="col-sm-10"> <div class="row"> <div class="col-xs-6"> <input name="deadline" class="form-control" type="text"> </div> </div> </div> </div> <div class="form-group" group="details"> <p for="" class="col-sm-2 control-label">@Attachment@:</p> <div class="col-sm-10"> <div class="row"> <div class="attachments"></div> </div> </div> </div> <div class="form-group"> <p class="col-sm-2 control-label"></p> <div class="col-sm-10"> <div class="pull-right"> <button name="submit" class="btn btn-primary disabled">@OK@</button>&nbsp; <button name="cancel" class="btn btn-default">@Cancel@</button> </div> </div> </div></fieldset>';
+
+    var itemText = '<fieldset name="preview"><div class="checkbox"> <div class="squared-checkbox"> <input type="checkbox" id="" class=""> <label for=""></label> </div> </div><div class="title"><span class="state-bar pull-right"></span><span name="title"></span></div><div class="body"></div></div>';
+
+    var CreateEditView = function(view,itemJson){
+
+      var URAutoCompleteJson = {
+        name:"attendee_input",
+        placeholder:"name",
+        enableEnter:"",
+        stateSpan:{
+          okCssClass:"glyphicon glyphicon-eye-open",
+          loadingCssClass:"loading glyphicon glyphicon-repeat",
+          errorCssClass:"glyphicon glyphicon-eye-close"
+        },
+        StateCallback:function(rc){
+          var btnReset=view.find("[name=attendee_reset]");
+          var btnAdd=view.find("[name=attendee_add]");
+          
+          if(rc.state==="OK"){
+            btnReset.removeClass("disabled");
+            btnAdd.removeClass("disabled");
+          }else if(rc.state==="ERROR"){
+            btnReset.removeClass("disabled");
+            btnAdd.addClass("disabled");
+          }else if(rc.state==="ENTER"){
+            btnAdd.click();
+          }else if(rc.state==="LOADING"||rc.state==="NONE"){
+            btnReset.addClass("disabled");
+            btnAdd.addClass("disabled");
+          }
+        },
+        autocomplete:{
+          minLength:0,
+          api:"json/meeting/employee_list_sample.txt",//AutoComplete
+          method:"Post",
+          postData:{
+            name:"member",
+            term:""
+          }
+        }
+      };
+
+      var URToolbarJson={
+        buttons:[
+          {
+            name:"attendee_reset",
+            title:stringMap.Clear,
+            iconCssClass:"glyphicon glyphicon-minus",
+            cssClass:"btn-danger hidden",
+            group:"",
+            click:function(){
+              $("#URAttendee").AutoCompleteInput(URAutoCompleteJson);
+            }
+          }
+          ,
+          {
+            name:"attendee_add",
+            title:stringMap.Add,
+            iconCssClass:"glyphicon glyphicon-plus",
+            cssClass:"btn-primary pull-right",
+            group:"",
+            pullRight:"",
+            click:function(){
+              var input = view.find("[name=attendee_input]");
+              var inputSpan = view.find(".attendee");
+    
+              var selectName = input.val();
+              var selectId   = input.attr("select_id");
+              var list = [{name:selectName,id:selectId}];
+
+              if(selectName===""||selectId===""){
+                return;
+              }
+
+              input.val("");
+
+              for(var i = 0;i<list.length;i++){
+                var employee = list[i];
+                if(inputSpan.find("[member_id="+employee.id+"]").length==0){
+                  var cell=$("<div style='float:left'>");
+                  var nodeText = $.sprintf("<label member_id='%s' class='person'>%s<span class='remove-self btn glyphicon glyphicon-remove-sign'></span></label>",employee.id,employee.name);  
+                  cell.append(nodeText);        
+                  inputSpan.append(cell);
+
+                  cell.find(".remove-self").click(function(){
+                    $(this).closest("div").hide("slide", {}, 200, function(){$(this).remove()});
+                  });
+                }   
+              } 
+            }
+          }
+        ]
+      }
+
+      view.append(editItemText);
+
+      var editview = view.find("[name=editview]");
+
+      editview.find('[name=remind_date]').datetimepicker({
+        scrollMonth:false
+      });
+
+      editview.find('[name=deadline]').datetimepicker({
+        format:'Y/m/d',
+        scrollMonth:false,
+        timepicker:false
+      });
+
+      editview.find(".attendee-toolbar").JSToolbar(URToolbarJson);
+      editview.find(".attendee-input-outer").AutoCompleteInput(URAutoCompleteJson);
+      editview.find("textarea").autosize();
+
+      var okbn = editview.find("[name=submit]");
+      var cancelbn = editview.find("[name=cancel]");
+      cancelbn.click(function(){
+        var id = view.attr("item_id");        
+        if(id){
+          DestroyView(editview);
+          UpdateCheckItem(view,itemJson);
+        }else{
+          DestroyView(view);
+        }
+        //}
+      });
+
+      okbn.click(function(){
+        var title = editview.find("[name=title]").val();
+        var description = editview.find("[name=description]").val();
+        var remind = editview.find("[name=remind_date]").val();
+        var deadline = editview.find("[name=deadline]").val();
+      
+        var postJson={
+          id:"id_"+Math.random().toString(36).substr(2, 9),
+          title:title,
+          description:description,
+          remind_date:remind,
+          deadline:deadline,
+
+          attachments:[]
+        };
+        if(itemJson){
+          $.extend(postJson,itemJson);
+        }
+        DestroyView(editview);
+        UpdateCheckItem(view,postJson);
+      });
+
+      for(var i = 0 ; i < 8 ;i++){
+        editview.find(".attachments").append('<div class="col-xs-3"><div style="height:50px;background-color:#555;margin:5px"></div></div>');
+      }
+
+      editview.find("[group=details]").hide(); 
+
+      editview.find("[name=title]").change(function(){
+        var text = $(this).val();
+        if(text!==""){
+          editview.find("[group=details]").show("blind",400,{}); 
+          okbn.removeClass("disabled");
+        }else{
+          editview.find("[group=details]").hide("blind",400,{}); 
+          okbn.addClass("disabled");
+        }
+      }).keyup(function(event){
+        var text = $(this).val();
+        if(text!==""){
+          editview.find("[group=details]").show("blind",400,{});
+          okbn.removeClass("disabled"); 
+        }else{
+          editview.find("[group=details]").hide("blind",400,{}); 
+          okbn.addClass("disabled");
+        }
+      })
+
+      if(itemJson){
+        editview.find("[name=title]").val(itemJson.title).change();
+      }
+
+    }
+
+
+    var DestroyView = function(view){
+      view.find('[name=remind_date]').datetimepicker("destroy");
+      view.find('[name=deadline]').datetimepicker("destroy");
+      view.hide("blind",{},500,function(){view.remove();});
+    }
+
+    var DestroyCheckList = function(view){
+
+    }
+
+    var UpdateCheckItem = function(view,itemJson){
+
+      console.log(itemJson);
+
+      var uiView = view.find("[name=preview]");
+      if(uiView.length===0){
+        uiView=$(itemText);
+        view.append(uiView);
+      }
+     
+      view.attr("item_id",itemJson.id);
+      uiView.find("[name=title]").text(itemJson.title);
+
+      var tid = uname+"_"+itemJson.id;
+      uiView.find(".checkbox [type=checkbox]").attr("id",tid);
+      uiView.find(".checkbox [for]").attr("for",tid);
+
+      uiView.find("[name=title]").click(function(){
+
+        CreateEditView(view,itemJson);
+
+        view.parent().find(".cbp-checklist-item.active").removeClass("active");
+
+        $(this).closest(".cbp-checklist-item").addClass("active");        
+
+        uiView.hide("blind",{},400,function(){
+          uiView.remove();}
+          );
+      });
+
+      uiView.find(".state-bar").html("").append('<span class="badge">2014/02/16</span>');
+      
+      uiView.show("blind",{},400);
+    }
+
+    var AddCheckItem = function(view,itemJson){
+
+      var uiChecklist = view.find(".cbp-checklist");
+      var uiItem = uiChecklist.find(".cbp-checklist-item[item_id"+itemJson.id+"]");
+      if(uiItem.length===0){
+        uiItem = $('<div class="cbp-checklist-item">');
+        uiChecklist.append(uiItem);
+      }
+      UpdateCheckItem(uiItem,itemJson);
+    }
+
+    var CreateCheckList = function(view){
+      
+      var lang = (opt.language)?opt.language:"en";
+  
+      if(lang==="en"){
+        stringMap=stringTable.en;
+      }else if(lang==="tw"){
+        stringMap=stringTable.tw;
+      }else if(lang==="cn"){
+        stringMap=stringTable.cn;   
+      }
+      
+      var html = $.JSReplaceStrings(checklistText,stringMap);
+
+      view.html("");
+      view.append(html);
+
+      var uiToolbar = view.find("[name=toolbar]");
+      var uiBody = view.find("[name=viewbody]");
+      var uiCheckList = view.find(".cbp-checklist");
+
+      uiBody.hide();
+
+      var toolbarJson={
+        buttons:[
+          /*{
+            name:"EditBn",
+            title:stringMap.Edit,
+            iconCssClass:"glyphicon glyphicon-edit",
+            cssClass:"btn-primary",
+            group:"ViewMode",
+            click:function(){
+              uiToolbar.find("[group=EditMode]").removeClass("disabled"); 
+              uiToolbar.find("[group=ViewMode]").addClass("disabled");  
+            }
+
+          },*/
+          {
+            name:"NewBn",
+            title:stringMap.New,
+            iconCssClass:"glyphicon glyphicon-plus",
+            cssClass:"btn-warning",
+            group:"EditMode",
+            click:function(){
+
+              var item = uiCheckList.find(".cbp-checklist-item.editview");
+
+              if(item.length!==0){
+                return;
+              }
+
+              item = $('<div class="cbp-checklist-item.editview">');
+              CreateEditView(item);
+        
+              uiCheckList.prepend(item);
+            }
+          }/*
+          ,
+          {
+            name:"SaveBn",
+            title:stringMap.Save,
+            iconCssClass:"glyphicon glyphicon-save",
+            cssClass:"btn-success disabled",
+            pullRight:"",
+            group:"EditMode",
+            click:function(){
+              
+            } 
+          }*/
+        ]
+      }
+
+      uiToolbar.JSToolbar(toolbarJson);
+
+      if(opt.list){
+        console.log(opt.list);
+        for(var i=0;i<opt.list.length;i++)
+          AddCheckItem(view,opt.list[i]);
+      }
+
+    }
+
+    return this.each(function() {
+      var checklist;
+      if( checklist = $(this).data('checklist') ) {
+        if( $.type(opt) === 'string' ) {
+          switch(opt) {
+            case 'show':
+
+            break;
+            case 'hide':
+            
+            break;
+            case 'destroy':
+    
+            break;
+            case 'reset':
+
+            break;
+          }
+        }else{
+ 
+        }
+        return 0;
+      }else{
+        ($.type(opt) !== 'string')&&CreateCheckList($(this));
+      }
+	  });
+  }
+}(window.jQuery || window.$));

@@ -1,0 +1,29 @@
+{  
+  "result":"1",
+  "id":"0",
+  "title":"範例",
+  "description":"id:回應值inputs:值回應階層不變,只需回應name及value",                                         
+  "type":"form", 
+  "method":"post",
+  "api":"json/meeting/company_simple_info_sample.txt",
+  "inputs":[
+    {
+      "id":"1",
+      "name":"company_name_tw",
+      "type":"text",
+      "title":"客戶名稱:",
+      "value":"",
+      "placeholder":"中文",
+      "important":""
+    }
+    ,
+    {
+      "id":"2",
+      "name":"company_name_en",
+      "type":"text",
+      "title":"",
+      "value":"",
+      "placeholder":"英文"
+    }
+  ]                
+}
